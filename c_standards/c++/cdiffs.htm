@@ -1,0 +1,3659 @@
+<!--
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+!-- Signed by <david@tribble.com> 8ACE3E79
+!-->
+<html>
+<head>
+
+<title>
+ Incompatibilities Between ISO C and ISO C++
+</title>
+
+<meta name="revision"
+ content="1.0 2001-08-05">
+<meta name="supersedes"
+ content="0.12 2000-11-13">
+<meta name="supersedes"
+ content="0.11 2000-09-20">
+<meta name="supersedes"
+ content="0.10 2000-07-30">
+<meta name="supersedes"
+ content="0.09 2000-02-17">
+<meta name="supersedes"
+ content="0.08 1999-10-31">
+<meta name="supersedes"
+ content="0.07 1999-10-13">
+<meta name="supersedes"
+ content="0.06 1999-10-05">
+<meta name="supersedes"
+ content="0.05 1999-09-14">
+<meta name="supersedes"
+ content="0.04 1999-09-04">
+<meta name="supersedes"
+ content="0.03 1999-09-02">
+<meta name="supersedes"
+ content="0.02 1999-08-31">
+<meta name="supersedes"
+ content="0.01 1999-08-26">
+<meta name="supersedes"
+ content="0.00 1999-08-24">
+<meta name="rights"
+ content="Copyright ©1999-2001 by David R. Tribble, all rights reserved.">
+<meta name="title"
+ content="Incompatibilities Between ISO C and ISO C++">
+<meta name="author"
+ content="David R. Tribble">
+<meta name="description"
+ content="Incompatibilities Between ISO C90 and ISO C++98">
+<meta name="subject"
+ content="Incompatibilities Between ISO C90 and ISO C++98">
+<meta name="language"
+ content="en.usa.iso-8859-1">
+<meta name="keywords"
+ content="programming language standard C C++ incompatibilities">
+<meta name="source"
+ content="cdiffs.htm">
+<meta name="voluntary content rating"
+ content="general">
+<meta name="author-email"
+ content="mailto:david@tribble.com">
+<meta name="author-home-page-url"
+ content="http://david.tribble.com/">
+<meta name="author-pgp-key-url"
+ content="http://david.tribble.com/pgpkey.htm">
+<meta name="robots"
+ content="index">
+
+</head>
+
+<!-- ------------------------------------------------------------------------->
+<!-- -->
+<body
+ link="#660000"
+ alink="#FF0000"
+ vlink="#660000"
+ bgcolor="#ECE0C8"
+ background="../bg/bg6parch.gif">
+
+<!-- ------------------------------------------------------------------------->
+<!-- -->
+<a name="top">
+<p align="center"> </a>
+<!-- hr size=7 -->
+
+<table
+ cols=1 width="100%" border=1>
+ <tr>
+  <td align="center">
+   <br>
+
+   <font size=+3>
+   <b> Incompatibilities Between <br>
+   ISO C and ISO C++ </b>
+   </font>
+
+   <p>
+   <hr width="50%">
+
+   <p>
+   <font size=+2>
+   <b> By David R. Tribble </b> <br>
+   <a href="mailto:david@tribble.com">
+    <b>david@tribble.com</b></a> <br>
+<!--
+   <a href="http://david.tribble.com/">
+    <b>david.tribble.com</b></a>
+!-->
+   </font>
+   <br>
+
+   <font size=+2>
+   <b> Revision 1.0, 2001-08-05 </b>
+   </font>
+   <br> <br>
+
+  </td>
+ </tr>
+</table>
+
+<!-- OMIT, NO LONGER NEEDED
+<p align="center">
+<img src="../img/constr.gif" align="center">
+<i>This document is not quite complete</i>
+!-->
+
+<!-- ------------------------------------------------------------------------->
+<!-- -->
+<p>
+<!-- hr width="75%" -->
+
+<a name="toc">
+<h2> Contents </h2> </a>
+
+<p>
+<ul>
+ <!-- ---------------------------------> <!-- -->
+ <p>
+ <li>
+  <a href="#intro">
+   Introduction</a>
+
+ <!-- ---------------------------------> <!-- -->
+ <p>
+ <li>
+  <a href="#C++-vs-C">
+   C++ versus C</a>
+
+ <!-- ---------------------------------> <!-- -->
+ <p>
+ <li>
+  <a href="#C90-vs-CPP98">
+   Changes to C99 versus C++98</a>
+  <ul>
+   <li>
+    <a href="#C90-aggreg-init">
+     Aggregate Initializers</a>
+   <li>
+    <a href="#C90-comments">
+     Comments</a>
+   <li>
+    <a href="#C90-cond-expr">
+     Conditional expression declarations</a>
+   <li>
+    <a href="#C90-digraph">
+     Digraph punctuation tokens</a>
+   <li>
+    <a href="#C90-impl-func">
+     Implicit function declarations</a>
+   <li>
+    <a href="#C90-impl-var">
+     Implicit variable declarations</a>
+   <li>
+    <a href="#C90-mixed-decl-stmt">
+     Intermixed declarations and statements</a>
+  </ul>
+
+ <!-- ---------------------------------> <!-- -->
+ <p>
+ <li>
+  <a href="#C99-vs-CPP98">
+   C99 versus C++98</a>
+  <ul>
+   <li>
+    <a href="#C99-alt-tok">
+     Alternate punctuation token spellings</a>
+   <li>
+    <a href="#C99-array-qual">
+     Array parameter qualifiers</a>
+   <li>
+    <a href="#C99-bool">
+     Boolean type</a>
+   <li>
+    <a href="#C99-char-literal">
+     Character literals</a>
+   <li>
+    <a href="#C99-clog">
+     clog identifier</a>
+   <li>
+    <a href="#C99-comma">
+     Comma operator results</a>
+   <li>
+    <a href="#C99-complex">
+     Complex floating-point type</a>
+   <li>
+    <a href="#C99-compound-literal">
+     Compound literals</a>
+   <li>
+    <a href="#C99-const-linkage">
+     const linkage</a>
+   <li>
+    <a href="#C99-desig-init">
+     Designated initializers</a>
+   <li>
+    <a href="#C99-typedefs">
+     Duplicate typedefs</a>
+   <li>
+    <a href="#C99-sizeof">
+     Dynamic sizeof evaluation </a>
+   <li>
+    <a href="#C99-empty-parm">
+     Empty parameter lists</a>
+   <li>
+    <a href="#C99-empty-pp-arg">
+     Empty preprocessor function macro arguments</a>
+   <li>
+    <a href="#C99-enum-const">
+     Enumeration constants</a>
+   <li>
+    <a href="#C99-enum-decl">
+     Enumeration declarations with trailing comma</a>
+   <li>
+    <a href="#C99-enum-type">
+     Enumeration types</a>
+   <li>
+    <a href="#C99-fam">
+     Flexible array members</a>
+   <li>
+    <a href="#C99-mangling">
+     Function name mangling</a>
+   <li>
+    <a href="#C99-func-ptr">
+     Function pointers</a>
+   <li>
+    <a href="#C99-hex-float">
+     Hexadecimal floating-point literals</a>
+   <li>
+    <a href="#C99-iec60559">
+     IEC 60559 arithmetic support</a>
+   <li>
+    <a href="#C99-inline">
+     Inline functions</a>
+   <li>
+    <a href="#C99-int-types">
+     Integer types headers</a>
+   <li>
+    <a href="#C99-lib-proto">
+     Library function prototypes</a>
+   <li>
+    <a href="#C99-lib-header">
+     Library header files</a>
+   <li>
+    <a href="#C99-long-long">
+     long long integer type</a>
+   <li>
+    <a href="#C99-nested-struct">
+     Nested structure tags</a>
+   <li>
+    <a href="#C99-non-proto-func">
+     Non-prototype function declarations</a>
+<!-- OMIT: THIS IS NOT A PROBLEM FOR C AS C++
+   <li>
+    <a href="#C99-null">
+     Null pointer constant</a>
+!-->
+   <li>
+    <a href="#C99-cast">
+     Old-style casts</a>
+   <li>
+    <a href="#C99-odr">
+     One definition rule</a>
+   <li>
+    <a href="#C99-pragma">
+     _Pragma keyword</a>
+   <li>
+    <a href="#C99-predef">
+     Predefined identifiers</a>
+   <li>
+    <a href="#C99-c-keyword">
+     Reserved keywords in C99</a>
+   <li>
+    <a href="#C99-cpp-keyword">
+     Reserved keywords in C++</a>
+   <li>
+    <a href="#C99-restrict">
+     restrict keyword</a>
+   <li>
+    <a href="#C99-return-void">
+     Returning void</a>
+   <li>
+    <a href="#C99-static-linkage">
+     static linkage</a>
+   <li>
+    <a href="#C99-string-init">
+     String initializers</a>
+   <li>
+    <a href="#C99-string-const">
+     String literals are const</a>
+   <li>
+    <a href="#C99-struct-proto">
+     Structures declared in function prototypes</a>
+   <li>
+    <a href="#C99-tgmath">
+     Type-generic math functions</a>
+   <li>
+    <a href="#C99-typedef">
+     Typedefs versus type tags</a>
+   <li>
+    <a href="#C99-func-vararg">
+     Variable-argument function declarators</a>
+   <li>
+    <a href="#C99-pp-vararg">
+     Variable-argument preprocessor function macros</a>
+   <li>
+    <a href="#C99-vla">
+     Variable-length arrays</a>
+   <li>
+    <a href="#C99-void-ptr">
+     Void pointer assignments</a>
+   <li>
+    <a href="#C99-wchar">
+     Wide character type</a>
+  </ul>
+
+ <!-- ---------------------------------> <!-- -->
+ <p>
+ <li>
+  <a href="#ref">
+   References</a>
+
+ <!-- ---------------------------------> <!-- -->
+ <p>
+ <li>
+  <a href="#ack">
+   Acknowledgments</a>
+
+ <!-- ---------------------------------> <!-- -->
+ <p>
+ <li>
+  <a href="#history">
+   Revision History</a>
+
+ <!-- ---------------------------------> <!-- -->
+ <p>
+ <li>
+  <a href="#end">
+   Bottom</a>
+
+</ul>
+
+<br type=page>
+<!-- ------------------------------------------------------------------------->
+<!-- -->
+<p>
+<hr width="75%">
+
+<a name="intro">
+<h2> Introduction </h2> </a>
+
+<p>
+The C programming language began to be standardized some time around 1985
+by the ANSI X3J9 committee.
+Several years of effort went by, and in 1989 ANSI approved the new standard.
+An ISO committee ratified it a year later in 1990
+after adding an amendment dealing with internationalization issues.
+The 1989 C standard is known officially as
+<b>ANSI/ISO 9899-1989, Programming Languages - C</b>,
+and this document refers to the 1989 C standard as <b>C89</b>.
+The 1990 ISO revision of the standard is known officially as
+<b>ISO/IEC 9899-1990, Programming Languages - C</b>,
+which is referred to in this document as "<b>C90</b>".
+
+<p>
+The next version of the C standard was ratified by ISO in 1999.
+Officially know as
+<b>ISO/IEC 9899-1999, Programming Languages - C</b>,
+it is referred to in this document as "<b>C99</b>".
+
+<p>
+The C++ programming language was based on the C programming language
+as it existed shortly after the ANSI C standardization effort had begun.
+Around 1995 an ISO committee was formed to standardize C++, and the
+new standard was ratified in 1998, which is officially known as
+<b>ISO/IEC 14882-1998, Programming Languages - C++</b>.
+It is referred to in this document as "<b>C++98</b>"
+or simply as "<b>C++</b>".
+
+<p>
+Though the two languages share a common heritage, and though the designers
+involved in the standardization processes for each language tried to keep them
+as compatible as possible, some incompatibilities unavoidably arose.
+Once the programmer is aware of these potential problem spots,
+they are easy, for the most part, to avoid when writing C code.
+
+<p>
+When we say that C is <i><b>incompatible</b></i> with C++ with respect to
+a specific <i><b>language feature</b></i>,
+we mean that a C program that employs that feature either
+is not valid C++ code and thus will not compile as a C++ program,
+or that it will compile as a C++ program but will exhibit different
+behavior than the same program compiled as a C program.
+In other words, an <i><b>incompatible C feature</b></i> is valid as C code
+but not as C++ code.
+All incompatibilities of this kind are addressed in this document.
+Avoiding these kinds of incompatibilities allows the programmer to write
+correct C code that is intended to interact with, or be compiled as, C++ code.
+
+<p>
+Another form of <i><b>incompatible feature</b></i> is one that is valid
+when used in a C++ program but is invalid in a C program.
+We call this an <i><b>incompatible C++ feature</b></i>.
+Huge portions of the C++ language fall into this category (e.g., classes,
+templates, exceptions, references, member functions, anonymous unions, etc.),
+so very few of these kinds of incompatibilities are addressed in this document.
+
+<p>
+Yet another form of incompatible feature occurs when a C++
+program uses a feature that has the same name as a C90 feature but which
+has a different usage or meaning in C.
+This document covers these kinds of incompatibilities.
+
+<p>
+This document lists only the incompatibilities between C99 and C++98.
+(Incompatibilities between C90 and C++ have been documented elsewhere;
+see <a href="#ref-Stroustrup">Appendix B of Stroustrup</a>
+[<a href="#ref-Stroustrup">STR</a>], for example.)
+
+<p>
+New additions to the C99 standard library are also not addressed in this
+document unless they specifically introduce C++ incompatibilities.
+
+<br type=page>
+<!-- ------------------------------------------------------------------------->
+<!-- -->
+<p>
+<hr width="75%">
+
+<a name="C++-vs-C">
+<h2> C++ versus C </h2> </a>
+
+<p>
+As discussed in the <a href="#Introduction">Introduction</a>, no attempt is
+made in this document to cover <i><b>incompatible C++ features</b></i>, i.e.,
+features of the C++ language or library that are not supported in C.
+Huge portions of C++ and its library fall into this category.
+A partial list of these features includes:
+<dl>
+ <li> anonymous unions
+ <li> classes
+ <li> constructors and destructors
+ <li> exceptions and <tt>try</tt>/<tt>catch</tt> blocks
+ <li> external function linkages (e.g., <tt>extern</tt> <tt>"C"</tt>)
+ <li> function overloading
+ <li> member functions
+ <li> namespaces
+ <li> <tt>new</tt> and <tt>delete</tt> operators and functions
+ <li> operator overloading
+ <li> reference types
+ <li> standard template library (STL)
+ <li> template classes
+ <li> template functions
+</dl>
+
+<br type=page>
+<!-- ------------------------------------------------------------------------->
+<!-- -->
+<p>
+<hr width="75%">
+
+<a name="C90-vs-CPP98">
+<h2> Changes to C99 versus C++98 </h2> </a>
+
+<p>
+The following items are incompatibilities between C90 and C++98,
+but have since been changed in C99 so that they no longer cause
+problems between the two languages.
+
+<ul>
+ <!-- ---------------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C90-aggreg-init">
+  <b> Aggregate Initializers </b> </a>
+
+ <p>
+ C90 requires automatic and register variables of aggregate type
+ (struct, array, or union) to have initializers containing only
+ constant expressions.
+ (Many compilers do not adhere to this restriction, however.)
+
+ <p>
+ C99 removes that restriction, allowing non-constant expressions to be used in
+ such initializers.
+
+ <p>
+ C++ allows non-constant expressions to be used in initializers for
+ automatic and register variables.
+ (It also allows arbitrary non-constant expressions to be used to initialize
+ static and external variables.)
+
+ <p>
+ For example:
+ <pre>
+    //<i> C and C++ code</i>
+    void foo(int i)
+    {
+        float   x = (float)<u>i</u>;           //<i> Valid C90, C99, and C++</i>
+        int     m[3] = { 1, 2, 3 };     //<i> Valid C90, C99, and C++</i>
+        int     g[2] = { 0, <u>i</u> };        //<i> Invalid C90</i>
+    } </pre>
+
+ <p>
+ [C99: &sect;6.7.8] <br>
+ [C++98: &sect;3.7.2, 8.5, 8.5.1]
+
+ <!-- ---------------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C90-comments">
+  <b> Comments </b> </a>
+
+ <p>
+ C++ recognizes <tt><b>//<i>...</i></b></tt> comments
+ as well as <tt><b>/*<i>...</i>*/</b></tt> comments.
+
+ <p>
+ C90 only recognizes the <tt>/*<i>...</i>*/</tt> form of comments.
+ The <tt>//<i>...</i></tt> form usually produces a syntax error in C90,
+ but there are rare cases that may compile erroneously without warning:
+ <pre>
+     i = (x<u>/<b>/*y*/</b>z++</u>
+           , w); </pre>
+
+ <p>
+ C99 recognizes both forms of comments.
+
+ <p>
+ [C99: &sect;5.1.1.2, 6.4.9] <br>
+ [C++98: &sect;2.1, 2.7]
+
+ <!-- ---------------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C90-cond-expr">
+  <b> Conditional expression declarations </b> </a>
+  <p>
+  C++ allows local variable declarations within conditional expressions
+  (which appear within <tt>for</tt>, <tt>if</tt>, <tt>while</tt>, and
+  <tt>switch</tt> statements).
+  The scope of the variables declared in this context extends to the end
+  of the statement containing the conditional expression.
+  For example:
+  <pre>
+    for (<u>int i = 0</u>; i < SIZE; i++)
+        a[<u>i</u>] = <u>i</u> + 1; </pre>
+  <p>
+  C90 does not allow this feature.
+  <p>
+  C99 allows this feature, but only within <tt>for</tt> statements.
+
+ <p>
+ [C99: &sect;6.8.5] <br>
+ [C++98: &sect;3.3.2, 6.4, 6.5]
+
+ <!-- ---------------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C90-digraph">
+  <b> Digraph punctuation tokens </b> </a>
+
+ <p>
+ C++ recognizes two-character punctuation tokens,
+ called <b><i>digraphs</i></b>, which are not recognized by C90.
+ The digraphs and their equivalent tokens are:
+
+ <p>
+ <table cols=3 border=0 width="60%">
+  <tr> <td width="10%"></td>
+       <td width="20%"> <tt>&lt;:</tt> </td>
+       <td width="60%"> <tt>[</tt> </td>
+  </tr>
+  <tr> <td></td> <td><tt>:&gt;</tt></td> <td><tt>]</tt></td> </tr>
+  <tr> <td></td> <td><tt>&lt;%</tt></td> <td><tt>{</tt></td> </tr>
+  <tr> <td></td> <td><tt>%&gt;</tt></td> <td><tt>}</tt></td> </tr>
+  <tr> <td></td> <td><tt>%:</tt></td>    <td><tt>#</tt></td> </tr>
+  <tr> <td></td> <td><tt>%:%:</tt></td>  <td><tt>##</tt></td> </tr>
+ </table>
+
+ <p>
+ C99 recognizes the same set of digraphs.
+
+ <p>
+ The following program is valid in both C99 and C++:
+ <pre>
+    <u>%:</u>include &lt;stdio.h&gt;
+
+    <u>%:</u>ifndef BUFSIZE
+     <u>%:</u>define BUFSIZE  512
+    <u>%:</u>endif
+
+    void copy(char d<u>&lt;::&gt;</u>, const char s<u>&lt;::&gt;</u>, int len)
+    <u>&lt;%</u>
+        while (len-- &gt;= 0)
+        <u>&lt;%</u>
+            d<u>&lt;:</u>len<u>:&gt;</u> = s<u>&lt;:</u>len<u>:&gt;</u>;
+        <u>%&gt;</u>
+    <u>%&gt;</u> </pre>
+
+ <p>
+ [C99: &sect;6.4.6] <br>
+ [C++98: &sect;2.5, 2.12]
+
+ <!-- ---------------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C90-impl-func">
+  <b> Implicit function declarations </b> </a>
+
+ <p>
+ C90 allows a function to be <i><b>implicitly declared</b></i> at the point
+ of its first use (call), assigning it a return type of <tt>int</tt>
+ by default.
+ For example:
+ <pre>
+    /*<i> No previous declaration of bar() is in scope</i> */
+
+    void foo(void)
+    {
+        <u>bar()</u>;  /*<i> Implicit declaration: extern int bar()</i> */
+    } </pre>
+
+ <p>
+ C++ does not allow implicit function declarations.
+ It is invalid to call a function that does not have a previous declaration
+ in scope.
+
+ <p>
+ C99 no longer allows functions to be implicitly declared.
+ The code above is invalid in both C99 and C++.
+
+ <p>
+ [C99: &sect;6.5.2.2] <br>
+ [C++98: &sect;5.2.2]
+
+ <!-- ---------------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C90-impl-var">
+  <b> Implicit variable declarations </b> </a>
+
+ <p>
+ C90 allows the declaration of a variable, function argument,
+ or structure member to omit the type specifier, implicitly defaulting
+ its type to <tt>int</tt>.
+
+ <p>
+ C99 does not allow this omission, and neither does C++.
+
+ <p>
+ The following code is valid in C90, but invalid in C99 and C++:
+ <pre>
+    static  <u>sizes</u> = 0;         /*<i> Implicit int, error</i> */
+
+    struct info
+    {
+        const char *  name;
+        const         <u>sz</u>;      /*<i> Implicit int, error</i> */
+    };
+
+    static <u>foo</u>(register <u>i</u>)     /*<i> Implicit ints, error</i> */
+    {
+        auto  <u>j</u> = 3;           /*<i> Implicit int, error</i> */
+
+        return (i + j);
+    } </pre>
+
+ <p>
+ [C99: &sect;6.7, 6.7.2] <br>
+ [C++98: &sect;7, 7.1.5]
+
+ <!-- ---------------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C90-mixed-decl-stmt">
+  <b> Intermixed declarations and statements </b> </a>
+
+ <p>
+ C90 syntax specifies that all the declarations within a block must
+ appear before the first statement in the block.
+
+ <p>
+ C++ does not have this restriction, allowing statements and declarations to
+ appear in any order within a block.
+
+ <p>
+ C99 also removes this restriction, allowing intermixed statements and
+ declarations.
+ <pre>
+    void prefind(void)
+    {
+        int     i;
+
+        for (i = 0; i < SZ; i++)
+            if (find(arr[i]))
+                break;
+
+        <u>const char *  s;</u>   /*<i> Invalid C90, valid C99 and C++</i> */
+
+        s = arr[i];
+        prepend(s);
+    } </pre>
+
+ <p>
+ [C99: &sect;6.8.2] <br>
+ [C++98: &sect;6, 6.3, 6.7]
+
+</ul>
+
+<br type=page>
+<!-- ------------------------------------------------------------------------->
+<!-- -->
+<p>
+<hr width="75%">
+
+<a name="C99-vs-CPP98">
+<h2> C99 versus C++98 </h2> </a>
+
+<p>
+The following items comprise the differences between C99 and C++98.
+Some of these incompatibilities existed between C89 and C++98 and remain
+unchanged between C99 and C++98, while others are new features that were
+introduced into C99 that are incompatible with C++98.
+
+<p>
+Note that features that are specific to C++ and which are not
+legal C (e.g., class member function declarations) are not included in this
+section;
+only language features that are common to both C and C++ are discussed.
+Most of the features are valid as C but invalid as C++.
+
+<p>
+Some of these features are likely to be implemented as extensions by many
+C++ compilers in order to be more compatible with C compilers.
+
+<ul>
+ <!-- ---------------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C99-alt-tok">
+  <b> Alternate punctuation token spellings </b> </a>
+
+ <p>
+ C++ provides the following keywords as synonyms for punctuation tokens:
+
+ <p>
+ <table cols=3 border=0 width="60%">
+  <tr> <td width="10%"> </td>
+       <td width="30%"> <tt>and</tt> </td>
+       <td width="50%"> <tt>&amp;&amp;</tt> </td> </tr>
+  <tr> <td></td> <td> <tt>and_eq</tt> </td>  <td> <tt>&amp;=</tt> </td> </tr>
+  <tr> <td></td> <td> <tt>bitand</tt> </td>  <td> <tt>&amp;</tt> </td> </tr>
+  <tr> <td></td> <td> <tt>bitor</tt> </td>   <td> <tt>|</tt> </td> </tr>
+  <tr> <td></td> <td> <tt>compl</tt> </td>   <td> <tt>~</tt> </td> </tr>
+  <tr> <td></td> <td> <tt>not</tt> </td>     <td> <tt>!</tt> </td> </tr>
+  <tr> <td></td> <td> <tt>not_eq</tt> </td>  <td> <tt>!=</tt> </td> </tr>
+  <tr> <td></td> <td> <tt>or</tt> </td>      <td> <tt>||</tt> </td> </tr>
+  <tr> <td></td> <td> <tt>or_eq</tt> </td>   <td> <tt>|=</tt> </td> </tr>
+  <tr> <td></td> <td> <tt>xor</tt> </td>     <td> <tt>^</tt> </td> </tr>
+  <tr> <td></td> <td> <tt>xor_eq </td>       <td> <tt>^=</tt> </td> </tr>
+ </table>
+
+ <p>
+ These keywords are also recognized by the C++ preprocessor.
+
+ <p>
+ C90 does not have these built-in keywords, but it does
+ provide a standard <tt><b>&lt;iso646.h&gt;</b></tt> header file
+ that contains definitions for the same words as macros, behaving
+ almost like built-in keywords.
+
+ <p>
+ C++ requires implementations to provide an empty
+ <tt>&lt;iso646.h&gt;</tt> header.
+ Including it in a C++ program has no effect on the program.
+ However, C code that does not include the <tt>&lt;iso646.h&gt;</tt>
+ header is free to use these words as identifiers and macro names,
+ which may cause incompatibilities when such code is compiled as C++.
+ <pre>
+    enum oper { nop, <u>and</u>, <u>or</u>, eq, ne };
+
+    extern int  instr(enum oper op, struct <u>compl</u> *c); </pre>
+
+ <p>
+ The recommended practice for code intended to be compiled as both C and C++
+ is to use these identifiers only for these special meanings, and only after
+ including <tt>&lt;iso646.h&gt;</tt>.
+ <pre>
+    //<i> Proper header inclusion allows for the use of 'and' et al</i>
+
+    #ifndef __cplusplus
+     #include <u>&lt;iso646.h&gt;</u>
+    #endif
+
+    int foo(float a, float b, float c)
+    {
+        return (a &gt; b  <u>and</u>  b &lt;= c);
+    } </pre>
+
+ <p>
+ [C99: &sect;7.9] <br>
+ [C++98: &sect;2.5, 2.11]
+
+ <!-- ---------------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C99-array-qual">
+  <b> Array parameter qualifiers </b> </a>
+
+ <p>
+ C99 provides new declaration syntax for function parameters of array types,
+ allowing type qualifiers (the <i>cv-qualifiers</i> <tt>const</tt> and
+ <tt>volatile</tt>, and <tt>restrict</tt>)
+ to be included within the first set of brackets of an array declarator.
+ The qualifier modifies the type of the array parameter itself.
+ For example, the following declarations are semantically identical:
+ <pre>
+    extern void  foo(int str[<u>const</u>]);
+    extern void  foo(int *const str); </pre>
+
+ <p>
+ In both declarations, parameter <tt>str</tt> is a const pointer to an
+ int object.
+
+ <p>
+ C99 also allows the <tt>static</tt> specifier to be placed within the
+ brackets of an array declaration immediately preceding the expression
+ specifying the size of the array.
+ The presence of such a specifer indicates that the array is composed of at
+ least the number of contiguous elements indicated by the size expression.
+ (Presumably this is a hint to the compiler for optimizing access to elements
+ of the array.)
+ For example:
+ <pre>
+    void baz(char s[<u>static</u> 10])
+    {
+        //<i> s[0] thru s[9] exist and are contiguous</i>
+        <i>...</i>
+    } </pre>
+
+ <p>
+ None of these new syntactic features are recognized by C++.
+
+ <p>
+ (These features might be provided as an extension by some C++ compilers.)
+
+ <p>
+ [C99: &sect;6.7.5, 6.7.5.2, 6.7.5.3] <br>
+ [C++98: &sect;7.1.1, 7.1.5.1, 8.3.4, 8.3.5, 8.4]
+
+ <!-- ---------------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C99-bool">
+  <b> Boolean type </b> </a>
+
+ <p>
+ C99 supports the <tt><b>_Bool</b></tt> keyword, which declares a two-valued
+ integer type (capable of representing the values
+ <b><tt>true</tt></b> and <b><tt>false</tt></b>).
+ It also provides a standard <tt><b>&lt;stdbool.h&gt;</b></tt> header that
+ contains definitions for the following macros:
+
+ <p>
+ <table cols=3 border=0 width="60%">
+  <tr> <td width="10%"></td>
+       <td width="20%"> <tt>bool</tt>
+       <td width="70%"> <i>Same as</i> <tt>_Bool</tt> </td>
+  </tr>
+  <tr> <td></td> <td><tt>false</tt></td>
+       <td> <i>Equal to</i> <tt>(_Bool)0</tt> </td> </tr>
+  <tr> <td></td> <td><tt>true</tt></td> 
+       <td> <i>Equal to</i> <tt>(_Bool)1</tt> </td> </tr>
+ </table>
+
+ <p>
+ C++ provides <tt>bool</tt>, <tt>false</tt>, and <tt>true</tt> as reserved
+ keywords and implements <tt>bool</tt> as a true built-in boolean type.
+
+ <p>
+ C programs that do not include the <tt>&lt;stdbool.h&gt;</tt> header
+ are free to use these keywords as identifiers and macro names, which may
+ cause compatibility problems when such code is compiled as C++.
+ For example:
+ <pre>
+    typedef short   <u>bool</u>;       //<i> Different</i>
+
+    #define <u>false</u>   ('\0')      //<i> Different</i>
+    #define <u>true</u>    (!false)    //<i> Different</i>
+
+    <u>bool</u>  flag =    <u>false</u>; </pre>
+
+ <p>
+ The recommended practice is therefore to use these identifiers in C only for
+ these special meanings, and only after including <tt>&lt;stdbool.h&gt;</tt>.
+
+ <p>
+ (It is likely that an empty <tt>&lt;stdbool.h&gt;</tt> header will be
+ provided by most C++ implementations as an extension.)
+
+ <p>
+ [C99: &sect;6.2.5, 6.3.1.1, 6.3.1.2, 7.16, 7.26.7] <br>
+ [C++98: &sect;2.11, 2.13.5, 3.9.1]
+
+ <!-- ---------------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C99-char-literal">
+  <b> Character literals </b> </a>
+
+ <p>
+ In C, character literals such as <tt>'a'</tt> have type <tt>int</tt>,
+ and thus <tt>sizeof('a')</tt> is equal to <tt>sizeof(int)</tt>.
+
+ <p>
+ In C++, character literals have type <tt>char</tt>,
+ and thus <tt>sizeof('a')</tt> is equal to <tt>sizeof(char)</tt>.
+
+ <p>
+ This difference can lead to inconsistent behavior in some code that is
+ compiled as both C and C++.
+ <pre>
+    memset(&amp;i, 'a', <u>sizeof('a')</u>);   //<i> Questionable code</i> </pre>
+
+ <p>
+ In practice, this is probably not much of a problem, since character constants
+ are implicitly converted to type <tt>int</tt> when they appear within
+ expressions in both C and C++.
+
+ <p>
+ [C99: &sect;6.4.4.4] <br>
+ [C++98: &sect;2.13.2]
+
+ <!-- ---------------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C99-clog">
+  <b> <tt><b>clog</b></tt> identifier </b> </a>
+
+ <p>
+ C99 declares <tt><b>clog()</b></tt> in <tt>&lt;math.h&gt;</tt> as the
+ complex natural logarithm function.
+
+ <p>
+ C++ declares <tt><b>std::clog</b></tt> in <tt>&lt;iostream&gt;</tt>
+ as the name of the standard error logging output stream
+ (analogous to the <tt>stderr</tt> stream).
+ This name is placed into the global namespace if the <tt>&lt;math.h&gt;</tt>
+ header is included, and refers to the logarithm function.
+ If <tt>&lt;math.h&gt;</tt> defines <tt>clog</tt> as a
+ preprocessor macro name, it can cause problems with other C++ code.
+ <pre>
+    //<i> C++ code</i>
+
+    #include <u>&lt;iostream&gt;</u>
+    using std::<u>clog</u>;
+
+    #include <u>&lt;math.h&gt;</u>               //<i> Possible conflict</i>
+
+    void foo(void)
+    {
+        <u>clog</u> << <u>clog</u>(2.718281828) << endl;
+                                    //<i> Possible conflict</i>
+    } </pre>
+
+ <p>
+ Including both the <tt>&lt;iostream&gt;</tt> and the <tt>&lt;cmath&gt;</tt>
+ headers in C++ code places both <tt>clog</tt> names into the
+ <tt>std::</tt> namespace, one being a variable and the other being a function,
+ which should not cause any conflicts.
+ <pre>
+    //<i> C++ code</i>
+
+    #include <u>&lt;iostream&gt;</u>
+    #include <u>&lt;cmath&gt;</u>
+
+    void foo(void)
+    {
+        <u>std::clog</u> << <u>std::clog</u>(2.718281828) << endl;
+                                    //<i> No conflict; different types</i>
+    }
+
+    void bar(void)
+    {
+        complex double  (* fp)(complex double);
+
+        fp = &<u>std::clog</u>;            //<i> Unambiguous</i>
+    } </pre>
+
+ <p>
+ It would appear that the safest approach to this potential conflict would be
+ to avoid using both forms of <tt>clog</tt> within the same source file.
+
+ <p>
+ [C99: &sect;7.3.7.2] <br>
+ [C++98: &sect;27.3.1]
+
+ <!-- ------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C99-comma">
+  <b> Comma operator results </b> </a>
+
+ <p>
+ The comma operator in C always results in an r-value even if its right
+ operand is an l-value,
+ while in C++ the comma operator will result in an l-value if its right
+ operand is an l-value.
+<!-- OMIT
+ This can produce different results in code that is compiled as both
+ C and C++:
+ <pre>
+    char    a[100];
+    size_t  i;
+
+    i = sizeof(0<u>,</u> a);               //<i> 'a' is an r-value in C,</i>
+                                    //<i> but is an l-value in C++</i>
+
+    if (i == 100) <i>...</i>               //<i> False in C, true in C++</i>
+    if (i == sizeof(char *)) <i>...</i>    //<i> True in C, false in C++</i> </pre>
+
+ <p>
+ Since the comma operator can produce an l-value in C++,
+!-->
+ This means that
+ certain expressions are valid in C++ but not in C:
+ <pre>
+    int     i;
+    int     j;
+
+    (i<u>,</u> j) = 1;     //<i> Valid C++, invalid C</i> </pre>
+
+<!-- OMIT
+ <p>
+ This incompatibility poses a problem only in rare cases, though,
+ such as when this kind of code is the result of
+ preprocessor macro replacement.
+!-->
+
+ <p>
+ [C99: &sect;6.5.3.4, 6.5.17] <br>
+ [C++98: &sect;5.3.3, 5.18]
+
+ <!-- ---------------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C99-complex">
+  <b> Complex floating-point type </b> </a>
+
+ <p>
+ C99 provides built-in complex and imaginary floating point types,
+ which are declared using the <tt><b>_Complex</b></tt> and
+ <tt><b>_Imaginary</b></tt> keywords.
+
+ <p>
+ There are exactly three complex types and three imaginary types in C99:
+
+ <p>
+ <table cols=2 border=0 width="60%">
+  <tr> <td width="10%"></td>
+       <td width="90%"> <tt>_Complex float</tt></td>
+  </tr>
+  <tr> <td></td> <td><tt>_Complex double</tt></td> </tr>
+  <tr> <td></td> <td><tt>_Complex long double</tt></td> </tr>
+
+  <tr> <td></td> <td><tt> <br> </tt></td> </tr>
+
+  <tr> <td></td> <td><tt>_Imaginary long double</tt></td> </tr>
+  <tr> <td></td> <td><Tt>_Imaginary double</tt></td> </tr>
+  <tr> <td></td> <td><tt>_Imaginary long double</tt></td> </tr>
+ </table>
+
+ <p>
+ C99 also provides a standard <tt><b>&lt;complex.h&gt;</b></tt> header that
+ contains definitions of complex floating point types, macros, and constants.
+ In particular, this header defines the following macros:
+
+ <p>
+ <table cols=3 border=0 width="70%">
+  <tr> <td width="10%"></td>
+       <td width="30%"> <tt>complex</tt> </td>
+       <td width="60%"> <i>Same as</i> <tt>_Complex</tt> </td>
+  </tr>
+  <tr> <td></td> <td><tt>imaginary</tt> </td>
+       <td> <i>Same as</i> <tt>_Imaginary</tt> </td>
+  </tr>
+  <tr> <td></td> <td><tt>I</tt></td>
+       <td> <i>i&nbsp; (the complex identity<!--, sqrt(-1)-->)</i> </td> </tr>
+ </table>
+
+ <p>
+ C code that does not include this header is free to use these words
+ as identifiers and macro names.
+ This was an intentional part of the design of the <tt>_Complex</tt>
+ and <tt>_Imaginary</tt> keywords, since this allows existing code
+ that employs the new words to continue working as it did before under C89.
+
+ <p>
+ Implicit widening conversions between the complex and imaginary types
+ are provided, which parallel the implicit widening conversions between
+ the non-complex floating point types.
+ <pre>
+    //<i> C99 code</i>
+
+    #include &lt;complex.h&gt;
+
+    <u>complex double</u> square_d(<u>complex double</u> a)
+    {
+        return (a * a);
+    }
+
+    <u>complex float</u> square_f(<u>complex float</u> a)
+    {
+        <u>complex double</u>  d = a;      //<i> Implicit conversion</i>
+
+        return square_d(a);         //<i> Implicit conversion</i>
+    } </pre>
+
+ <p>
+ C++ provides a template class named <tt><b>complex</b></tt>, declared in the
+ <tt>&lt;complex&gt;</tt> standard header file.
+ This type is incompatible with the C99 <tt>complex</tt> types.
+
+ <p>
+ C++ supports more complex types than C99, in theory, since <tt>complex</tt>
+ is a template class.
+ <pre>
+    //<i> C++ code</i>
+
+    #include &lt;complex&gt;
+
+    <u>complex&lt;float&gt;</u> square(<u>complex&lt;float&gt;</u> a)
+    {
+        return (a * a);
+    }
+
+    <u>complex&lt;int&gt;</u> square(<u>complex&lt;int&gt;</u> a)
+    {
+        return (a * a);
+    } </pre>
+
+ <p>
+ It is possible to define typedefs that will work in both C99 and C++,
+ albeit with some limitations:
+ <pre>
+    #ifdef __cplusplus
+
+     #include &lt;complex&gt;
+
+     typedef complex&lt;float&gt;           complex_float;
+     typedef complex&lt;double&gt;          complex_double;
+     typedef complex&lt;long double&gt;     complex_long_double;
+
+    #else
+
+     #include &lt;complex.h&gt;
+
+     typedef complex float            complex_float;
+     typedef complex double           complex_double;
+     typedef complex long double      complex_long_double;
+
+     typedef imaginary float          imaginary_float;
+     typedef imaginary double         imaginary_double;
+     typedef imaginary long double    imaginary_long_double;
+
+    #endif </pre>
+
+ <p>
+ Including these definitions allows for portable code that will compile as
+ both C and C++ code, such as:
+ <pre>
+    complex_double square_cd(complex_double a)
+    {
+        return (a * a);
+    } </pre>
+
+ <p>
+ [C99: &sect;6.2.5, 6.3.1.6, 6.3.1.7, 6.3.1.8] <br>
+ [C++98: &sect;26.2]
+
+ <!-- ---------------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C99-compound-literal">
+  <b> Compound literals </b> </a>
+
+ <p>
+ C99 allows literals having types other than primitive types
+ (e.g., user-defined structure or array types)
+ to be specified in constant expressions;
+ these are called <i><b>compound literals</b></i>.
+ For example:
+ <pre>
+    struct info
+    {
+        char    name[8+1];
+        int     type;
+    };
+
+    extern void  add(struct info s);
+    extern void  move(float coord[2]);
+
+    void predef(void)
+    {
+        add(<u>(struct info){ "e", 0 }</u>);      //<i> A struct literal</i>
+        move(<u>(float[2]){ +0.5, -2.7 }</u>);    //<i> An array literal</i>
+    } </pre>
+
+ <p>
+ C++ does not support this feature.
+
+ <p>
+ C++ does provides a similar capability through the use of non-default
+ class constructors, but which is not quite as flexible as the C feature:
+ <pre>
+    void predef2()
+    {
+        add(<u>info("e", 0)</u>);      //<i> Call constructor info::info()</i>
+    } </pre>
+
+ <p>
+ (This C feature might be provided as an extension by some C++ compilers,
+ but would probably be valid only for POD structure types and arrays of POD
+ types.)
+
+ <p>
+ [C99: &sect;6.5.2, 6.5.2.5] <br>
+ [C++98: &sect;5.2.3, 8.5, 12.1, 12.2]
+
+ <!-- ---------------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C99-const-linkage">
+  <b> <tt><b>const</b></tt> linkage </b> </a>
+
+ <p>
+ C specifies that a variable declared with a <tt>const</tt> qualifier is
+ not a modifiable object.
+ In all other regards, though, it is treated the same as any other variable.
+ Specifically, if a <tt>const</tt> object with file scope is not explicitly
+ declared <tt>static</tt>, its name has <i><b>external linkage</b></i>
+ and is visible to other source modules.
+ <pre>
+    const int           i = 1;  //<i> <u>External</u> linkage</i>
+
+    extern const int    j = 2;  //<i> 'extern' optional</i>
+    <u>static</u> const int    k = 3;  //<i> 'static' required</i> </pre>
+
+ <p>
+ C++ specifies that a <tt>const</tt> object with file scope has
+ <i><b>internal linkage</b></i> by default, meaning that the object's name
+ is not visible outside the source file in which it is declared.
+ A <tt>const</tt> object must be declared with an explicit <tt>extern</tt>
+ specifier in order to be visible to other source modules.
+ <pre>
+    const int           i = 1;  //<i> <u>Internal</u> linkage</i>
+
+    <u>extern</u> const int    j = 2;  //<i> 'extern' required</i>
+    static const int    k = 3;  //<i> 'static' optional</i> </pre>
+
+ <p>
+ The recommended practice is therefore to define constants with an explicit
+ <tt>static</tt> or <tt>extern</tt> specifier.
+
+ <p>
+ [C99: &sect;6.2.2, 6.7.3] <br>
+ [C++98: &sect;7.1.5.1]
+
+ <!-- ---------------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C99-desig-init">
+  <b> Designated initializers </b> </a>
+
+ <p>
+ C99 introduces the feature of <i><b>designated initializers</b></i>,
+ which allows specific members of structures, unions, or arrays
+ to be initialized explicitly by name or subscript.
+ For example:
+ <pre>
+    struct info
+    {
+        char    name[8+1];
+        int     sz;
+        int     typ;
+    };
+
+    struct info  arr[] =
+    {
+        <u>[0]</u> = { <u>.sz</u> = 20, <u>.name</u> = "abc" },
+        <u>[9]</u> = { <u>.sz</u> = -1, <u>.name</u> = "" }
+    }; </pre>
+ Unspecified members are default-initialized.
+
+ <p>
+ C++ does not support this feature.
+
+ <p>
+ (This feature might be provided as an extension by some C++ compilers,
+ but would probably be valid only for POD structure types and arrays of POD
+ types.
+ However, C++ already provides a similar capability through the use of
+ non-default class constructors.)
+
+ <p>
+ [C99: &sect;6.7.8] <br>
+ [C++98: &sect;8.5.1, 12.1]
+
+ <!-- ---------------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C99-typedefs">
+  <b> Duplicate typedefs </b> </a>
+
+ <p>
+ C does not allow a given typedef to appear more than once in
+ the same scope.
+
+ <p>
+ C++ handles typedefs and type names differently than C, and allows redundant
+ occurrences of a given typedef within the same scope.
+
+ <p>
+ Thus the following code is valid in C++ but invalid in C:
+ <pre>
+    typedef int  <u>MyInt</u>;
+    typedef int  <u>MyInt</u>;     //<i> Valid C++, invalid C</i> </pre>
+
+ <p>
+ This means that typedefs that might be included more than once in a program
+ (e.g., common typedefs that occur in multiple header files)
+ should be guarded by preprocessing directives if such source code is meant to
+ be compiled as both C and C++.
+ For example:
+ <pre>
+    //========================================
+    //<i> <u>one.h</u></i>
+
+    #ifndef MYINT_T
+     #define MYINT_T
+     typedef int  <u>MyInt</u>;
+    #endif
+    <i>...</i>
+
+    //========================================
+    //<i> <u>two.h</u></i>
+
+    #ifndef MYINT_T
+     #define MYINT_T
+     typedef int  <u>MyInt</u>;
+    #endif
+    <i>...</i> </pre>
+
+ <p>
+ Thus code can include multiple header files without causing an error in C:
+ <pre>
+    //<i> Include multiple headers that define typedef MyInt</i>
+    #include "one.h"
+    #include "two.h"
+
+    <u>MyInt</u>   my_counter = 0; </pre>
+
+ <p>
+ [C99: &sect;6.7, 6.7.7] <br>
+ [C++98: &sect;7.1.3]
+
+ <!-- ---------------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C99-sizeof">
+  <b> Dynamic <tt>sizeof</tt> evaluation </b> </a>
+
+ <p>
+ Because C99 supports variable-length arrays (VLAs),
+ the <tt>sizeof</tt> operator does not necessarily evaluate to a constant
+ (compile-time) value.
+ Any expression that involves applying the <tt>sizeof</tt> operator to a
+ VLA operand must be evaluated at runtime
+ (any other use of <tt>sizeof</tt> can be evaluated at compile time).
+ For example:
+ <pre>
+    size_t dsize(int sz)
+    {
+        float   arr[<u>sz</u>];          //<i> VLA, dynamically allocated</i>
+
+        if (sz &lt;= 0)
+            return sizeof(sz);    //<i> Evaluated at compile time</i>
+        else
+            return <u>sizeof(arr)</u>;   //<i> Evaluated at runtime</i>
+    } </pre>
+
+ <p>
+ C++ does not support VLAs, so C code that applies the <tt>sizeof</tt> operator
+ to VLA operands will cause problems when compiled as C++.
+
+ <p>
+ [C99: &sect;6.5.3.4, 6.7.5, 6.7.5.2] <br>
+ [C++98: &sect;5.3, 5.3.3]
+
+ <!-- ---------------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C99-empty-parm">
+  <b> Empty parameter lists </b> </a>
+
+ <p>
+ C distinguishes between a function declared with an empty parameter list
+ and a function declared with a parameter list consisting of only
+ <tt>void</tt>.
+ The former is an unprototyped function taking an unspecified number of
+ arguments, while the latter is a prototyped function taking no arguments.
+ <pre>
+    //<i> C code</i>
+
+    extern int  foo<u>()</u>;          //<i> Unspecified parameters</i>
+    extern int  bar<u>(void)</u>;      //<i> No parameters</i>
+
+    void baz()
+    {
+        foo(<u>0</u>);         //<i> Valid C, invalid C++</i>
+        foo(<u>1</u>, <u>2</u>);      //<i> Valid C, invalid C++</i>
+
+        bar();          //<i> Okay in both C and C++</i>
+        bar(<u>1</u>);         //<i> Error in both C and C++</i>
+    } </pre>
+
+ <p>
+ C++, on the other hand, makes no distinction between the two declarations
+ and considers them both to mean a function taking no arguments.
+ <pre>
+    //<i> C++ code</i>
+
+    extern int  xyz<u>()</u>;
+
+    extern int  xyz<u>(void)</u>;  //<i> Same as 'xyz()' in C++,</i>
+                            //<i> Different and invalid in C</i> </pre>
+
+ <p>
+ For code that is intended to be compiled as either C or C++, the best
+ solution to this problem is to always declare functions taking no parameters
+ with an explicit <tt>void</tt> prototype.
+ For example:
+ <pre>
+    //<i> Compiles as both C and C++</i>
+    int bosho(<u>void</u>)
+    {
+        <i>...</i>
+    } </pre>
+
+ <p>
+ Empty function prototypes are a deprecated feature in C99
+ (as they were in C89).
+
+ <p>
+ [C99: &sect;6.7.5.3] <br>
+ [C++98: &sect;8.3.5, C.1.6.8.3.5]
+
+ <!-- ---------------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C99-empty-pp-arg">
+  <b> Empty preprocessor function macro arguments </b> </a>
+
+ <p>
+ C99 allows preprocessor function macros to be specified with empty (missing)
+ arguments.
+ <pre>
+    #define ADD3(a,b,c)  (+ a + b + c + 0)
+
+    ADD3(1, 2, 3)   =&gt; (+ 1 + 2 + 3 + 0)
+    ADD3(1, 2, )    =&gt; (+ 1 + 2 + + 0)
+    ADD3(1, , 3)    =&gt; (+ 1 + + 3 + 0)
+    ADD3(1,,)       =&gt; (+ 1 + + + 0)
+    ADD3(,,)        =&gt; (+ + + + 0) </pre>
+
+ <p>
+ C++ does not support empty preprocessor function macros arguments.
+
+ <p>
+ (This feature is likely to be provided as an extension by many C++ compilers.)
+
+ <p>
+ [C99: &sect;6.10.3, 6.10.3.1] <br>
+ [C++98: &sect;16.3., 16.3.1]
+
+ <!-- ---------------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C99-enum-const">
+  <b> Enumeration constants </b> </a>
+
+ <p>
+ Enumeration constants in C are essentially just named constants of type
+ <tt>signed</tt> <tt>int</tt>.
+ As such, they are constrained to having an initialization value that falls
+ within the range [<tt>INT_MIN</tt>,<tt>INT_MAX</tt>].
+ This also means that for any given enumeration constant <tt>RED</tt>, the
+ values of <tt>sizeof(RED)</tt> and <tt>sizeof(int)</tt> are always the same.
+
+ <p>
+ C++ enumeration constants have the same type as their enumeration type,
+ which means that they have the same size and alignment as their underlying
+ integer type.
+ This means that the values of <tt>sizeof(RED)</tt> and <tt>sizeof(int)</tt>
+ are not necessarily the same for any given enumeration constant <tt>RED</tt>.
+ Enumeration constants also have a wider range of possible
+ underlying types in C++ than in C:
+ <tt>signed</tt> <tt>int</tt>,
+ <tt>unsigned</tt> <tt>int</tt>,
+ <tt>signed</tt> <tt>long</tt>, and <!-- -->
+ <tt>unsigned</tt> <tt>long</tt><!--, and possibly others
+ (e.g., <tt>unsigned</tt> <tt>long</tt> <tt>long</tt>)-->.
+ As such, they also have a wider range of valid initialization values.
+
+ <p>
+ This may cause incompatibilities for C code compiled as C++, if the
+ C++ compiler chooses to implement an enumeration type as a different
+ size than it would be in C, or if the program relies on the results of
+ expressions such as <tt>sizeof(RED)</tt>.
+ <pre>
+    enum ControlBits
+    {
+        CB_LOAD =   0x0001,
+        CB_STORE =  0x0002,
+        <i>...</i>
+        CB_TRACE =  <u>LONG_MAX</u>+1,       //<i> (Undefined behavior)</i>
+        CB_ALL =    <u>ULONG_MAX</u>
+    }; </pre>
+
+ <p>
+ [C99: &sect;6.4.4.3, 6.7.2.2] <br>
+ [C++98: &sect;4.5, 7.2]
+
+ <!-- ---------------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C99-enum-decl">
+  <b> Enumeration declarations with trailing comma </b> </a>
+
+ <p>
+ C99 allows a trailing comma to follow the last enumeration constant
+ initializer within an enumeration type declaration, similar to structure
+ member initialization lists.
+ For example:
+ <pre>
+    enum Color { RED = 0, GREEN, BLUE<u>,</u> }; </pre>
+
+ <p>
+ C++ does not allow this.
+
+ <p>
+ (This feature is likely to be provided as an extension by many C++ compilers.)
+
+ <p>
+ [C99: &sect;6.7.2.2] <br>
+ [C++98: &sect;7.2]
+
+ <!-- ---------------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C99-enum-type">
+  <b> Enumeration types </b> </a>
+
+ <p>
+ C specifies that each enumerated type is a unique type, distinct from all
+ other enumerated types within the same program.
+ The implementation is free to use a different underlying primitive integer
+ type for each enumerated type.
+ This means that <tt>sizeof(enum</tt>&nbsp;<tt>A)</tt> and
+ <tt>sizeof(enum</tt>&nbsp;<tt>B)</tt> are not necessarily the same.
+ This also means, given that <tt>RED</tt> is an enumeration constant of
+ type <tt>enum</tt>&nbsp;<tt>Color</tt>, that
+ <tt>sizeof(RED)</tt> and <tt>sizeof(enum</tt>&nbsp;<tt>Color)</tt> are not
+ necessarily the same (since all enumeration constants are of type
+ <tt>signed</tt> <tt>int</tt>).
+
+ <p>
+ All enumeration constants, though, convert to values of type
+ <tt>signed</tt> <tt>int</tt> when they appear in expressions.
+ Since enumeration constants cannot portably be wider than <tt>int</tt>,
+ it might appear that <tt>int</tt> is the widest enumeration type;
+ however, implementations are free to support wider enumeration integer types.
+ Such extended types may be different than the types used by a C++ compiler,
+ however.
+
+ <p>
+ In C, objects of enumeration types may be assigned integer values without the
+ need for a explicit cast.
+ For example:
+ <pre>
+    //<i> C code</i>
+
+    enum Color { RED, BLUE, GREEN };
+
+    int         c <u>=</u> RED;    //<i> Cast not needed</i>
+    enum Color  col <u>=</u> 1;    //<i> Cast not needed</i> </pre>
+
+ <p>
+ C++ also specifies that all enumerated types are unique and distinct types,
+ but it goes further than C to enforce this.
+ In particular, a function name can be overloaded to take an argument of
+ different enumerated types.
+ While objects of enumerated types implicitly convert to integer values,
+ integer values require an explicit cast to be converted into enumerated
+ types.
+ Implicitly converted enumeration values are converted to their underlying
+ integer type, which is not necessarily <tt>signed</tt> <tt>int</tt>.
+ For example:
+ <pre>
+    //<i> C++ code</i>
+
+    enum Color { <i>...</i> };
+
+    enum Color setColor(int h)
+    {
+        enum Color  c;
+
+        c <u>=</u> h;             //<i> Error, no implicit conversion</i>
+        return c;
+    }
+
+    int hue(enum Color c)
+    {
+        return (<u>c</u> + 128);  //<i> Implicit conversion,</i>
+                           //<i> but might not be signed int</i>
+    } </pre>
+
+ <p>
+ Since a C++ enumeration constant has the same type and size as its
+ enumeration type, this means,
+ given that <tt>RED</tt> is an enumeration constant of
+ type <tt>enum</tt>&nbsp;<tt>Color</tt>, that the values of
+ <tt>sizeof(RED)</tt> and <tt>sizeof(enum</tt>&nbsp;<tt>Color)</tt> are
+ exactly the same, which differs from the rules in C.
+
+ <p>
+ There is no guarantee that a given enumeration type
+ is implemented as the same underlying type in both C and C++,
+ or even in different C implementations.
+ This affects the calling interface between C and C++ functions.
+ This may also cause incompatibilities for C code compiled as C++, if the
+ C++ compiler chooses to implement an enumeration type as a different
+ size that it would be in C, or if the program relies on the results of
+ expressions such as <tt>sizeof(RED)</tt>.
+ <pre>
+    //<i> C++ code</i>
+
+    <u>enum Color</u> { <i>...</i> };
+
+    extern "C" void  foo(<u>Color</u> c);
+                        //<i> Parameter types might not match</i>
+
+    void bar(<u>Color</u> c)
+    {
+        foo(<u>c</u>);         //<i> Enum types might be different sizes</i>
+    } </pre>
+
+ <p>
+ [C99: &sect;6.4.4.3, 6.7.2.2] <br>
+ [C++98: &sect;4.5, 7.2]
+
+ <!-- ---------------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C99-fam">
+  <b> Flexible array members (FAMs) </b> </a>
+
+ <p>
+ This is also known as the <i><b>struct hack</b></i>.
+ This specifies a conforming way to declare a structure containing a set of
+ fixed-sized members followed by a <i><b>flexible array member</b></i>
+ that can hold an unspecified number of elements.
+ Such a structure is typically allocated by calling <tt>malloc()</tt>,
+ passing it the number of bytes beyond the fixed portion of the structure
+ to add to the allocation size.
+ For example:
+ <pre>
+    struct Hack
+    {
+        int     count;    //<i> Fixed member(s)</i>
+        int     fam<u>[]</u>;    //<i> Flexible array member</i>
+    };
+
+    struct Hack * vmake(int sz)
+    {
+        struct Hack *  p;
+
+        p = malloc(sizeof(struct Hack) <u>+ sz*sizeof(int)</u>);
+                            //<i> Allocate a variable-sized structure</i>
+
+        p->count = sz;
+        for (int i = 0; i < sz; i++)
+            p-><u>fam[i]</u> = i;
+
+        return p;
+    } </pre>
+
+ <p>
+ C++ does not support flexible array members.
+
+ <p>
+ (This feature might be provided as an extension by some C++ compilers,
+ but would probably be valid only for POD structure types.)
+
+ <p>
+ [C99: &sect;6.7.2.1] <br>
+ [C++98: &sect;8.3.4]
+
+ <!-- ---------------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C99-mangling">
+  <b> Function name mangling </b> </a>
+
+ <p>
+ In order to implement overloaded functions and member functions, C++
+ compilers must have a means of mapping the source names of functions
+ into unique symbols in the object code resulting from the compile.
+ For example, the functions <tt>::foo(int)</tt>, <tt>::foo(float)</tt>,
+ and <tt>Mine::foo()</tt> all have identical names (<tt>foo</tt>)
+ but different <i><b>calling signatures</b></i>.
+ In order for the linker to distinguish between the functions during program
+ link time, they must be <i><b>mangled</b></i> into different
+ symbolic names.
+
+ <p>
+ This differs from the way functions names are mapped into symbolic object
+ names in C, which allows for certain cases of type punning (between
+ signed and unsigned integer types) and non-prototyped extern functions.
+ Therefore C programs compiled as C++ will produce different symbolic names,
+ unless the functions are explicitly declared as having
+ <tt><b>extern</b></tt>&nbsp;<tt><b>"C"</b></tt> linkage.
+ For example:
+ <pre>
+    int  foo(int i);   //<i> Different symbolic names in C and C++</i>
+
+    #ifdef __cplusplus
+    <u>extern "C"</u>
+    #endif
+    int  bar(int i);   //<i> Same symbolic name in both C and C++</i> </pre>
+
+ <p>
+ C++ functions are implicitly declared with
+ <tt><b>extern</b></tt>&nbsp;<tt><b>"C++"</b></tt> linkage.
+
+ <p>
+ Another consequence of C++ function name mangling is that identifiers
+ in C++ are not allowed to contain two or more consecutive underscores
+ (e.g., the name <tt>foo__bar</tt> is invalid).
+ Such names are reserved for the implementation, ostensibly so that it
+ may have a guaranteed means of mangling source function names
+ into unique object symbolic names.
+ (For example, an implementation might choose to mangle the member function
+ <tt>Mine::foo(int)</tt> into something like <tt>foo__4Mine_Fi</tt>,
+ which is a symbolic name containing consecutive underscores.)
+
+ <p>
+ C does not reserve such names, so a C program is free to use such names
+ in any manner.
+ For example:
+ <pre>
+    void <u>foo__bar</u>(int i)  //<i> Improper C++ name</i>
+    { <i>...</i> } </pre>
+
+ <p>
+ [C99: &sect;5.2.4.1, 6.2.2, 6.4.2.1] <br>
+ [C++98: &sect;2.10, 3.5, 17.4.2.2, 17.4.3.1.2, 17.4.3.1.3]
+
+ <!-- ---------------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C99-func-ptr">
+  <b> Function pointers </b> </a>
+
+ <p>
+ C++ functions have <tt><b>extern</b></tt>&nbsp;<tt><b>"C++"</b></tt>
+ linkage by default.
+ In order to call C functions from C++, the functions must be declared with
+ <tt><b>extern</b></tt>&nbsp;<tt><b>"C"</b></tt> linkage.
+ This is typically accomplished by placing C function declarations
+ within an <tt>extern</tt>&nbsp;<tt>"C"</tt> block:
+ <pre>
+    <u>extern "C"</u>
+    {
+        extern int  api_read(int f, char *b);
+        extern int  api_write(int f, const char *b);
+    } </pre>
+ <pre>
+    <u>extern "C"</u>
+    {
+        #include "api.h"
+    } </pre>
+
+ <p>
+ But simply declaring functions with
+ <tt>extern</tt>&nbsp;<tt>"C"</tt> linkage is not enough to ensure that
+ C++ functions can call C functions properly.
+ Specifically, pointers to <tt>extern</tt>&nbsp;<tt>"C"</tt> functions
+ and pointers to <tt>extern</tt>&nbsp;<tt>"C++"</tt> functions
+ are not compatible.
+ When compiled as C++ code, function pointer declarations are implicitly
+ defined as having <tt>extern</tt>&nbsp;<tt>"C++"</tt> linkage,
+ so they cannot be assigned addresses of <tt>extern</tt>&nbsp;<tt>"C"</tt>
+ functions.
+ (Function pointers can thus be a source of problems when dealing with C API
+ libraries and C callback functions.)
+ <pre>
+    extern int      mish(int i);    //<i> <u>extern "C++"</u> function</i>
+
+    <u>extern "C"</u> int  mash(int i);
+
+    void foo(int a)
+    {
+        int  (*pf)(int i);          //<i> C++ function pointer</i>
+
+        pf = &mish;                 //<i> Okay, C++ function address</i>
+        (*pf)(a);
+
+        <u>pf = &mash;</u>                 //<i> Error, C function address</i>
+        (*pf)(a);
+    } </pre>
+
+ <p>
+ To make the combination of function pointers and
+ <tt>extern</tt>&nbsp;<tt>"C"</tt> functions work correctly in C++,
+ function pointers that are assigned addresses of C
+ functions must be changed to have <tt>extern</tt>&nbsp;<tt>"C"</tt> linkage.
+
+ <p>
+ One solution is to use a typedef with the proper linkage:
+ <pre>
+    <u>extern "C"</u>
+    {
+        typedef int  (*<u>Pcf</u>)(int);   //<i> C function pointer</i>
+    }
+
+    void bar(int a)
+    {
+        int  (*pf)(int i);          //<i> C++ function pointer</i>
+
+        pf = &mish;                 //<i> Okay, C++ function address</i>
+        (*pf)(a);
+
+        <u>Pcf</u>  pc;                    //<i> C function pointer</i>
+
+        <u>pc = &mash;</u>                 //<i> Okay, C function address</i>
+        (*pc)(a);
+    } </pre>
+
+ <p>
+ [C99: &sect;6.2.5, 6.3.2.3, 6.5.2.2] <br>
+ [C++98: &sect;5.2.2, 17.4.2.2, 17.4.3.1.3]
+
+ <!-- ---------------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C99-hex-float">
+  <b> Hexadecimal floating-point literals </b> </a>
+
+ <p>
+ C99 recognizes hexadecimal floating-point literals,
+ having a "<tt>0x</tt>" prefix and a "<tt>p</tt>" exponent specifier.
+ For example:
+ <pre>
+    float  pi = <u><b>0x</b>3.243F6A88<b>p</b>+03</u>; </pre>
+
+ <p>
+ C99 also provides additional format specifiers for the <tt>printf()</tt> and
+ <tt>scanf()</tt> family of standard library functions:
+ <pre>
+    printf("%9.3<u>a</u>", f);
+    printf("%12.6<u>lA</u>", d); </pre>
+
+ <p>
+ (These features are likely to be provided as extensions
+ by many C++ compilers.)
+
+ <p>
+ [C99: &sect;6.4.4.2, 6.4.8] <br>
+ [C++98: &sect;2.9, 2.13.3]
+
+ <!-- ---------------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C99-iec60559">
+  <b> IEC 60559 arithmetic support </b> </a>
+
+ <p>
+ C99 allows an implementation to pre-define the <tt><b>__STD_IEC_559</b></tt>
+ preprocessor macro, indicating that it conforms to certain required behavior
+ of the IEC 60559 (a.k.a. IEEE 599) specification regarding floating-point
+ arithmetic and library functions.
+ Implementations that do not pre-define this macro are not require to provide
+ conforming floating-point behavior.
+
+ <p>
+ C++ does not make any special provisions for implementations that explicitly
+ support the IEC 60559 floating-point specification.
+
+ <p>
+ Conformance to IEC 60559 floating-point arithmetic, and the pre-definition
+ of the <tt>__STD_IEC_559</tt> macro, is likely to be provided as an
+ extension by many C++ compilers.
+
+ <p>
+ C99 also allows an implementation to pre-define the
+ <tt><b>__STD_IEC_559_COMPLEX</b></tt> preprocessor macro to indicate that
+ it conforms to the behavior specified by IEC 60559 for complex floating-point
+ arithmetic and library functions.
+ This affects the way the <tt>_Complex</tt> and <tt>_Imaginary</tt> types
+ are implemented.
+
+ <p>
+ C++ provides library functions for complex floating-point arithmetic by
+ providing the <tt>complex&lt;&gt;</tt> template class, declared in the
+ standard <tt>&lt;complex&gt;</tt> header file.
+ This type is incompatible with the C99
+ <a href="#C99-complex"> <tt>complex</tt></a>
+ types.
+
+ <p>
+ Conformance to the complex arithmetic specification,
+ and the pre-definition of the <tt>__STD_IEC_559</tt> macro,
+ might also be provided by many C++ compilers, and this would indicate
+ how the <tt>complex&lt;&gt;</tt> template class is implemented.
+
+ <p>
+ [C99: &sect;6.10.8, F, G] <br>
+ [C++98: &sect;16.8]
+
+ <!-- ---------------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C99-inline">
+  <b> Inline functions </b> </a>
+
+ <p>
+ Both C99 and C++ allow functions to be defined as <tt><b>inline</b></tt>,
+ which is a hint to the compiler that invocations of such functions can be
+ replaced with inline code expansions rather than actual function calls.
+ Inline functions are not supposed to be a source of incompatibilities
+ between C99 and C++ in practice, but there is a small difference in
+ the semantics of the two languages.
+
+ <p>
+ C++ requires all of the definitions for a given inline
+ function to be composed of exactly the same token sequence.
+
+ <p>
+ C99, however, allows multiple definitions of
+ a given inline function to be different,
+ and does not require the compiler to detect such differences
+ or issue a diagnostic.
+
+ <p>
+ Thus the following two example source files,
+ which define two slightly different versions of the same inline function,
+ constitute acceptable C99 code but invalid C++ code:
+ <pre>
+    //========================================
+    //<i> one.c</i>
+
+    <u>inline</u> int <u>twice</u>(int i)         //<i> One definition</i>
+    {
+        return i * i;
+    }
+
+    int foo(int j)
+    {
+        return twice(j);
+    }
+
+    //========================================
+    //<i> two.c</i>
+
+    typedef int  integer;
+
+    <u>inline</u> integer <u>twice</u>(integer a) //<i> Another definition</i>
+    {
+        return (a * a);
+    }
+
+    int bar(int b)
+    {
+        return twice(b);
+    } </pre>
+
+ <p>
+ This should not be a problem in practice, provided that multiple inline
+ function definitions occur only in shared header files (which ensures that
+ the multiple function definitions are composed of the same token sequences).
+
+ <p>
+ [C99: &sect;6.7.4] <br>
+ [C++98: &sect;7.1.2]
+
+ <!-- ---------------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C99-int-types">
+  <b> Integer types headers </b> </a>
+
+ <p>
+ C99 provides the header file <tt><b>&lt;stdint.h&gt;</b></tt>,
+<!-- OMIT
+ and <tt><b>&lt;inttypes.h&gt;</b></tt>
+!-->
+ which contains declarations and macro definitions for standard integer types.
+ For example:
+ <pre>
+    int  height(<u>int_least32_t</u> x);
+    int  width(<u>uint16_t</u> x); </pre>
+
+ <p>
+ C++ does not provide these types or header files.
+
+ <p>
+ (This feature is likely to be provided as an extension by many C++ compilers.
+ Some C++ compilers might also provide a <tt>&lt;cstdint&gt;</tt>
+<!-- OMIT
+ and <tt>&lt;cinttypes&gt;</tt>
+!-->
+ header file as an extension.)
+<!-- IRRELEVANT
+ Even if these types are provided as an extension, though,
+ they can cause problems with overloaded functions, e.g.:
+ <pre>
+    void  foo(int x);
+    void  foo(long x);
+
+    void  foo(<u>int32_t</u> x);  //<i> This may duplicate one of the other</i>
+                           //<i> foo() functions</i> </pre>
+!-->
+
+ <p>
+ [C99: &sect;7.1.2, 7.18] <br>
+ [C++98: &sect;17.4.1.2, D.5]
+
+ <!-- ---------------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C99-lib-proto">
+  <b> Library function prototypes </b> </a>
+
+ <p>
+ The C++ standard library header files amend some of the standard C library
+ function declarations so as to be more type-safe when used in C++.
+ For example, the standard C library function declaration:
+ <pre>
+    //<i> &lt;string.h&gt;</i>
+    extern char *   strchr(const char *s, int c); </pre>
+ is replaced with these near-equivalent declarations in the C++ library:
+ <pre>
+    //<i> &lt;cstring&gt;</i>
+    extern <u>const</u> char * strchr(<u>const</u> char *s, int c);
+    extern char *       strchr(char *s, int c); </pre>
+ These slightly different declarations can cause problems when C code
+ is compiled as C++ code, such as:
+ <pre>
+    //<i> C code</i>
+    const char * s = <i>...</i>;
+    char *       p;
+
+    p = strchr(s, 'a');             //<i> Valid C, invalid C++</i> </pre>
+ This kind of code results in an attempt to assign a <tt>const</tt> pointer
+ returned from a function to a non-<tt>const</tt> variable.
+ A simple cast corrects the code, making it valid as both C++ and C code,
+ as in:
+ <pre>
+    //<i> Corrected for C++</i>
+    p = <u>(char *)</u> strchr(s, 'a');    //<i> Valid C and C++</i> </pre>
+
+ <p>
+ [C99: &sect;7.21.5, 7.24.4.5] <br>
+ [C++98: &sect;17.4.1.2, 21.4]
+
+ <!-- ---------------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C99-lib-header">
+  <b> Library header files </b> </a>
+
+ <p>
+ C++ provides the standard C89 library as part of its library.
+
+ <p>
+ C99 adds a few header files that are not included as part of the
+ standard C++ library, though:
+
+ <p>
+ <table cols=2 border=0 width="60%">
+  <tr> <td width="10%"></td>
+       <td width="90%"> <tt>&lt;complex.h&gt;</tt></td>
+  </tr>
+  <tr> <td></td> <td><tt>&lt;fenv.h&gt;</tt></td> </tr>
+  <tr> <td></td> <td><tt>&lt;inttypes.h&gt;</tt></td> </tr>
+  <tr> <td></td> <td><tt>&lt;stdbool.h&gt;</tt></td> </tr>
+  <tr> <td></td> <td><tt>&lt;stdint.h&gt;</tt></td> </tr>
+  <tr> <td></td> <td><tt>&lt;tgmath.h&gt;</tt></td> </tr>
+ </table>
+
+ <p>
+ Even though C++ provides the C89 standard C library headers as part of its
+ library, it deems their use as <i>deprecated</i>.
+ Instead, it encourages programmers to prefer the equivalent set of
+ C++ header files which provide the same functionality as the C header files:
+
+ <p>
+ <table cols=4 border=0 width="60%">
+  <tr> <td width="10%"></td>
+       <td width="30%"> <tt>&lt;math.h&gt;</tt></td>
+       <td width="25%"> <i>replaced by</i> </td>
+       <td width="35%"> <tt>&lt;cmath&gt;</tt></td>
+  </tr>
+  <tr> <td></td> <td><tt>&lt;stddef.h&gt;</tt></td>
+       <td> <i>replaced by</i> </td>
+       <td> <tt>&lt;cstddef&gt;</tt></td> </tr>
+  <tr> <td></td> <td><tt>&lt;stdio.h&gt;</tt></td>
+       <td> <i>replaced by</i> </td>
+       <td> <tt>&lt;cstdio&gt;</tt></td> </tr>
+  <tr> <td></td> <td><tt>&lt;stdlib.h&gt;</tt></td>
+       <td> <i>replaced by</i> </td>
+       <td> <tt>&lt;cstdlib&gt;</tt></td> </tr>
+  <tr> <td></td> <td> <i>etc.</i></td>
+       <td></td> <td> <i>etc.</i> </td> </tr>
+ </table>
+
+ <p>
+ Deprecating the use of the C header files thus makes the following
+ valid C++98 program possibly invalid under a future revision of
+ standard C++:
+ <pre>
+    #include <u>&lt;stdio.h&gt;</u>     //<i> Deprecated in C++</i>
+
+    int main(void)
+    {
+        printf("Hello, world\n");
+        return 0;
+    } </pre>
+
+ <p>
+ The program can be modified by removing the use of deprecated features
+ in order to make it portable to future implementations of standard C++:
+ <pre>
+    #ifdef __cplusplus
+     #include <u>&lt;cstdio&gt;</u>     //<i> C++ only</i>
+     using std::printf;
+    #else
+     #include <u>&lt;stdio.h&gt;</u>    //<i> C only</i>
+    #endif
+
+    int main(void)
+    {
+        printf("Hello, world\n");
+        return 0;
+    } </pre>
+<!-- NOT NEEDED
+ Or, if the program only needs to compile as C++ and not as C:
+ <pre>
+    #include <u>&lt;cstdio&gt;</u>     //<i> C++ only</i>
+    using std::printf;
+
+    int main(void)
+    {
+        printf("Hello, world\n");
+        return 0;
+    } </pre>
+!-->
+
+ <p>
+ [C99: &sect;7.1.2] <br>
+ [C++98: &sect;17.4.1.2, D.5]
+
+ <!-- ---------------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C99-long-long">
+  <b> <tt><b>long</b></tt> <tt><b>long</b></tt> integer type </b> </a>
+
+ <p>
+ C99 provides <tt><b>signed</b></tt> <tt><b>long</b></tt> <tt><b>long</b></tt>
+ and <tt><b>unsigned</b></tt> <tt><b>long</b></tt> <tt><b>long</b></tt>
+ integer types to its repertoire of primitive types,
+ which are binary integer types at least 64 bits wide.
+
+ <p>
+ C99 also has enhanced lexical rules to allow for integer constants of
+ these types.
+ For example:
+ <pre>
+    long long int           i = -9000000000000000000<u>LL</u>;
+    unsigned long long int  u = 18000000000000000000<u>LLU</u>; </pre>
+
+ <p>
+ C99 also provides several new macros in <tt>&lt;limits.h&gt;</tt>,
+ new format specifiers for the <tt>printf()</tt> and <tt>scanf()</tt>
+ family of standard library functions,
+ and additional standard library functions
+ that support these types.
+ For example:
+ <pre>
+    void pr(<u>long long</u> i)
+    {
+        printf("%<u>ll</u>d", i);
+    } </pre>
+
+ <p>
+ C++ does not recognize these integer types.
+
+ <p>
+ (These features are likely to be provided as extensions by many C++ compilers,
+ especially those that provide the same runtime library for both C and C++
+ environments.)
+
+ <p>
+ [C99: &sect;5.2.4.2.1, 6.2.5, 6.3.1.1, 6.4.4.1, 6.7.2,
+  7.12.9, 7.18.4, 7.19.6.1, 7.19.6.2, 7.20.1, 7.20.6, 7.24.2.1, 7.24.2.2,
+  7.24.4, A.1.5, B.11, B.19, B.23, F.3, H.2] <br>
+ [C++98: &sect;2.13.1, 3.9.1, 21.4, 22.2.2.2.2, 27.8.2, C.2]
+
+ <!-- ---------------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C99-nested-struct">
+  <b> Nested structure tags </b> </a>
+
+ <p>
+ Nested structure types may be declared within other structures.
+ The scope of the inner structure tag extends outside the scope of the
+ outer structure in C, but does not do so in C++.
+ Structure declarations possess their own scope in C++, but do not in C.
+ This applies to any struct, union, and enumerated types declared within
+ a structure declaration.
+ For example:
+ <pre>
+    struct Outer
+    {
+        <u>struct Inner</u>        //<i> Nested structure declaration</i>
+        {
+            int         a;
+            float       f;
+        }           in;
+
+        <u>enum E</u>              //<i> Nested enum type declaration</i>
+        {
+            UKNOWN, OFF, ON
+        }           state;
+    };
+
+    <u>struct Inner</u>    si;     //<i> Nested type is visible in C,</i>
+                            //<i> Not visible in C++</i>
+
+    <u>enum E</u>          et;     //<i> Nested type is visible in C,</i>
+                            //<i> Not visible in C++</i> </pre>
+
+ <p>
+ In order to be visible in C++,
+ the inner declarations must be explicitly named using its outer class prefix,
+ or they must be declared outside the outer structure
+ so that they have file scope.
+ The former case, for example:
+ <pre>
+    //<i> C++ code</i>
+
+    <u>Outer::</u>Inner     si;    //<i> Explicit type name</i>
+    <u>Outer::</u>E         et;    //<i> Explicit type name</i> </pre>
+
+ <p>
+ And the latter case:
+ <pre>
+    //<i> C and C++ code</i>
+
+    <u>struct Inner</u>            //<i> Declaration is no longer nested</i>
+    {
+        int         a;
+        float       f;
+    };
+
+    <u>enum E</u>                  //<i> Declaration is no longer nested</i>
+    {
+        UKNOWN, OFF, ON
+    };
+
+    struct Outer
+    {
+        <u>struct Inner</u>    in;
+        <u>enum E</u>          state;
+    }; </pre>
+
+ <p>
+ [C99: &sect;6.2.1, 6.2.3, 6.7.2.1, 6.7.2.3] <br>
+ [C++98: &sect;9.9, C.1.2.3.3]
+
+ <!-- ---------------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C99-non-proto-func">
+  <b> Non-prototype function declarations </b> </a>
+
+ <p>
+ C supports <i><b>non-prototype</b></i> (a.k.a. <i>K&amp;R-style</i>)
+ function definitions.
+ (Like C90, C99 deems this as <i>deprecated</i> practice.)
+ For example:
+ <pre>
+    int foo(<u>a</u>, <u>b</u>)     //<i> Deprecated syntax</i>
+        <u>int</u>  <u>a</u>;
+        <u>int</u>  <u>b</u>;
+    {
+        return (a + b);
+    } </pre>
+
+ <p>
+ C++ allows only prototyped function definitions.
+ So in order to compile the example above as C++ code,
+ it must be rewritten in function prototype form:
+ <pre>
+    int foo(<u>int a</u>, <u>int b</u>)
+    {
+        return (a + b);
+    } </pre>
+
+ <p>
+ [C99: &sect;6.2.7, 6.5.2.2, 6.7.5.3, 6.9.1, 6.11.6, 6.11.7] <br>
+ [C++98: &sect;5.2.2, 8.3.5, 8.4, C.1.6]
+
+ <!-- ---------------------------------------------------------------> <!-- -->
+<!-- OMIT: THIS IS NOT A PROBLEM FOR C AS C++
+ <p>
+ <li>
+  <a name="C99-null">
+  <b> Null pointer constant </b> </a>
+
+ <p>
+ Both C and C++ allow a constant integer expression that evaluates
+ to zero to be used as a generic null pointer constant.
+ Such an expression is converted into the appropriate pointer type,
+ which can be deduced from the context.
+
+ <p>
+ Since C allows a pointer to null to be assigned to a variable of any
+ pointer type, a null pointer constant can either be a constant integer
+ expression that evaluates to zero (typically <tt>0</tt> or <tt>0L</tt>)
+ or such an expression cast to <tt>void</tt> <tt>*</tt>.
+ The <tt><b>NULL</b></tt> macro, defined in <tt>&lt;stddef.h&gt;</tt>,
+ can be therefore be defined as <tt>((void</tt> <tt>*)0)</tt>.
+
+ <p>
+ Since C++ does not allow an expression of type pointer to null
+ to be assigned to an object of any other pointer type,
+ a null pointer constant can only be an constant integer expression
+ that evaluates to zero.
+ This means that the <tt><b>NULL</b></tt> macro,
+ defined in <tt>&lt;cstddef&gt;</tt>,
+ cannot be defined as <tt>((void</tt> <tt>*)0)</tt>.
+ (The use of integer zero for null
+ can cause situations where the use of <tt>NULL</tt> as
+ a pointer expression can lead to ambiguous or unintended results.
+ It also allows programs to take liberties in assuming
+ that <tt>NULL</tt> is an integer.)
+
+ <p>
+ Some examples, which are valid in C++ but which may or may not produce
+ errors in C (depending on how <tt>NULL</tt> is defined), are:
+ <pre>
+    void foo(char *bp, int sz)
+    {
+        memset(bp, <u>NULL</u>, sz);       //<i> A</i>
+        sz = <u>NULL</u>;                  //<i> B</i>
+        *bp = <u>NULL</u>;                 //<i> C</i>
+    } </pre>
+
+ <p>
+ [C99: &sect;6.3.2.3, 6.5.16.1, 7.17, J.3.12] <br>
+ [C++98: &sect;4.10, 4.11, 5.9, 5.10, 5.16, 5.17, 18.1, C.2.2.3]
+!-->
+
+ <!-- ---------------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C99-cast">
+  <b> Old-style casts </b> </a>
+
+ <p>
+ C++ provides four typecast operators:
+
+ <p>
+ <table cols=2 border=0 width="30%">
+  <tr> <td width="5%"> </td>
+       <td width="95%"> <tt>const_cast</tt> </td> </tr>
+  <tr> <td></td> <td> <tt>dynamic_cast</tt> </td> </tr>
+  <tr> <td></td> <td> <tt>reinterpret_cast</tt> </td> </tr>
+  <tr> <td></td> <td> <tt>static_cast</tt> </td> </tr>
+ </table>
+
+ <p>
+<!-- INACCURATE? IN WHAT SECTION OF C++98?
++INCOMPLETE
+ While C++ recognizes old-style casts,
+ it deems their use as <i>deprecated</i>.
+!-->
+ While the following C code is also valid C++98 code,
+ it may not be considered valid code in a future
+ revision of the C++ standard:
+ <pre>
+    char *        p;
+    const char *  s = <u>(const char *)</u> p; </pre>
+
+ <p>
+ One possible work-around is to use macros in C that simulate the C++
+ typecast operators:
+ <pre>
+    #ifdef __cplusplus
+     #define const_cast(t,e)        const_cast&lt;t&gt;(e)
+     #define dynamic_cast(t,e)      dynamic_cast&lt;t&gt;(e)
+     #define reinterpret_cast(t,e)  reinterpret_cast&lt;t&gt;(e)
+     #define static_cast(t,e)       static_cast&lt;t&gt;(e)
+    #else
+     #define const_cast(t,e)        ((t)(e))
+     #define dynamic_cast(t,e)      ((t)(e))
+     #define reinterpret_cast(t,e)  ((t)(e))
+     #define static_cast(t,e)       ((t)(e))
+    #endif
+
+    const char *  s = const_cast(const char *, p); </pre>
+
+ <p>
+ All four casts are included above even though <tt>dynamic_cast</tt> is not
+ really useful in C code.
+ Perhaps a better definition for <tt>dynamic_cast</tt> in C would be:
+ <pre>
+     #define dynamic_cast(t,e)      _Do_not_use_dynamic_cast
+                                        //<i> Produces a compile-time error</i> </pre>
+
+ <p>
+ C++ also provides functional typecasts, which are not recognized in C:
+ <pre>
+    f = <u>float</u>(i);   //<i> C++ cast to float; invalid C</i> </pre>
+
+ <p>
+ These kinds of typecasts cannot be used in code that is compiled as
+ both C and C++.
+
+ <p>
+ [C99: &sect;6.3, 6.54] <br>
+ [C++98: &sect;5.2, 5.2.3, 5.2.7, 5.2.9, 5.2.10, 5.2.11, 5.4,
+  14.6.2.2, 14.6.2.3]
+
+ <!-- ---------------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C99-odr">
+  <b> One definition rule </b> </a>
+
+ <p>
+ C allows <i><b>tentative definitions</b></i> for variables, e.g.:
+ <pre>
+    <u>int  i;</u>        //<i> Tentative definition</i>
+    int  i = 1;    //<i> Explicit definition</i> </pre>
+
+ <p>
+ C++ does not allow this.
+ Only one definition of any given variable is allowed within a program.
+
+ <p>
+ C also allows, or at least does not require a diagnostic for, different
+ source files containing conflicting definitions.
+ For example:
+ <pre>
+    //========================================
+    //<i> <u>one.c</u></i>
+
+    struct Capri                //<i> A declaration</i>
+    {
+        int     a;
+        int     b;
+    };
+
+    //========================================
+    //<i> <u>two.c</u></i>
+
+    struct Capri                //<i> Conflicting declaration</i>
+    {
+        float   x;
+    }; </pre>
+
+ <p>
+ C++ deems this invalid, requiring both definitions to consist of the same
+ sequence of tokens.
+
+ <p>
+ C allows definitions of the same function or object in different source files
+ to be composed of different token sequences, provided that they are
+ semantically identical.
+
+ <p>
+ The C++ rules are more strict, requiring the multiple definitions to be
+ composed of identical token sequences.
+ Thus the following code, which contains multiple definitions that are
+ semantically equivalent but syntactically (token-wise) different,
+ is valid in C but invalid in C++:
+ <pre>
+    //========================================
+    //<i> <u>file1.c</u></i>
+
+    struct <u>Waffle</u>               //<i> A declaration</i>
+    {
+        int     a;
+    };
+
+    int <u>syrup</u>(int amt)          //<i> A definition</i>
+    {
+        return amt*2;
+    }
+
+    //========================================
+    //<i> <u>file2.c</u> - Valid C, but invalid C++</i>
+
+    typedef int     IType;
+
+    struct <u>Waffle</u>               //<i> Equivalent declaration,</i>
+    {                           //<i> but a different token sequence</i>
+        IType   a;
+    };
+
+    IType <u>syrup</u>(IType quant)    //<i> Equivalent definition,</i>
+    {                           //<i> but a different token sequence</i>
+        return (quant*2);
+    } </pre>
+
+ <p>
+ [C99: &sect;6.9.2, J.2] <br>
+ [C++98: &sect;3.2, C.1.2.3.1]
+
+ <!-- ---------------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C99-pragma">
+  <b> <tt><b>_Pragma</b></tt> keyword </b> </a>
+
+ <p>
+ C99 provides the <tt><b>_Pragma</b></tt> keyword, which operates in a
+ similar fashion to the <tt>#pragma</tt> preprocessor directive.
+ For example, these two constructs are equivalent:
+ <pre>
+    #pragma FLT_ROUND_INF   //<i> Preprocessor pragma</i>
+
+    _Pragma(FLT_ROUND_INF)  //<i> Pragma statement</i></pre>
+
+ <p>
+ C++ does not support the <tt>_Pragma</tt> keyword.
+
+ <p>
+ (This feature is likely to be provided as an extension by many C++ compilers.)
+
+ <p>
+ [C99: &sect;5.1.1.2, 6.10.6, 6.10.9] <br>
+ [C++98: &sect;16.6]
+
+ <!-- ---------------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C99-predef">
+  <b> Predefined identifiers </b> </a>
+
+ <p>
+ C99 provides a predefined identifier, <tt><b>__func__</b></tt>, which
+ acts like a string literal containing the name of the enclosing function.
+ For example:
+ <pre>
+    int incr(int a)
+    {
+        fprintf(dbgf, "%s(%d)\n", <u>__func__</u>, a);
+        return ++a;
+    } </pre>
+
+ <p>
+ (While this feature is likely to be provided as an extension
+ by many C++ compilers, it is unclear what its value would be,
+ especially for member functions within nested template classes declared
+ within nested namespaces.)
+
+ <p>
+ [C99: &sect;6.4.2.2, 7.2.1.1, J.2] <br>
+
+ <!-- ---------------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C99-c-keyword">
+  <b> Reserved keywords in C99 </b> </a>
+
+ <p>
+ C99 has a few reserved keywords that are not recognized by C++:
+
+ <p>
+ <table cols=2 border=0 width="30%">
+  <tr> <td width="5%"> </td>
+       <td width="95%"> <tt>restrict</tt> </td> </tr>
+  <tr> <td></td> <td> <tt>_Bool</tt> </td> </tr>
+  <tr> <td></td> <td> <tt>_Complex</tt> </td> </tr>
+  <tr> <td></td> <td> <tt>_Imaginary</tt> </td> </tr>
+  <tr> <td></td> <td> <tt>_Pragma</tt> </td> </tr>
+ </table>
+
+ <p>
+ This will cause problems when C code containing these tokens
+ is compiled as C++.
+ For example:
+ <pre>
+    extern int   set_name(char *<u>restrict</u> n); </pre>
+
+ <p>
+ [C99: &sect;6.4.1, 6.7.2, 6.7.3, 6.7.3.1, 6.10.9, 7.3.1, 7.16, A.1.2] <br>
+ [C++98: &sect;2.11]
+
+ <!-- ---------------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C99-cpp-keyword">
+  <b> Reserved keywords in C++ </b> </a>
+
+ <p>
+ C++ has a few keywords that are not recognized by C99:
+
+ <p>
+ <table cols=4 border=0 width="75%">
+  <tr> <td width="7%"> </td>
+       <td width="27%"> <tt>bool</tt> </td> 
+       <td width="35%"> <tt>mutable</tt> </td> 
+       <td width="31%"> <tt>this</tt> </td>
+  </tr>
+  <tr> <td></td>
+       <td> <tt>catch</tt> </td> 
+       <td> <tt>namespace</tt> </td> 
+       <td> <tt>throw</tt> </td>
+  </tr>
+  <tr> <td></td>
+       <td> <tt>class</tt> </td> 
+       <td> <tt>new</tt> </td> 
+       <td> <tt>true</tt> </td>
+  </tr>
+  <tr> <td></td>
+       <td> <tt>const_cast</tt> </td> 
+       <td> <tt>operator</tt> </td> 
+       <td> <tt>try</tt> </td>
+  </tr>
+  <tr> <td></td>
+       <td> <tt>delete</tt> </td> 
+       <td> <tt>private</tt> </td> 
+       <td> <tt>typeid</tt> </td>
+  </tr>
+  <tr> <td></td>
+       <td> <tt>dynamic_cast</tt> </td>
+       <td> <tt>protected</tt> </td>
+       <td> <tt>typename</tt> </td>
+  </tr>
+  <tr> <td></td>
+       <td> <tt>explicit</tt> </td> 
+       <td> <tt>public</tt> </td>
+       <td> <tt>using</tt> </td>
+  </tr>
+  <tr> <td></td>
+       <td> <tt>export</tt> </td> 
+       <td> <tt>reinterpret_cast</tt> </td>
+       <td> <tt>virtual</tt> </td>
+  </tr>
+  <tr> <td></td>
+       <td> <tt>false</tt> </td> 
+       <td> <tt>static_cast</tt> </td>
+       <td> <tt>wchar_t</tt> </td>
+  </tr>
+  <tr> <td></td>
+       <td> <tt>friend</tt> </td> 
+       <td> <tt>template</tt> </td>
+       <td></td>
+   </tr>
+ </table>
+
+ <p>
+ C++ also specifically reserves the <tt>asm</tt> keyword,
+ which may or may not be reserved in C implementations.
+
+ <p>
+ C code is free to use these keywords as identifiers and macro names.
+ This will cause problems when C code containing these tokens
+ is compiled as C++.
+ For example:
+ <pre>
+    extern int   <u>try</u>(int attempt);
+    extern void  frob(struct <u>template</u> *t, <u>bool</u> <u>delete</u>); </pre>
+
+ <p>
+ [C99: &sect;6.4.1] <br>
+ [C++98: &sect;2.11]
+
+ <!-- ---------------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C99-restrict">
+  <b> <tt><b>restrict</b></tt> keyword </b> </a>
+
+ <p>
+ C99 supports the <tt><b>restrict</b></tt> keyword, which allows for certain
+ optimizations involving pointers.
+ For example:
+ <pre>
+    void copy(int *<u>restrict</u> d, const int *<u>restrict</u> s, int n)
+    {
+        while (n-- > 0)
+            *d++ = *s++;
+    } </pre>
+
+ <p>
+ C++ does not recognize this keyword.
+
+ <p>
+ A simple work-around for code that is meant to be compiled as either C
+ or C++ is to use a macro for the <tt>restrict</tt> keyword:
+ <pre>
+    #ifdef __cplusplus
+     #define restrict    /*<i> nothing</i> */
+    #endif </pre>
+
+ <p>
+ (This feature is likely to be provided as an extension by many C++ compilers.
+ If it is, it is also likely to be allowed as a reference modifier
+ as well as a pointer modifier.)
+<!-- NOT NEEDED
+ For example:
+ <pre>
+    void foo(Type &<u>restrict</u> o)
+    {
+        <i>...</i>
+    } </pre>
+ The <tt>restrict</tt> specifier is only allowed within function parameter
+ declarations.)
+!-->
+
+ <p>
+ [C99: &sect;6.2.5, 6.4.1, 6.7.3, 6.7.3.1, 7, A.1.2, J.2] <br>
+ [C++98: &sect;2.11]
+
+ <!-- ---------------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C99-return-void">
+  <b> Returning <tt>void</tt> </b> </a>
+
+ <p>
+ C++ allows functions of return type <tt>void</tt> to explicitly return
+ expressions of type <tt>void</tt>.
+ C does not allow void functions to return any kind of expression.
+
+ <p>
+ For example:
+ <pre>
+    <u>void</u> foo(someType expr)
+    {
+        <i>...</i>
+        return <u>(void)</u>expr;      //<i> Valid C++, invalid C</i>
+    } </pre>
+
+ <p>
+ This is allowed in C++ primarily to allow template functions to accept any
+ function return type, including <tt>void</tt>, as a template parameter.
+ For example:
+ <pre>
+    //<i> C++ code</i>
+    template &lt;typename <u>T</u>&gt;
+    <u>T</u> bar(someType expr)
+    {
+        <i>...</i>
+        return <u>(T)</u>expr;         //<i> Valid even if <u>T</u> is void</i>
+    } </pre>
+
+ <p>
+ [C99: &sect;6.8.6.4] <br>
+ [C++98: &sect;3.9.1, 6.6.3]
+
+ <!-- ---------------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C99-static-linkage">
+  <b> <tt><b>static</b></tt> linkage </b> </a>
+
+ <p>
+ Both C and C++ allow objects and functions to have
+ <b><i><tt>static</tt> file linkage</i></b>, also known as
+ <b><i>internal linkage</i></b>.
+ C++, however, deems this as deprecated practice, preferring the use of
+ <b><i>unnamed namespaces</i></b> instead.
+ (C++ objects and functions declared within unnamed namespaces have
+ <i>external linkage</i> unless they are explicitly declared <tt>static</tt>.
+ C++ deems the use of <tt>static</tt> specifiers on objects or function
+ declarations within namespace scope as deprecated.)
+
+ <p>
+ While it is not a problem for C code compiled under C++98 rules,
+ it may become a problem in a future revision of the C++ language.
+ For example, the following fragment uses the deprecated <tt>static</tt>
+ feature:
+ <pre>
+    //<i> C and C++ code</i>
+
+    <u>static</u> int  bufsize = 1024;
+    <u>static</u> int  counter = 0;
+
+    <u>static</u> long square(long x)
+    {
+        return (x * x);
+    } </pre>
+
+ <p>
+ The preferred way of doing this in C++ is:
+ <pre>
+    //<i> C++ code</i>
+
+    <u>namespace /*<i>unnamed</i>*/</u>
+    {
+        static int  bufsize = 1024;
+        static int  counter = 0;
+
+        static long square(long x)
+        {
+            return (x * x);
+        } </pre>
+    } </pre>
+
+ <p>
+ (Note that the use of the <tt>static</tt> specifiers is unnecessary.)
+
+ <p>
+ A possible work-around is to use preprocessor macros and wrappers:
+ <pre>
+    //<i> C and C++ code</i>
+
+    #ifdef __cplusplus
+     #define STATIC  static
+    #endif
+
+    #ifdef __cplusplus
+    namespace /*<i>unnamed</i>*/
+    {
+    #endif
+
+    STATIC int  bufsize = 1024;
+    STATIC int  counter = 0;
+
+    STATIC long square(long x)
+    {
+        return (x * x);
+    }
+
+    #ifdef __cplusplus
+    }
+    #endif </pre>
+
+ <p>
+ [C99: &sect;6.2.2, 6.2.4, 6.7.1, 6.9, 6.9.1, 6.9.2, 6.11.2] <br>
+ [C++98: &sect;3.3.5, 3.5, 7.3.1, 7.3.1.1, D.2]
+ 
+ <!-- ---------------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C99-string-init">
+  <b> String initializers </b> </a>
+
+ <p>
+ C allows character arrays to be initialized with string constants.
+ It also allows a string constant initializer to contain exactly
+ one more character than the array it initializes,
+ i.e., the implicit terminating null character of the string may be ignored.
+ For example:
+ <pre>
+    char  name1[] =  "Harry";   //<i> Array of 6 char</i>
+
+    char  name2[6] = "Harry";   //<i> Array of 6 char</i>
+
+    char  name3[] =  { 'H', 'a', 'r', 'r', 'y', '\0' };
+                                //<i> Same as 'name1' initialization</i>
+
+    char  name4[5] = "Harry";   //<i> Array of 5 char, no null char</i> </pre>
+
+ <p>
+ C++ also allows character arrays to be initialized with string constants,
+ but always includes the terminating null character in the initialization.
+ Thus the last initializer (<tt>name4</tt>) in the example above
+ is invalid in C++.
+
+ <p>
+ [C99: &sect;6.7.8] <br>
+ [C++98: &sect;8.5, 8.5.2]
+
+ <!-- ---------------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C99-string-const">
+  <b> String literals are <tt><b>const</b></tt> </b> </a>
+
+ <p>
+ In C, string literals have type <tt>char[<i>n</i>]</tt>,
+ but are not modifiable (i.e., attempting to modify the contents of a
+ string literal is undefined behavior).
+
+ <p>
+ In C++, string literals have type <tt>const</tt> <tt>char[<i>n</i>]</tt>
+ and are also not modifiable.
+
+ <p>
+ When a string literal is used in an expression (or passed to a function),
+ both C and C++ implicit convert it into a pointer of type
+ <tt>char</tt> <tt>*</tt>.
+ (The C++ conversion is considered to be two conversions,
+ the first being an array-to-pointer conversion from type
+ <tt>const</tt> <tt>char[<i>n</i>]</tt>
+ to type <tt>const</tt> <tt>char</tt> <tt>*</tt>,
+ and the second being a qualification conversion to type
+ <tt>char</tt> <tt>*</tt>.)
+
+ <p>
+ The following code is valid in both C and C++.
+ <pre>
+    extern void  frob(<u>char *s</u>);
+                        //<i> Argument is not <u>const char *</u></i>
+
+    void foo(void)
+    {
+        frob(<u>"abc"</u>);    //<i> Valid in both C and C++,</i>
+                        //<i> since literal converts to <u>char *</u></i>
+    } </pre>
+
+ <p>
+ This language feature does not present an incompatibility
+ between C99 and C++98.
+ However, the implicit conversion has been deprecated in C++
+ (presumably to be replaced by a single implicit conversion to type
+ <tt>const</tt> <tt>char</tt> <tt>*</tt>),
+ which means that a future revision of C++ may no longer accept the code
+ above as valid code.
+
+ <p>
+ [C99: &sect;6.3.2.1, 6.4.5, 6.5.1, 6.7.8] <br>
+ [C++98: &sect;2.13.4, 4.2, D.4]
+
+ <!-- ---------------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C99-struct-proto">
+  <b> Structures declared in function prototypes </b> </a>
+
+ <p>
+ C allows <tt>struct</tt>, <tt>union</tt>, and <tt>enum</tt> types to be
+ declared within function prototype scope, e.g.:
+ <pre>
+    extern void  foo(const <u>struct info { int typ; int sz; }</u> *s);
+
+    int bar(<u>struct point { int x, y; }</u> pt)
+    { <i>...</i> } </pre>
+
+ <p>
+ C also allows structure types to be declared as function return types,
+ as in:
+ <pre>
+    extern <u>struct pt { int x; }</u>  pos(void); </pre>
+
+ <p>
+ C++ does not allow either of these,
+ since the scope of the structure declared in this
+ fashion does not extend outside the function declaration or definition,
+ making it impossible to define objects of that structure type
+ which could be passed as arguments to the function
+ or to assign function return values into objects of that type.
+
+ <p>
+ Both C and C++ allow declarations of <i>incomplete</i> structure types
+ within function prototypes and as function return types, though:
+ <pre>
+    void  frob(<u>struct sym</u> *s);  //<i> Okay, pointer to incomplete type</i>
+    <u>struct typ</u> *  fraz(void);   //<i> Ditto</i> </pre>
+
+ <p>
+ [C99: &sect;6.2.1, 6.7.2.3, 6.7.5.3, I] <br>
+ [C++98: &sect;3.3.1, 3.3.3, 8.3.5, C.1.6.8.3.5]
+
+ <!-- ---------------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C99-tgmath">
+  <b> Type-generic math functions </b> </a>
+
+ <p>
+ C99 supports <i><b>type-generic mathematical functions</b></i>.
+ These are functions that are essentially overloaded on the three
+ floating-point types
+ (<tt>float</tt>, <tt>double</tt>, and <tt>long</tt> <tt>double</tt>)
+ and the three complex floating-point types
+ (<tt>complex</tt> <tt>float</tt>, <tt>complex</tt> <tt>double</tt>,
+ and <tt>complex</tt> <tt>long</tt> <tt>double</tt>).
+ To use them, the header file <tt><b>&lt;tgmath.h&gt;</b></tt> must be
+ included; the functions are defined as macros, presumably replaced by
+ implementation-defined names.
+
+ <p>
+ For example, the following is one possible implementation of the type-generic
+ functions:
+ <pre>
+    /*<i> Equivalent &lt;tgmath.h&gt; contents:</i>
+    *<i> extern <u>float</u>                sin(<u>float</u> x);</i>
+    *<i> extern <u>double</u>               sin(<u>double</u> x);</i>
+    *<i> extern <u>long double</u>          sin(<u>long double</u> x);</i>
+    *<i> extern <u>float complex</u>        sin(<u>float complex</u> x);</i>
+    *<i> extern <u>double complex</u>       sin(<u>double complex</u> x);</i>
+    *<i> extern <u>long double complex</u>  sin(<u>long double complex</u> x);</i>
+    *<i> etc...</i>
+    */
+
+    //<i> Macro definitions</i>
+    #define sin  __tg_sin       //<i> Built-in compiler symbol</i>
+    #define cos  __tg_cos       //<i> Built-in compiler symbol</i>
+    #define tan  __tg_tan       //<i> Built-in compiler symbol</i>
+    <i>etc...</i> </pre>
+
+ <p>
+ C++ can also provide type-generic functions, since it is quite capable of
+ providing multiple overloaded function definitions.
+
+ <p>
+ (Support for type-generic mathematical functions might be provided by many
+ C++ implementations as an extension, although the exact nature of such
+ generic/overloaded functions would most likely differ substantially from
+ the corresponding C99 implementation.
+ In particular, pointers to type-generic functions would probably
+ behave differently.)
+
+ <p>
+ [C99: &sect;7.22] <br>
+ [C++98: &sect;13, 13.1, 13.3.1, 13.3.2, 13.3.3]
+
+ <!-- ---------------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C99-typedef">
+  <b> Typedefs versus type tags </b> </a>
+
+ <p>
+ C requires type tags to be preceded by the
+ <tt>struct</tt>, <tt>union</tt>, or <tt>enum</tt> keyword.
+
+ <p>
+ C++ treats type tags as implicit typedef names.
+
+ <p>
+ Thus the following code is valid C but invalid C++:
+ <pre>
+    //<i> Valid C, invalid C++</i>
+
+    typedef int  <u>type</u>;
+
+    struct <u>type</u>
+    {
+        <u>type</u>            memb;   //<i> int</i>
+        struct <u>type</u> *   next;   //<i> struct pointer</i>
+    };
+
+    void foo(<u>type</u> t, int i)
+    {
+        int          <u>type</u>;
+        struct <u>type</u>  s;
+
+        <u>type</u> = i + t + sizeof(<u>type</u>);
+        s.memb = <u>type</u>;
+    } </pre>
+
+ <p>
+ This difference in the treatment of typedefs can also lead to code that is
+ valid as both C and C++, but which has different semantic behavior.
+ For example:
+ <pre>
+    int  <u>sz</u> = 80;
+
+    int size(void)
+    {
+        struct <u>sz</u>
+        { <i>...</i> };
+
+        return sizeof(<u>sz</u>);      //<i> sizeof(int) in C,</i>
+                                //<i> sizeof(struct sz) in C++</i>
+    } </pre>
+
+ <p>
+ [C99: &sect;6.2.1, 6.2.3, 6.7, 6.7.2.1, 6.7.2.2, 6.7.2.3] <br>
+ [C++98: &sect;3.1, 3.3.1, 3.3.7, 3.4, 3.4.4, 3.9, 7.1.3, 7.1.5, 7.1.5.2, 9.1]
+
+ <!-- ---------------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C99-func-vararg">
+  <b> Variable-argument function declarators</b> </a>
+
+ <p>
+ C90 syntax allows a trailing ellipsis in the parameter list of a function
+ declarator, which specifies that the function can take zero or more
+ additional arguments after the last named parameter.
+
+ <p>
+ C++ also allows variable function argument lists, but provides two
+ syntactical forms for this feature.
+ <pre>
+    /*<i> Variable-argument function declarations</i> */
+    int  foo(int a, int b<u>,</u> <u>...</u>);      //<i> Valid C++ and C</i>
+    int  bar(int a, int b <u>...</u>);       //<i> Valid C++, invalid C</i> </pre>
+
+ <p>
+ [C99: &sect;6.7.5] <br>
+ [C++98: &sect;8.3.5]
+
+ <!-- ---------------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C99-pp-vararg">
+  <b> Variable-argument preprocessor function macros </b> </a>
+
+ <p>
+ C99 supports preprocessor function macros that may take a variable number
+ of arguments.
+ Such macros are defined with a trailing '<tt><b><i>...</i></b></tt>' token
+ in their parameter lists, and may use the <tt><b>__VA_ARGS__</b></tt>
+ reserved identifier in their replacement text.
+
+ <p>
+ For example:
+ <pre>
+    #define DEBUGF(f,<u>...</u>) \
+        (fprintf(dbgf, "%s(): ", f), fprintf(dbgf, <u>__VA_ARGS__</u>))
+
+    #define DEBUGL(<u>...</u>) \
+        fprintf(dbgf, <u>__VA_ARGS__</u>)
+
+    int incr(int *a)
+    {
+        DEBUGF(<u>"incr"</u>, <u>"before: a=%d\n"</u>, <u>*a</u>);
+        (*a)++;
+        DEBUGL(<u>"after: a=%d\n"</u>, <u>*a</u>);
+        return (*a);
+    } </pre>
+
+ <p>
+ C++ does not provide this feature.
+
+ <p>
+ (This feature is likely to be provided as an extension by many C++ compilers.)
+
+ <p>
+ [C99: &sect;6.10.3, 6.10.3.1, 6.10.3.4, 6.10.3.5] <br>
+ [C++98: &sect;16.3, 16.3.1]
+
+ <!-- ---------------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C99-vla">
+  <b> Variable-length arrays (VLAs) </b> </a>
+
+ <p>
+ C99 supports <i><b>variable-length arrays</b></i>, which
+ are arrays of automatic storage whose size is determined dynamically
+ at program execution time.
+ For example:
+ <pre>
+    size_t sum(int sz)
+    {
+        float   arr[<u>sz</u>];      //<i> VLA, dynamically allocated</i>
+
+        while (sz-- > 0)
+            arr[sz] = sz;
+        return <u>sizeof(arr)</u>;   //<i> Evaluated at runtime</i>
+    } </pre>
+
+ <p>
+ C99 also provides new declaration syntax for function parameters of VLA types,
+ allowing a variable identifier or a <tt>'*'</tt> to occur within the
+ brackets of an array function parameter declaration in place of a constant
+ integer size expression.
+ The following example illustrates the syntax involved in passing VLAs to a
+ function:
+ <pre>
+    extern float  sum_square(int n, float a[<u>*</u>]);
+
+    float sum_cube(int n, float a[<u>m</u>])
+    {
+        <i>...</i>
+    }
+
+    void add_seq(int n)
+    {
+        float   x[<u>n</u>];       //<i> VLA</i>
+        float   s;
+
+        <i>...</i>
+        s = sum_square(n, <u>x</u>) + sum_cube(n, <u>x</u>);
+        <i>...</i>
+    } </pre>
+
+ <p>
+ VLA function parameter declarations using a <tt>'*'</tt> can only appear in
+ function declarations (with prototypes) and not in function definitions.
+ Note that this capability also affects the way <tt>sizeof</tt> expressions
+ are evaluated.
+
+ <p>
+ C++ does not support VLAs<!-- using this syntax -->.
+
+ <p>
+ [C99: &sect;6.7.5, 6.7.5.2, 6.7.5.3, 6.7.6] <br>
+ [C++98: &sect;8.3.4, 8.3.5, 8.4]
+
+ <!-- ---------------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C99-void-ptr">
+  <b> Void pointer assignments </b> </a>
+
+ <p>
+ C allows a pointer to void (<tt>void</tt> <tt>*</tt>) value
+ to be assigned to an object of any other pointer type
+ without requiring a cast.
+ This allows such things as assigning the return value of <tt>malloc()</tt>
+ to a pointer variable without the need for an explicit cast.
+<!-- NOT APPLICABLE TO C99; CALLING UNDECLARED FUNCTIONS IS IMPOSSIBLE
+ It also allows for easier detection of incorrectly assigning to
+ pointer objects the return values of undeclared functions that are
+ expected to return pointers; applying an explicit cast to such return values
+ tends to hide these kinds of errors.
+ <pre>
+    //<i> Declaration for bufcpy() is not in scope<i>
+
+    void foo(void *d, const void *s)
+    {
+        char *  s;
+
+        s = (char *) bufcpy(d, s);  //<i> Cast hides missing declaration</i>
+        <i>...</i>
+    } </pre>
+!-->
+
+ <p>
+ C++ does not allow assigning a pointer to void directly to an object
+ of any other pointer type without an explicit cast.
+ This is considered a breach of type safety, so an explicit cast is required.
+ Thus the following code is valid C but invalid C++:
+ <pre>
+    extern <u>void *</u>  malloc(size_t n);
+
+    struct object * allocate(void)
+    {
+        struct object *  p;
+
+        p <u>=</u> malloc(sizeof(struct object));
+                            //<i> Direct assignment without a cast,</i>
+                            //<i> valid C, invalid C++</i>
+        return p;
+    } </pre>
+
+ <p>
+ (Both languages allow values of any pointer type to be assigned
+ to objects of type pointer to void without requiring an explicit cast.
+ <pre>
+    <u>void *</u>  vp;
+    Type *  tp;
+
+    vp <u>=</u> tp;    //<i> No explicit cast needed,</i>
+                //<i> valid C and C++</i> </pre>
+
+ <p>
+ Such usage is considered type safe.)
+
+ <p>
+ (Note that there are situations in C++ where pointers are implicitly converted
+ to type pointer to void, such as when comparing a pointer of type pointer to
+ void to another pointer of a different type, but such situations are
+ considered type safe since no pointer objects are modified in the process.)
+
+ <p>
+ [C99: &sect;6.2.5, 6.3.2.3, 6.5.15, 6.5.16, 6.5.16.1] <br>
+ [C++98: &sect;3.8, 3.9.2, 4.10, 5.4, 5.9, 5.10, 5.16, 5.17, 13.3.3.2]
+
+ <!-- ---------------------------------------------------------------> <!-- -->
+ <p>
+ <li>
+  <a name="C99-wchar">
+  <b> Wide character type </b> </a>
+
+ <p>
+ C provides a <i><b>wide character type</b></i>, <tt><b>wchar_t</b></tt>,
+ that is capable of holding a single wide character from an
+ extended character set.
+ This type is defined in the standard header files
+ <tt><b>&lt;stddef.h&gt;</b></tt>,
+ <tt><b>&lt;stdlib.h&gt;</b></tt>, and
+ <tt><b>&lt;wchar.h&gt;</b></tt>.
+
+ <p>
+ C++ also provides a <tt><b>wchar_t</b></tt> type, but it is a reserved
+ keyword just like <tt>int</tt>.
+ No header file is required to enable its definition.
+
+ <p>
+ This means that C code that does not include any of the standard header files
+ listed above is free to use <tt>wchar_t</tt> as an identifier or macro name;
+ such code will not compile as C++ code.
+ <pre>
+    //<i> Does not #include &lt;stddef.h&gt;, &lt;stddef.h&gt;, or &lt;wchar.h&gt;</i>
+
+    typedef unsigned short  <u>wchar_t</u>;
+
+    <u>wchar_t</u> readwc(void)
+    {
+        <i>...</i>
+    } </pre>
+
+ <p>
+ The recommended practice is therefore to use the <tt>wchar_t</tt> type
+ only for its special meaning, and only after including
+ <tt>&lt;stddef.h&gt;</tt>,
+ <tt>&lt;stdlib.h&gt;</tt>, or
+ <tt>&lt;wchar.h&gt;</tt>.
+
+ <p>
+ (It is likely that a <tt>&lt;wchar.h&gt;</tt> header
+ will be provided by most C++ implementations as an extension.
+ Some C++ compilers might also provide an empty <tt>&lt;cwchar&gt;</tt>
+ header as an extension.)
+
+ <p>
+ [C99: &sect;3.7.3, 6.4.4.4, 6.4.5, 7.1.2, 7.17, 7.19.1, 7.20, 7.24] <br>
+ [C++98: &sect;2.11, 2.13.2, 2.13.4, 3.9.1, 4.5, 7.1.5.2]
+
+</ul>
+
+<!-- ------------------------------------------------------------------------->
+<!-- -->
+<p>
+<hr width="75%">
+
+<a name="ref">
+<h2> References </h2> </a>
+
+<dl>
+ <p>
+ <dt> [C89]
+ <dd> <b> Programming Languages - C </b> <br>
+  <b>ANSI/ISO 9899:1989</b>, 1989, <br>
+  Available at
+  <a href="http://www.ansi.org/">
+   www.ansi.org</a>.
+
+ <p>
+ <dt> [C90]
+ <dd> <b> Programming Languages - C </b> <br>
+  (with ISO amendments) <br>
+  <b>ISO/IEC 9899:1990</b>, 1990,
+  ISO/IEC JTC1/SC22/WG14. <br>
+  Available at
+  <a href="http://www.ansi.org/">
+   www.ansi.org</a>.
+
+ <p>
+ <dt> [C99]
+ <dd> <b> Programming Languages - C </b> <br>
+  <b>ISO/IEC 9899:1999</b>, 1999,
+  ISO/IEC JTC1/SC22/WG14. <br>
+  Available at
+  <a href="http://www.ansi.org/">
+   www.ansi.org</a>.
+
+<!-- OMIT
+ <p>
+ <dt> [C9X]
+ <dd> <b> Programming Languages - C </b> <br>
+  (Draft) <br>
+  <b>ISO/IEC 9899:1999</b>, Draft 1999-01-18, N869,
+  ISO/IEC JTC1/SC22/WG14. <br>
+  Available at
+  <a href="http://www.dkuug.dk/JTC1/SC22/WG14/">
+   www.dkuug.dk/JTC1/SC22/WG14/</a>.
+!-->
+
+ <p>
+ <dt> [C++98]
+ <dd> <b> Programming Languages - C++ </b> <br>
+  <b>ISO/IEC 14882:1998(E)</b>, 1998-09-01, 1st ed.,
+  ISO/IEC JTC1/SC22. <br>
+  Available at
+  <a href="http://www.ansi.org/">
+   www.ansi.org</a>.
+
+ <a name="ref-Stroustrup">
+ <p> </a>
+ <dt> [STR]
+ <dd> <b> The C++ Programming Language, Appendix B - Compatibility </b> <br>
+  Bjarne Stroustrup. <br>
+  Third ed., 1997, AT&amp;T. <br>
+<!-- OMIT
+  Available at
+  <a href="http://www.research.att.com/~bs/">
+   www.research.att.com/~bs/</a>. <br>
+!-->
+  Available in PDF format at
+  <a href="http://www.research.att.com/~bs/3rd_compat.pdf">
+   www.research.att.com/~bs/3rd_compat.pdf</a>.
+
+</dl>
+
+<!-- ------------------------------------------------------------------------->
+<!-- -->
+<p>
+<hr width="75%">
+
+<a name="ack">
+<h2> Acknowledgments </h2> </a>
+
+<p>
+My thanks to the the people who gave helpful comments on early drafts of
+this document, especially to the following individuals who emailed me
+suggestions and corrections or posted comments on the
+<a href="news:comp.std.c"> comp.std.c</a> and
+<a href="news:comp.std.c++"> comp.std.c++</a>
+newsgroups:
+
+<ul>
+ <li> Nelson H. F. Beebe,
+  <a href="mailto:beebe@math.utah.edu">
+   beebe@math.utah.edu</a>
+
+ <li> Greg Brewer,
+  <a href="mailto:greg@brewer.net">
+   greg@brewer.net</a>.
+
+ <li> David Capshaw,
+  <a href="mailto:capshaw@metrowerks.com">
+   capshaw@metrowerks.com</a>.
+
+ <li> Steve Clamage,
+  <a href="mailto:clamage@eng.sun.com">
+   clamage@eng.sun.com</a>.
+
+ <li> Yaakov Eisenberg,
+  <a href="mailto:Yaakov@Digisoft.com">
+   Yaakov@Digisoft.com</a>.
+
+ <li> Clive D. W. Feather,
+  <a href="mailto:clive@demon.net">
+   clive@demon.net</a>.
+
+ <li> Francis Glassborow,
+  <a href="mailto:francisG@robinton.demon.co.uk">
+   francisG@robinton.demon.co.uk</a>.
+
+ <li> Doug Gwyn,
+  <a href="mailto:gwyn@arl.mil">
+   gwyn@arl.mil</a> or
+  <a href="mailto:dagwyn@home.com">
+   dagwyn@home.com</a>.
+
+<!-- SUBMITTED ONLY MINOR CORRECTION
+ <li> Russell Hanneken,
+  <a href="mailto:russell@laissezfairebooks.com">
+   russell@laissezfairebooks.com</a>.
+!-->
+
+<!-- SUBMITTED ONLY MINOR CORRECTION
+ <li> Richard Heathfield,
+  <a href="mailto:richard@antlimited.com">
+   richard@antlimited.com</a>.
+!-->
+
+ <li> James Kanze,
+  <a href="mailto:James.Kanze@dresdner-bank.com">
+   James.Kanze@dresdner-bank.com</a>.
+
+ <li> Matt Seitz,
+  <a href="mailto:mseitz@snapserver.com">
+   mseitz@snapserver.com</a>.
+
+ <li> Vesa A J Karvonen,
+  <a href="mailto:vkarvone@cc.helsinki.fi">
+   vkarvone@cc.helsinki.fi</a>.
+
+ <li> Nick Maclaren,
+  <a href="mailto:nmm1@cam.ac.uk">
+   nmm1@cam.ac.uk</a>.
+
+ <li> Joe Maun,
+  <a href="reply_to@yahoo.com">
+   reply_to@yahoo.com</a>.
+
+ <li> Gabriel Netterdag,
+  <a href="mailto:gabriel.netterdag@quidsoft.se">
+   gabriel.netterdag@quidsoft.se</a>.
+
+ <li> Cesar Quiroz,
+  <a href="mailto:Cesar.Quiroz@CoWare.com">
+   Cesar.Quiroz@CoWare.com</a>.
+
+ <li> Bjarne Stroustrup,
+  <a href="mailto:bs@research.att.com">
+   bs@research.att.com</a>
+  and
+  <a href="http://www.research.att.com/~bs/">
+   www.research.att.com/~bs</a>.
+
+ <li> Keith Thompson,
+  <a href="mailto:kst@cts.com">
+   kst@cts.com</a>.
+
+ <li> Martin van Loewis,
+  <a href="mailto:loewis@informatik.hu-berlin.de">
+   loewis@informatik.hu-berlin.de</a>.
+
+ <li> Daniel Villeneuve,
+  <a href="mailto:danielv@crt.umontreal.ca">
+   danielv@crt.umontreal.ca</a>.
+
+ <li> Bill Wade,
+  <a href="mailto:bill.wade@stoner.com">
+   bill.wade@stoner.com</a>.
+
+</ul>
+
+<!-- ------------------------------------------------------------------------->
+<!-- -->
+<p>
+<hr width="75%">
+
+<a name="history">
+<h2> Revision History </h2> </a>
+
+<p>
+<dl>
+ <p>
+ <dt> 1.0, 2001-08-05
+ <dd>
+  Completed revision.
+
+ <p>
+ <dt> 0.12, 2000-11-13
+ <dd>
+  Minor corrections made. <br>
+  Better HTML anchor names.
+
+ <p>
+ <dt> 0.11, 2000-09-20
+ <dd>
+  Sixth public review revision. <br>
+  Added ISO section reference numbers to most of the sections.
+
+ <p>
+ <dt> 0.10, 2000-07-30
+ <dd>
+  Sixth public review revision.
+
+ <p>
+ <dt> 0.09, 2000-02-17
+ <dd>
+  Fifth public review revision, still incomplete.
+
+ <p>
+ <dt> 0.08, 1999-10-31
+ <dd>
+  Fourth public review revision, still incomplete. <br>
+  Minor corrections made. <br>
+  Changed "C9X" to "C99" after the ratification of ISO C-1999.
+
+ <p>
+ <dt> 0.07, 1999-10-13
+ <dd>
+  Third public review revision, still incomplete.
+
+ <p>
+ <dt> 0.06, 1999-10-05
+ <dd>
+  Second public review revision, still incomplete.
+
+ <p>
+ <dt> 0.05, 1999-09-14
+ <dd>
+  First public review revision, still incomplete.
+
+ <p>
+ <dt> 0.00, 1999-08-24
+ <dd>
+  First attempt, incomplete.
+
+</dl>
+
+<!-- ------------------------------------------------------------------------->
+<!-- -->
+<a name="end">
+<p> </a>
+<hr width="75%">
+
+<p>
+<i>Copyright &copy;1999-2001 by David R. Tribble, all rights reserved.</i>
+
+<p>
+<i>
+References and links to this document may be created without permission
+from the author.
+Portions of this document may be used or quoted without permission
+from the author provided that appropriate credit is given to the author.
+This document may be printed and distributed without permission from the
+author on the condition that the authorship and copyright notices remain
+present and unaltered.
+</i>
+
+<p>
+The author can be reached by email at
+<a href="mailto:david@tribble.com">
+ david@tribble.com</a>.
+<br>
+The author's home web page is at
+<a href="http://david.tribble.com/">
+ david.tribble.com</a>.
+
+<!-- ------------------------------------------------------------------------->
+<!-- -->
+<p>
+<hr size=7>
+
+</body>
+</html>
+<!--
+
+-----BEGIN PGP SIGNATURE-----
+Version: PGPfreeware 5.5.5 for non-commercial use <http://www.nai.com>
+
+iQA/AwUBO22tlXS9RCOKzj55EQJ0mQCgm2+rLBNRK8XHIHLRI1SQWcfxUWcAoI7Q
+1k7p5cdpOE5P016jZPk9bgdE
+=cUgB
+-----END PGP SIGNATURE-----
+!-->

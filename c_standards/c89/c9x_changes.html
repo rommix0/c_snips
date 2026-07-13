@@ -1,0 +1,529 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 3.2//EN">
+
+<HTML>
+
+<HEAD>
+  <TITLE>C9X -- The New C Standard</TITLE>
+  <LINK REV="made" HREF="mailto:t_wolf@tiscalinet.ch">
+  <LINK REL="stylesheet" HREF="c9x.css" TYPE="text/css">
+  <META NAME="description" CONTENT="What's new in the new C9X standard?">
+  <META NAME="keywords" CONTENT="ANSI-C, programming, standards, C9X, ISO">
+</HEAD>
+
+<BODY BGCOLOR="#FFFFF4">
+
+<TABLE WIDTH="100%" BORDER=0 CELLSPACING=0 CELLPADDING=5 CLASS="title">
+<TR>
+  <TD VALIGN=TOP>
+    <H1>The <EM>New</EM> ISO Standard for C (C9X)</H1>
+  </TD>
+
+  <TD ALIGN=RIGHT VALIGN=TOP>
+      <A HREF="index.html"><IMG SRC="../buttons/up_page.jpg" WIDTH=82
+      HEIGHT=21 ALT="ISO C" BORDER=0></A>
+  </TD>
+</TR>
+</TABLE>
+
+<HR>
+<!--======================================================================-->
+
+<H2>What is C9X?</H2>
+
+<P>
+C9X is the name for an effort undertaken in the late nineteen-nineties
+to produce a new improved standard for the programming language C. An ISO
+committee has been working to define this new improved language. In december
+1997, they released their first public draft version of the new standard for
+public review. Later, they also released the
+<A HREF="http://wwwold.dkuug.dk/jtc1/sc22/open/n2794/">C9X FCD</A>.
+(I suppose that "FCD" stands for "Final Committee Draft".) This document
+can also be obtained in
+<A HREF="http://wwwold.dkuug.dk/JTC1/SC22/WG14/www/docs/n843.ps.gz">gzipped
+Postscript</A> form.
+</P>
+<P>
+The new ISO standard for the programming language was ratified by ISO in
+1999. Its ISO document number should therefore be ISO/IEC 9899:1999 (I didn't
+verify this.)
+</P>
+<BLOCKQUOTE>
+<STRONG>Please note</STRONG> that the final standard as it has been ratified
+<EM>may differ substantially</EM> from the <EM>working document</EM> referenced
+by the links above!
+</BLOCKQUOTE>
+
+
+<H2>What is new in C9X?</H2>
+
+<P>
+Clearly, the first question any C programmer will ask now is "And what's
+new in C?"
+</P>
+<P>
+Back in 1998, I compiled a list of changes based on the above final
+committe draft of the new ISO standard. I have never gotten any complaint
+saying that the information here was incorrect, so I guess the final standard
+did not deviate too much from the FCD. The ISO work group has published its own
+<A HREF="http://wwwold.dkuug.dk/JTC1/SC22/WG14/www/newinc9x.htm">list of
+changes</A>, but it's not exactly verbose...
+</P>
+<P>
+I still offer this list of changes because it seems still to be reasonably accurate,
+and it will give you a first impression of what the new C is like. Of course, for
+the full story, you'll have to get hold of a copy of the new ISO standard. Although
+I tried my best, I do not guarantee the information provided here to be correct.
+(As I wrote above, this list is based on the FCD, <EM>not</EM> the final new ISO
+standard.)
+<P>
+In what follows, I'll refer to C as it is defined by its original ISO
+standard (ISO/IEC 9899:1990, including technical corrigenda
+<A HREF="ftp://dkuug.dk/JTC1/SC22/WG14/www/docs/tc1.htm">TC1</A> and
+<A HREF="ftp://dkuug.dk/JTC1/SC22/WG14/www/docs/tc2.htm">TC2</A>) as
+<STRONG>C89</STRONG>, the language as defined by C89 plus the normative
+addendum 1 is referred to as <STRONG>C94</STRONG>.
+</P>
+
+<H2>Changes from C89 to C9X</H2>
+<P>
+The list below is split in several sections:
+</P>
+<UL>
+  <LI><A HREF="#Environment">Environment</A>
+  <LI><A HREF="#Preprocessor">Preprocessor</A>
+  <LI><A HREF="#Syntax">Syntax</A>
+  <LI><A HREF="#Semantics">Semantics</A>
+  <LI><A HREF="#Library">Library</A>
+  <LI><A HREF="#Annexes">Annexes</A>
+</UL>
+
+<TABLE BORDER=0>
+<TR>
+  <TH><HR><A NAME="Environment">Environment</A><HR></TH>
+</TR>
+<TR>
+  <TD>
+    <OL TYPE=1>
+      <LI> Most of the translation limits (§5.2.4.1) have been increased,
+           most notably, the implementation must support:
+	   <UL TYPE="disc">
+	     <LI>63 significant initial characters in an internal identifier
+	         or macro name (universal or extended characters count as one),
+	     <LI>31 significant initial characters in an external identifier
+                 (counting "short" UCNs as 6 and "long" UCNs as 10, and
+                 counting extended characters like the corresponding UCN),
+	         and
+	     <LI>4095 characters in a logical source line.
+	   </UL>
+	   These values were 31, 6, and 509, respectively, in C89. Note that
+	   <EM>all</EM> identifiers are case sensitive now, even external
+	   ones. (In C89, an implementation was allowed to ignore case for
+	   external identifiers.)
+    </OL>
+  </TD>
+</TR>
+<TR>
+  <TH><HR><A NAME="Preprocessor">Preprocessor</A><HR></TH>
+</TR>
+<TR>
+  <TD>
+    <OL TYPE=1>
+      <LI VALUE=2>
+           The <CODE>#pragma</CODE> directive has three reserved forms, all
+           starting with the pp-token <CODE>STDC</CODE> right after "pragma".
+	   These are used to specify certain characteristics of the
+	   floating point support to comply with IEC 559.
+	   <BR><BR>
+      <LI> The <CODE>_Pragma</CODE> unary operator allows the construction of
+           pragmas through macro expansion.
+	   <BR><BR>
+      <LI> Predefined macro <CODE>__STDC_VERSION__</CODE> has now the value
+           <CODE>199901L</CODE>. (In C94, it's value was <CODE>199409L</CODE>,
+	   C89 didn't have it at all.) I suppose this value will be fixed
+	   in the final version of the new standard to reflect the date of
+	   its actual acceptance by ISO.
+	   <BR><BR>
+      <LI> There are two conditionally defined macros,
+           <CODE>__STDC_IEC_559__</CODE> and <CODE>__STDC_IEC_559_COMPLEX__</CODE>,
+	   indicating IEC 559 conformance for floating point and complex
+	   arithmetic, respectively. If defined, they're defined to the
+	   decimal constant 1. A third conditionally defined macro called
+           <CODE>__STDC_ISO_10646__</CODE> shall indicate that <CODE>wchar_t</CODE>
+           is in accordance with ISO/IEC 10646. If defined, this macro has
+           a value of the form <CODE>yyyymmL</CODE>.
+	   <BR><BR>
+      <LI> Macro expansion: empty arguments are explicitly allowed. (In C89,
+           this resulted in undefined behavior.) Stringification (the
+	   <CODE>#</CODE> operator) of an empty argument yields the empty string,
+	   concatenation (<CODE>##</CODE>) of an empty argument with a non-empty
+	   argument produces the non-empty argument, and concatenation
+	   of two empty arguments produces nothing at all.
+	   <BR><BR>
+      <LI> Function-like macros with variable arguments, uses the ellipsis
+           (<CODE>...</CODE>) notation. For replacement, the variable arguments
+	   (including the separating commas) are "collected" into one single
+	   extra argument that can be referenced as <CODE>__VA_ARGS__</CODE>
+	   within the macro's replacement list. <CODE>__VA_ARGS__</CODE> may occur
+	   <EM>only</EM> within the replacement list of a function-like macro
+	   having a variable argument list. It's possible to have <EM>only</EM>
+	   variable arguments, as in
+	   <BLOCKQUOTE><TABLE><TR><TD Class="code"><PRE>
+ #define My_Macro(...) __VA_ARGS__</PRE></TD></TR></TABLE></BLOCKQUOTE>
+      <LI> The <CODE>#line</CODE> directive allows the specification of a line
+           number up to 2**31-1. (In C89, the limit was 2**15-1, i.e. 32767.)
+	   <BR><BR>
+      <LI> The syntax of preprocessing numbers has been changed to allow for
+           the new binary exponents present in hexadecimal floating point
+           constants.
+	   <BR><BR>
+      <LI> Line-comments (starting with the pp-token "<CODE>//</CODE>" and
+           extending up to the end of the line). As with normal comments,
+	   it's not possible to construct a comment as the result of macro
+	   replacement.
+	   <BR><BR>
+    </OL>
+  </TD>
+</TR>
+<TR>
+  <TH><HR><A NAME="Syntax">Syntax</A><HR></TH>
+</TR>
+<TR>
+  <TD>
+    <OL TYPE=1>
+      <LI VALUE=11>
+           New keywords: <CODE>restrict</CODE>, <CODE>inline</CODE>, <CODE>_Complex</CODE>,
+	   <CODE>_Imaginary</CODE>, <CODE>_Bool</CODE>.
+	   <BR><BR>
+      <LI> Within a compound statement ("block"), declarations and statements
+           can be freely mixed.
+	   <BR><BR>
+      <LI> Digraph tokens (<CODE>&lt;: :&gt; &lt;% %&gt; %: %:%:</CODE>, synonym to
+           <CODE>[ ] { } # ##</CODE>, from C94) are part of the language.
+	   <BR><BR>
+      <LI> Array declarations may have a '<CODE>*</CODE>' between the square
+           brackets (used for variable arrays in parameter lists).
+	   <BR><BR>
+      <LI> In a <CODE>for</CODE>-loop, the first expression may be a declaration,
+           with a scope encompassing only the loop.
+           <BLOCKQUOTE><TABLE ><TR><TD Class="code"><PRE>
+for (decl; pred; inc)
+  stmt;</PRE></TD></TR></TABLE></BLOCKQUOTE>
+           is equivalent to:
+	       <BLOCKQUOTE><TABLE><TR><TD Class="code"><PRE>
+{
+  decl;
+  for (; pred; inc)
+    stmt;
+}</PRE></TD></TR></TABLE></BLOCKQUOTE>
+      <LI> Compound literals (anonymous aggregates) can be created using the
+           notation
+           <BLOCKQUOTE><TABLE><TR><TD Class="code"><PRE>
+( type-name ) { initializer-list }</PRE></TD></TR></TABLE></BLOCKQUOTE>
+	   (possibly with a trailing comma before the closing brace).
+	   Compound literals are primary expressions.
+	   <BR><BR>
+      <LI> Initializers (and anonymous aggregates) have a named notation for
+           initializing members. For array elements, the element is designated
+           by <CODE>[const-expression]</CODE>, for struct and union members
+	   using a dot notation <CODE>.member-name</CODE>. E.g.,
+	   <BLOCKQUOTE><TABLE><TR><TD Class="code"><PRE>
+struct {int a[3], b;} w[] =
+  { [0].a = {1}, [1].a = 2 };</PRE></TD></TR></TABLE></BLOCKQUOTE>
+	   or
+	   <BLOCKQUOTE><TABLE><TR><TD Class="code"><PRE>
+struct {int a, b, c, d;} s =
+  { .a = 1, .c = 3, 4, .b = 5};</PRE></TD></TR></TABLE></BLOCKQUOTE>
+	   Note: the '4' in the above initializer list initializes
+	   <CODE>s.d</CODE>.
+	   <BR><BR>
+	   As usual, global data is by default set to zero (or to NULL in the
+	   case of pointers). If an initializer is present, any members not
+	   explicitly set also are zeroed out. (As in C89; the
+	   <A HREF="string_init.html">clarifications from TC2</A> are retained
+	   in C9X.)
+	   <BR><BR>
+      <LI> Notation for "universal characters":
+           <BLOCKQUOTE><TABLE><TR><TD Class="code"><PRE>
+<EM>universal-character-name:
+  </EM><STRONG>\u</STRONG><EM> hex-quad
+  </EM><STRONG>\U</STRONG><EM> hex-quad hex-quad
+
+hex-quad:
+  hexadecimal-digit hexadecimal-digit
+  hexadecimal-digit hexadecimal-digit</EM></PRE></TD></TR></TABLE></BLOCKQUOTE>
+	   Note that universal characters may appear even in the midst of
+	   an identifier! (An implementation is allowed to do some name
+	   mangling if the linker cannot deal with universal characters.)
+	   I suppose this is intended to let e.g. the Japanese write their
+	   identifiers using their Japanese characters (or symbols, or
+	   glyphs, or whatever the linguistically correct term would be).
+	   <BR><BR>
+      <LI> Notation for hexadecimal floating point constants with binary
+           exponent, i.e., the exponent is given as a decimal power of two.
+           <BR><BR>
+      <LI> New suffix "<CODE>LL</CODE>" or "<CODE>ll</CODE>" (and "<CODE>ULL</CODE>"
+           and "<CODE>ull</CODE>", of course) for constants of the
+           new <CODE>long long</CODE> types.
+    </OL>
+  </TD>
+</TR>
+<TR>
+  <TH><HR><A NAME="Semantics">Semantics</A><HR></TH>
+</TR>
+<TR>
+  <TD>
+    <OL TYPE=1>
+      <LI VALUE=21>
+           Floating point arithmetic defined such that it can comply with the
+	   <A HREF="index.html#FP">IEC 559</A> standard ("Binary
+	   floating-point arithmetic"), also known as IEEE 754 (and IEEE 854).
+	   <BR><BR>
+      <LI> New type <CODE>long long</CODE> (signed and unsigned), at least 64 bits
+           wide.
+           <BR><BR>
+      <LI> New identifier <CODE>__func__</CODE>, which is declared implicitly if
+           used within a function as
+	   <BLOCKQUOTE><TABLE><TR><TD Class="code"><CODE>
+static const char __func__[] = "<EM>function-name</EM>";</CODE></TD></TR></TABLE></BLOCKQUOTE>
+	   where <CODE><EM>function-name</EM></CODE> is the unadorned name of
+	   the function the identifier is used in. (Provides a means to
+	   obtain the name of the current function, similar to the
+	   <CODE>__FILE__</CODE> macro. It's a variable instead of a macro
+	   because the preprocessor doesn't know about functions.)
+	   <BR><BR>
+      <LI> Initializers for <CODE>auto</CODE> aggregates can be non-constant
+           expressions.
+	   <BR><BR>
+      <LI> The integer division and modulus operators are defined to perform
+           truncation towards zero. (In C89, it was implementation-defined
+	   whether truncation was done towards zero or -infinity. This is
+	   (obviously) important only if one or both operands are negative.
+	   Consider:
+	   <BLOCKQUOTE><TABLE><TR><TD Class="code"><PRE>
+-22 / 7 = -3
+-22 % 7 = -1</PRE></TD><TD>truncation towards zero</TD></TR>
+<TR><TD Class="code"><PRE>
+-22 / 7 = -4
+-22 % 7 =  6</PRE></TD><TD>truncation towards -infinity</TD></TR></TABLE></BLOCKQUOTE>
+	   Both satisfy the required equation <CODE>(a/b)*b + a%b == a</CODE>.
+	   The second has the advantage that the modulus is always positive
+	   -- but they decided on the other (more Fortran-like, less
+	   Pascal-like) variant...)
+	   <BR><BR>
+      <LI> Type specifiers: new combinations added for:
+           <UL TYPE="disc">
+             <LI><CODE>_Bool</CODE>
+	     <LI><CODE>float _Complex</CODE>, <CODE>double _Complex</CODE>,
+	         <CODE>long double _Complex</CODE>
+             <LI><CODE>signed</CODE> and <CODE>unsigned long long int</CODE>.
+	   </UL>
+	   Note: it seems that these type specifiers may occur in any order,
+	   e.g, <CODE>_Complex double long</CODE> or <CODE>signed long int long</CODE>
+	   would be legal.
+	   <BR><BR>
+	   The implementation of the complex types is defined by the standard
+	   (6.2.5(13)) to use cartesian coordinates (real and imaginary
+	   part), i.e. forbids an implementation using polar coordinates
+	   (distance from [0,0] and an angle). Furthermore, the same
+	   paragraph also specifies that a complex type has the same alignment
+	   requirements as an array of two elements of the corresponding
+	   floating types, the first must be the real part and the second
+	   the imaginary part.
+	   <BR><BR>
+           Objects of the new boolean type <CODE>_Bool</CODE> may have one of the
+           two values zero or one.
+           <BR><BR>
+      <LI> In a declaration, there must be at least one type specifier, i.e.,
+           the default to <CODE>int</CODE> has been thrown out. E.g., the
+	   declaration
+	   <BLOCKQUOTE><TABLE><TR><TD Class="code"><PRE>f();</PRE></TD></TR></TABLE></BLOCKQUOTE>
+           was equivalent to <CODE>int f();</CODE> in C89, but is illegal in C9X.
+	   <BR><BR>
+      <LI> Structs: the last member may have an incomplete array type. (This
+           is a way to codify the well-known "struct hack" that was widely
+           used and in practice worked on nearly every compiler.) The idea is
+           illustrated by the following piece of code:
+	   <BLOCKQUOTE><TABLE><TR><TD Class="code"><PRE>
+struct s {int n; double d[];};
+struct s *p1, *p2;
+size_t   sz;
+
+sz = sizeof (struct s);  // sz == offsetof (struct s, d)
+
+p1 = malloc (sizeof (struct s) + 8 * sizeof (double));
+p2 = malloc (sizeof (struct s) + 5 * sizeof (double));
+
+/* p1 behaves now as if it had been declared as
+
+   struct {int n; double d[8];} *p1;
+
+   p2 behaves now as if it had been declared as
+
+   struct {int n; double d[5];} *p2;
+*/</PRE></TD></TR></TABLE></BLOCKQUOTE>
+           Note that the specification as given in the Committee Draft
+	   implies that there be no padding before the variable last member,
+	   or, if there is, that it be included in <CODE>sizeof (struct s)</CODE>.
+	   <BR><BR>
+      <LI> Type qualifiers are idempotent, i.e., if a type qualifier
+           appears several times (either directly or indirectly through
+           typedefs) in a type specification, it's treated as if it
+           appeared only once. E.g. <CODE>const const int i;</CODE>  is equivalent
+           to <CODE>const int i;</CODE>. (Note that in
+	   <CODE>const int * const p;</CODE>, this doesn't apply as the second
+	   <CODE>const</CODE> qualifies the pointer!)
+	   <BR><BR>
+      <LI> There's a new type qualifier, called <CODE>restrict</CODE>. It's
+           intended to be used only for pointer types (6.5.3(2)). Its
+	   semantics is that two restrict-qualified pointers cannot be
+	   aliases of the same object. A restricted pointer and a
+	   non-restricted point <EM>can</EM> be aliases, though. This is
+	   intended to facilitate alias analysis in compilers, allowing
+	   more aggressive optimizations to be employed. For more information
+	   on this new feature, see the
+	   <A HREF="http://www.lysator.liu.se/c/restrict.html">original
+	   proposal X3J11 94-009, "Restricted Pointers"</A>.
+	   <BR><BR>
+      <LI> There's a new function specifier <CODE>inline</CODE>, giving the
+           compiler a hint that such a function should be inlined.
+	   <BR><BR>
+      <LI> A compiler must parse and accept both <CODE>restrict</CODE> and
+           <CODE>inline</CODE>, but is free to ignore the hints given by them.
+	   <BR><BR>
+      <LI> There are variable-length arrays, whose size depends not upon
+           a constant expression but on a computed value.
+	   Variable-length arrays must not be global or members of a struct
+	   or union. Multi-dimensional variable-length arrays are allowed.
+	   <BR><BR>
+      <LI> The <CODE>goto</CODE> statement is not allowed to jump <EM>into</EM>
+           the scope of a variable-length array. Jumps <EM>within</EM> such
+	   a scope are allowed.
+	   <BR><BR>
+    </OL>
+  </TD>
+</TR>
+<TR>
+  <TH><HR><A NAME="Library">Library</A><HR></TH>
+</TR>
+<TR>
+  <TD>
+    <OL TYPE=1>
+      <LI VALUE=35>
+           New <CODE>&lt;stdbool.h&gt;</CODE>, containg a typedef for
+	   <CODE>bool</CODE> and macros for <CODE>true</CODE> and <CODE>false</CODE>.
+	   <BR><BR>
+      <LI> The <A HREF="http://www.lysator.liu.se/c/iso646.h"><CODE>&lt;iso646.h&gt;</CODE></A> header from C94 is also in C9X.
+           <BR><BR>
+      <LI> <CODE>&lt;errno.h&gt;</CODE> contains a new predefined macro
+           <CODE>EILSEQ</CODE>. Used to report errors in wide-character
+	   conversion. (This macro was introduced in C94.)
+	   <BR><BR>
+      <LI> New <CODE>&lt;inttypes.h&gt;</CODE>, giving typedefs specifying
+           integer types with
+	   <UL TYPE="disc">
+	     <LI> exactly <EM>n</EM> bits
+	     <LI> at least <EM>n</EM> bits
+	     <LI> the fastest (whatever that means) type having at least
+	          <EM>n</EM> bits
+           </UL>
+	   where <EM>n</EM> in [8, 16, 32, 64]. Also defines for each of
+	   these types macros expanding to the correct format specifiers for
+	   the <CODE>printf</CODE> and <CODE>scanf</CODE> families, as well as macros
+	   expanding to the correct suffixes for constants (e.g.,
+	   <CODE>UINT64_C (0x123)</CODE> might expand to <CODE>0x123ULL</CODE>) and
+	   for the maximum and minimum values of these types.
+	   <BR><BR>
+      <LI> New file <CODE>&lt;fenv.h&gt;</CODE>, providing access to the floating
+           point state. (To conform to <A HREF="c_std.html#FP">IEC 559</A>.)
+	   <BR><BR>
+      <LI> <CODE>&lt;math.h&gt;</CODE> contains some new low-level functions
+           (e.g. <CODE>is_nan</CODE> or <CODE>copysign</CODE>) as well as some
+	   configuration macros and a pragma to comply with
+	   <A HREF="c_std.html#FP">IEC 559</A>. Also
+	   contains new high-level functions, e.g. <CODE>gamma</CODE>.
+	   <BR><BR>
+      <LI> <CODE>&lt;complex.h&gt;</CODE> provides mathematical functions for
+           the new complex types.
+	   <BR><BR>
+      <LI> <CODE>&lt;tgmath.h&gt;</CODE> stands for "type-generic math" and defines
+           some macros that automagically call the right function from
+	   <CODE>&lt;math.h&gt;</CODE> or from <CODE>&lt;complex.h&gt;</CODE>
+	   depending upon the type of their arguments.
+	   <BR><BR>
+      <LI> <CODE>&lt;stdarg.h&gt;</CODE> has a new function <CODE>va_copy</CODE>
+           to copy a variable argument list.
+	   <BR><BR>
+      <LI> The file model of <CODE>&lt;stdio.h&gt;</CODE> has been extended to
+           cover also files with multi-byte or wide characters. There are
+	   some additional functions, most notably <CODE>snprintf</CODE>
+	   (like <CODE>sprintf</CODE>, but allows the programmer to specify the
+	   length of the result buffer) and a <CODE>vscanf</CODE> family (in
+	   analogy to <CODE>vprintf</CODE>).
+	   <BR><BR>
+      <LI> <CODE>&lt;stdlib.h&gt;</CODE> has a few new routines for conversions
+           of <CODE>long long</CODE>, e.g. <CODE>atoll</CODE> (which doesn't describe
+	   a Pacific island).
+	   <BR><BR>
+      <LI> <CODE>&lt;time.h&gt;</CODE> has a new type <CODE>struct tmx</CODE>, which
+           is like <CODE>struct tm</CODE> but contains a few more fields dealing
+	   with leap seconds. There are also a few new routines operating on
+	   this new structure.
+	   <BR><BR>
+      <LI> <CODE>&lt;wctype.h&gt;</CODE> contains a lot of wide-character handling
+           functions, including formatted I/O and numeric conversions. (If I
+	   recall correctly, this is basically what was defined in C94.)
+	   <BR><BR>
+    </OL>
+  </TD>
+</TR>
+<TR>
+  <TH><HR><A NAME="Annexes">Annexes</A><HR></TH>
+</TR>
+<TR>
+  <TD>
+    <OL TYPE=1>
+      <LI VALUE=48>
+           Annexes C and D (informative) detail the model of sequence points.
+           <BR><BR>
+      <LI>
+           New annex F (normative) details the
+	   <A HREF="index.html#FP">IEC 559</A> floating point model
+	   and its support in C.
+	   <BR><BR>
+      <LI> Annex G (informative) describes
+           <A HREF="index.html#FP">IEC 559</A> conformant complex
+           arithmetic.
+	   <BR><BR>
+      <LI> Annex H (informative) describes to what extent C conforms to the
+        <A HREF="ftp://crl.dec.com/pub/misc/lia-1-is.ps.Z">ISO/IEC 10967-1</A>
+	   standard on language-independent arithmetic.
+	   <BR><BR>
+      <LI> Annex I (normative) defines the ranges of legal values for universal
+           character names in the source character set.
+    </OL>
+  </TD>
+</TR>
+</TABLE>
+
+<HR>
+<!--======================================================================-->
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=5 CLASS="footer" WIDTH="100%">
+<TR>
+  <TD>
+       <A HREF="../../index.html">
+       <IMG SRC="../buttons/home_page.jpg" ALT="Home Page" WIDTH=82
+       HEIGHT=22 BORDER=0></A>
+  </TD>
+  <TD ALIGN="left" WIDTH="100%">
+       <FONT SIZE=-1>Copyright &copy; 2000 by
+       <A HREF="mailto:t_wolf@tiscalinet.ch">Thomas Wolf</a>. All rights
+       reserved.
+       </FONT>
+       <BR>
+       <FONT SIZE=-1>TW, Aug 01, 2000</FONT>
+  </TD>
+</TR>
+</TABLE>
+
+</BODY>
+</HTML>

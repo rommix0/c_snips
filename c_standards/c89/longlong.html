@@ -1,0 +1,1673 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
+<title> The 64-bit integer type "long long": arguments and history. (John R. Mashey) </title>
+</head>
+<body>
+<h1> The 64-bit integer type "long long": arguments and history. (John R. Mashey) </h1>
+<hr>
+<a name="1"></a>
+<pre>
+Subject: <a href="http://groups.google.com/groups/search?as_ugroup=comp.lang.c&amp;as_uauthors=John+Mashey&amp;as_usubject=longs+long+in&amp;as_drrb=b&amp;as_mind=15&amp;as_minm=8&amp;as_miny=1995&amp;as_maxd=17&amp;as_maxm=8&amp;as_maxy=1995&amp;sitesearch=groups.google.com">Re: long longs in c</a>
+From: mash@mash.engr.sgi.com (John R. Mashey) 
+Date: Aug 16 1995
+Newsgroups: comp.lang.c
+
+In article &lt;40g7uj$c74@hpuerci.atl.hp.com>, swm@atl.hp.com (Sandy Morton) writes:
+|> Organization: Hewlett-Packard Company, Technology Solutions Lab
+|> 
+|> In article &lt;danpop.808147613@rscernix>, Dan.Pop@mail.cern.ch (Dan Pop) writes:
+|> |> long long is not a C feature.  Compiler specific questions belong to
+|> |> system specific newsgroups, in this case comp.sys.hp.hpux.
+|> 
+|> Okay.  I'm not arguing with you and I plan to post my problem there as well.
+|> But ... are you sure about long longs not being a C feature?  I was under
+|> the impression they were being added to the ansi standard (thus the reason
+|> HP is implementing them).  They are still very new, and until HP's 10.0
+...
+
+
+1) long longs are not part of ANSI C ... but probably will be, since:
+
+2) They are implemented by many vendors.  3 years ago, there was an informal
+working group that included many vendors, (addressing 64-bit C progrmaming
+models for machines that also had 32-bit models),
+and the general consensus was
+that as much as we despised the syntax, it was:
+        a) Already in CONVEX &amp; Amdahl, at least
+        b) Already in Gnu C
+        c) And various other hardware vendors either already had it in
+           or were planning to.
+Somebody in this group was also on ANSI C committee, and observed that
+fact of long long not being in ANSI C was no reason not to agree on doing it,
+since standards generally codify existing practice, rather than inventing
+new things, when reasonably possible.
+
+3) On SGI, printf long long    uses    %lld.  I don't know what others do.
+
+
+-john mashey    DISCLAIMER: &lt;generic disclaimer, I speak for me only, etc>
+UUCP:    mash@sgi.com 
+DDD:    415-390-3090    FAX: 415-967-8496
+USPS:   Silicon Graphics 6L-005, 2011 N. Shoreline Blvd, Mountain View, CA 94039-7311
+
+</pre>
+<hr>
+<a name="2"></a>
+<pre>
+Subject: <a href="http://groups.google.com/groups/search?as_ugroup=comp.lang.c&amp;as_uauthors=John+Mashey&amp;as_usubject=longs+long+in&amp;as_drrb=b&amp;as_mind=16&amp;as_minm=8&amp;as_miny=1995&amp;as_maxd=18&amp;as_maxm=8&amp;as_maxy=1995&amp;sitesearch=groups.google.com">Re: long longs in c</a>
+From: mash@mash.engr.sgi.com (John R. Mashey) 
+Date: Aug 17 1995
+Newsgroups: comp.lang.c,comp.std.c
+
+In article &lt;danpop.808659017@rscernix>, Dan.Pop@mail.cern.ch (Dan Pop) writes:
+|> 
+|> In &lt;40tdmr$j8k@murrow.corp.sgi.com> mash@mash.engr.sgi.com (John R. Mashey) writes:
+|> 
+|> >1) long longs are not part of ANSI C ... but probably will be, since:
+
+(lots of people have implemented it, if not previously, as instigated
+by 64-bit working group in 1992). 
+
+
+|> Well, you'd better have a look at comp.std.c.  None of the committee
+|> people posting there seems to be favouring the addition of long long
+|> in C9X.  They're considering other schemes.  long long seems to be
+|> doomed to be a vendor extension.
+
+
+I believe this conclusion to be unwarranted ....
+        a) Some features are random extensions by individual vendors.
+        b) Some extensions get widely implemented in advance of the
+           standard, because they solve some problem that cannot wait
+           until the next standard ... after all, standards have no
+           business changing overnight.
+        c) Standards committees may well need to sometimes invent new
+           things [like, when volatile was added years ago].
+        d) However, if an extension is widely implemented, it is incumbent
+           on an open standards committee to give that extension serious
+           consideration ...  because otherwise, there is a strong
+           tendency for the defacto standards to evolve away from the
+           dejure standard... which is probably not a good idea.
+        e) Again, as I said before, the 1-2 members of the 1992 group were also
+           in the ANSI C group ... were where I got the opinion above from,
+           i.e., don't let the non-existence of long long in the standard
+           stop you from making progress - it is better to do something
+           consistent.
+
+IF long long has definitively been ruled out (as opposed to being disliked by
+a few committee members), it would be interesting to hear more... as it
+seems inconsistent with past behavior, which has at least sometimes
+ratified existing practices that were less than elegant... and was
+appropriate in doing so.
+        
+-- 
+-john mashey    DISCLAIMER: &lt;generic disclaimer, I speak for me only, etc>
+UUCP:    mash@sgi.com 
+DDD:    415-390-3090    FAX: 415-967-8496
+USPS:   Silicon Graphics 6L-005, 2011 N. Shoreline Blvd, Mountain View, CA 94039-7311
+</pre>
+<hr>
+<a name="3"></a>
+<pre>
+Subject: <a href="http://groups.google.com/groups/search?as_ugroup=comp.lang.c&amp;as_uauthors=John+Mashey&amp;as_usubject=longs+long+in&amp;as_drrb=b&amp;as_mind=20&amp;as_minm=8&amp;as_miny=1995&amp;as_maxd=22&amp;as_maxm=8&amp;as_maxy=1995&amp;sitesearch=groups.google.com">Re: long longs in c</a>
+From: mash@mash.engr.sgi.com (John R. Mashey) 
+Date: Aug 21 1995
+Newsgroups: comp.lang.c,comp.std.c
+
+In article &lt;412dkr$7dm@newsbf02.news.aol.com>, ffarance@aol.com
+(FFarance) writes:
+
+|> > |> In &lt;40tdmr$j8k@murrow.corp.sgi.com> mash@mash.engr.sgi.com (John R.
+|> Mashey) writes:
+|> >|> 
+|> > |> >1) long longs are not part of ANSI C ... but probably will be,
+|> since:
+|> > (lots of people have implemented it, if not previously, as instigated
+|> > by 64-bit working group in 1992). 
+|> 
+|> The "long long" type is unlikely to be included in C9X.  Although the
+|> problem has been discussed in the EIR (extended integer range) working
+|> group of NCEG (numeric C extensions group -- X3J11.1) for several years,
+|> over the past two years is has been recognized as a faulty solution.
+
+It is informative to hear that this has been recognized over the last two
+years as faulty ... but there is a *serious* problem here...
+
+SO, WHEN DO WE GET A NON-FAULTY SOLUTION?
+        I.e., there are proposals.  When does one get accepted *enough* that
+        vendors dare go implement it and expect it will actually persist
+        (or close enough) in the final standard?  (For example, years ago,
+        "volatile" was clearly known to be coming soon enough (1985/1986)
+        to save those of us worried about serious optimization, even though
+        the standard didn't get approved until later.)
+=========
+I'd like to go through some background, facts, and then a few opinions, to
+observe that in the effort to get a "perfect" solution, we are now in the
+awkward position of lacking a seriously-necessary feature / direction
+in the standard, with the usual result: individual vendors go implement
+extensions, not necessarily compatible.  This particular one is *very*
+frustrating, since it is not rocket science, but rather predictable.
+Note: none of this is meant to be criticism of people involved in the
+standards process, which is inherently a frustrating, and often thankless
+task.  It is meant as a plea to balance perfectionism versus pragmatism,
+of which both are needed to make progress.  It is also a plea that people
+involved in this *must* have a good feel for likely hardware progress,
+especially for a language like C that has always been meant to make
+reasonably efficient use of hardware.  While I have no special love for
+"long long", especially its syntax, and while there are plenty of
+issues that need to be dealt with, and while I hardly believe C's type
+system is perfect ... 
+
+I believe that we have a *serious* problem in 1995, to *not* have multiple
+implementations of compilers accepting a 64-bit integer data type, such that
+it was already well-lined up to become part of the standard.
+The situation we are in, is like where we would have been ~1978, had we
+not already had "long" in the language for several years.  That is:
+
+        a) PDP-11 UNIX would have been really ugly in the area of file
+	   pointers, since int hadn't been big enough for a long time,
+	   that is, the 16-bit systems needed first-class 32-bit data,
+	   regardless of anything else.  Structs with 2 ints really
+	   wouldn't have been very pleasant.  Likewise, limiting files
+	   to 64KB wasn't either. 
+        b) Preparing cross-compilers and tools for 32-bit systems would have
+           been more painful, that is, it was good to have first-class data
+           on the 16-bit system to prepare the tools, and when done, to get
+           code that made sense on both 16- and 32-bit systems.
+        c) It would have been far more difficult to maintain portability
+           and interoperability between 16- and 32-bit systems, that is,
+           one could both write portable code if one was careful, and
+           especially, one *could* provide structs for external data that
+           looked the same, since both 16- and 32-bit systems could
+           describe 8-, 16-, and 32-bit data.
+Of course, this was in the days before people had converted as much code to
+using typedefs, which made it pretty painful.
+
+Deja vu...  in 1995:
+        a) There is a great desire by many to have a UNIX API for 64-bit
+           files on 32-bit systems (called the Large File Summit), since
+           2GB file limits are behind the power curve of disks these days. This
+           is no problem on 64-bit systems, and it's not really too unclean
+           on 32-bit systems (if you've added a a first-class 64-bit type
+           and can typedef onto it.  Yes, some older code breaks ... but
+           well-typedefed code is OK.) Some people implemented this in 1994.
+        b) Every major RISC microprocessor family used in systems
+	   either already has a 64-bit version on the market [1992:
+	   MIPS &amp; DEC], or has one coming soon [1995: Sun UltraSPARC,
+	   IBM/Moto PPC620, 1996: HP PA-8000].  Hence, some people have
+	   already done compilers that have to run on 32-bit machines,
+	   to produce code for 64-bit machines ...  just like running
+	   PDP-11 compilers to produce VAX code.
+        c) Right now, without a 64-bit integer datatype usable in 32-bit C,
+           there is the same awkwardness we would have had, had we not had
+           long back in the 16->32 days.
+
+(But what about 128-bits: I'd be pleased to have a 128-bit type as well
+...  however, a pragmatic view says: we have the 64-bit problem right
+now, we've had it for several years; we won't have the 128-bit problem
+for quite a few years.  Based on the typical 2 bits every 3 years
+increase in addressing, a gross estimate is: 32 bits/2 bits * 3 years =
+48 years, or 1992+48 = 2040.  Personally, I'm aggressive, so might say
+year 2020 for wanting 128-bit computers ... but on the other hand,
+there are some fairly serious penalties for building 128-bit wide
+integer datapaths, and there are some other impediments to making the
+64->128-bit transition as smooth as the 32->64 one; In any case, I will
+be very surprised to see any widespread use, in general-purpose
+systems, of 128-bit-wide integer datapaths, in 10 years (2005).  I
+wouldn't be surprised to see 128-bit floating-point in some micros, but
+128-bit integers would indeed surprise me.  Hence, I'd much rather have
+a simple solution for 64-bit right now.  Of course, a plan that allows
+something sensible for the bigger integers over time is goodness.
+
+BACKGROUND
+If 64-bit microprocessors are unfamiliar, consider reading:
+John R. Mashey, "64-bit Computing", BYTE, Sept 1991, 135-142.  This explained
+what 64-bit micros were, the hardware trends leading to this, and that
+there would be widespread use of them by 1995 (there is).  While a little
+old, most of what I said there still seems OK.
+
+SOME FACTS
+1) Vector supercomputers have been 64-bit systems for years. One may argue
+that these are low-volume, and for several reasons (word-addressing on
+CRAYs, non-existence of 32-bit family members, etc, stronger importance of
+FORTRAN, etc), some people might argue that these are not very relevant
+to C ... but still, there are several $B of hardware installed, and,
+for example, CONVEX has supported long long as 64-bit integer for years.
+CRAY made int 64 bits, and short 32 bits.
+
+2) In 1992, 64-bit microprocessors became available from MIPS (R4000) and
+DEC (Alpha), and started shipping in systems. For {SPARC, PPC, HP PA},
+the same thing happens in 1995 or 1996 - the chips have all been announced;
+some people guess the Intel/HP effort appears in 1998.
+
+3) From 1992 thru current, I estimate there must be about $10B installed base
+of 64-bit-capable microprocessor hardware already sold.   Most of it is
+still running 32-bit OSs, although some of the 32-bit OS code uses 64-bit
+integer manipulations for speed.
+I *think* >$1B worth is already running 64-bit
+UNIX + programming environments, i.e., DEC UNIX and SGI IRIX 6 (shipped 12
+months ago).
+While some 64-bit hardware will stay running 32-bit software for a
+while, new OS releases may well convert some of the existing hardware to
+64-bit OSs, and an increasing percentage of newer systems will run the
+64-bit OSs, especially in larger servers.  [2GB/4GB main memory limits
+do not make the grade for big servers these days; while one can get
+above this on 32-bit hardware, it starts to get painful.]
+
+4) DEC UNIX is a "pure" 64-bit system, that is, there is no 32-bit programming
+model, since there was no such installed base of Alpha software, i.e.,
+that was a plausible choice for DEC.  SGI's IRIX 6 is a "mixed 64/32"
+model, i.e., it is a 64-bit OS that supports both 32- and 64-bit
+models, and will, i.e., that is not a transitional choice, as we
+believe that many applications will stick in 32-bit for a long time.
+IRIX 5 &amp; 6 both support a 64-bit interface to 64-bit file systems in
+32-bit user programs, i.e., somewhere underneath is a long long,
+although carefully typdeffed to avoid direct references in user code.
+DEC UNIX proves you can port a lot of software to 64-bit; IRIX proves you
+can make code reasonably portable between 32- and 64-bit.
+
+Both of these systems use the so-called LP64 model, i.e., at this instant,
+the total installed base of 64-bit software (with possible exception of
+CRAY T3D) uses LP64:
+        sizes in bits
+Name    char    short   int     long    ptr     long long       Notes
+ILP32   8       16      32      32      32      64              many
+LLP64   8       16      32      32      64      64              longlong needed
+LP64    8       16      32      64      64      64              DEC, SGI
+ILP64   8       16      64      64      64      64              (needs 32-bit)
+
+(The comments mean: in LLP64 (Longlong+Pointer are 64), you need *something* to
+describe 64-bit integers; in ILP64 (integer, long, pointer are 64) you'll
+want to add some other type to describe 32-bit integer.  I didn't invent
+this nomenclature, which is less than elegant :-) 
+
+5) In 1992, there was a 6-month effort among {whole bunch of vendors} to see
+if we could agree on a choice of {LLP64, LP64, ILP64}.  There was *serious*
+talent involved from around the industry, but at that time, we could not
+agree.  As it turns out, it probably doesn't matter much for well-typdeffed
+code, i.e., newer applications.  Some older code breaks no matter what you
+choose, and and some older code works on 1-2 of the models and breaks on the
+other(s), with the breakage depending on the specific application.   What we
+did agree on was (1) Supply some standard typedef names that application
+vendors could use, if they wanted, and if they didn't already have their
+own set of typedefs.  Some vendors have done this.  (2) Do long long as a
+64-bit integer datatype (NOT as a might-be-any-size >= long), so we'd
+at least have one.  NOTE: this is more for the necessities of ILP32;
+LP64 and ILP64 could get away without it, but the problem is in dealing
+with 64-bit integers from ILP32 programs ... similar to the 16/32-bit days.
+As noted, there were several people in this group also involved in ANSI C,
+and we asked them about the wisdom of doing this, and were told, unambiguously,
+that we might as well go ahead and do it.  Whether it was good or not, it
+was not for lack of communication...
+
+6) Now, there is a new 64-bit initiative to get some 64-bit API and data
+representation issues settled.  The first part (API), is crucial, and ISVs
+really want it badly; that is, some vendors have already done 64-bit ports,
+but a lot more are getting there, and we're starting to get into the "big"
+applications that have masses of software, and not surprisingly, the ISVs
+do not want to have to redo things any more than they need to.
+
+OPINIONS:
+1) There is a right time, and two wrong times, to standardize something.
+If is standardized too early, before some relevant experience has accumulated,
+bad mistakes can be made.  If it standardized too late, a whole bunch of people
+will have already done it, likely in more-or-less incompatible ways, especially
+in the subtle cases, or will have gotten into a less-than-elegant solution,
+basically out of desperation to get something done.  I'd distinguish between
+two cases:
+        a) Add an extension because it is cool, because customers have
+           asked for it, because it helps performance, etc, etc ... or
+           because some competitor puts it in :-)
+        b) Add an extension because fundamental external industry trends
+           make it *excruciatingly painful* to do without the extension or
+           some equivalent.
+I think "long long" fits b) better than a); people aren't doing this for fun;
+they are doing it to fit the needs of straightforward, predictable,
+hardware trends that mostly look like straight lines on semi-log charts,
+with a transition coming very similar to that which occurred going from
+PDP-11 to VAX, i.e., not rocket science, not needing brilliant innovations.
+
+2) So, when is the right time to have at least gotten a simple data type
+available to represent 64-bit integers (in a 32-bit environment, i.e.,
+assuming that long was unavailable)?
+
+1989: nobody would even admit to working on 64-bit micros.
+1990: MIPS R4000 announced (late in year).
+1991: Various vendors admit to 64-bit plans; 2GB (31-bits) SCSI disks starting
+1992: 64-bit micros (MIPS, Alpha) ship in systems from multiple vendors
+1992/1993: DEC ships OSF/1 (I can't recall whether late in 1992, or in 1993)
+1994: SGI ships IRIX 6 (64/32-bit)
+1996: IBM/Motorola PPC620, Sun UltraSPARC, HP PA8000 out in systems;
+      (PPC620 &amp; UltraSPARC might be out in 1995, but for sure by 1996).
+1996: ?
+1998: ? Intel/HP 64-bit chip ??
+
+From the above, it sure looks to me like we really needed to get *something*
+for a 64-bit datatype in C (again, general agreement, not in a formal
+standard), usable in ILP32 environments:
+1991: would have been wonderful, but too much to expect.
+1992: more likely, and there were some people with experience, and there
+        were several real chips to help check speed assumptions.
+1993: starting to get a little late
+1995: too late to catch most of the effort.
+
+Without going through the sequences in detail, the usual realities of
+adding this kind of extension usually mean that somebody is adding the
+extension to C a year before it would ship (on 32-bit system), and probably
+2 years before there's a 64-bit UNIX shipped. This means there were several
+companies with committed development efforts in 1991/1992.
+
+So, in summary: it would have been really nice if we could have gotten
+something agreeable (that is not blessed as standard, that always takes longer,
+but with some agreement of intent) in 1991, or at least in 1992, late enough
+for people to have some experience, but early enough to get something
+consistent to customers that could still have a chance of being blessed
+later on.  Proposals in 1995 ... are late enough that many vendors will
+have already done the compiler work that they need to ship 64-bit 
+products in 1996 or 1997...  Of course, this is hindsight, and I do feel
+a little bad for not pushing harder on this in 1991.
+
+
+|>      - After much analysis, the problem is not ``can I standardize
+|>      "long long", or how to I get a 64-bit type, or what is the name
+|>      of a 64-bit type'', but ``loss of intent information causes
+|>      portability problems''.  This isn't an obvious conclusion.  You
+|>      should read the paper to understand the *real* problem.
+
+Hmmm.  Having started with C in 1973, from Dennis' 25-pager (that's all there
+was), and having gone thru the 16- to 32-bit transitions, and Little-Endian ->
+Big-Endian transitions, and being old enough to be at least acknowledged in
+the first K&amp;R C book, and having /managed various UNIX ports,
+and worked on C compilers, and having moved applications around, and having
+helped design RISC micros with some strong input from what real C code
+looked like, and having helped design the first 64-bit RISC micro ...
+I think I understand "loss of intent", which was certainly a major topic
+of the 1992 series of meetings.  (we just couldn't agree on which intents
+were more common or more important.)
+
+One more time: I claim "how I get a 64-bit type" IS a problem; I don't
+think it's the only problem, and there may well be more general ways to
+handle these issues (and as soon as I dig up gnu zip so I can look at
+the files, I'll look at the SBEIR files).
+
+ BUT, I CLAIM THAT IT IS A *REAL*
+PROBLEM WHEN $9B OF COMPUTERS CAN'T EVEN USE A SIMPLE C INTEGER DATATYPE TO
+DESCRIBE THEIR OWN INTEGER REGISTERS.   ($9B = $10B - $1B running 64-bit OSs).
+
+
+|>      - The use of "long long" causes more harm (really!) because it
+|>      creates more porting problems.  As a simple example, while we
+
+Causes more harm than what?  Remember, some of us had no choice but to
+figure out something to do in 1991 or 1992, to get 32-bitters ready to
+deal with 64-bit.  In any case, whether it causes more harm or not,
+a whole bunch of us found some 64-bit integer data type *necessary*.
+
+|>      might believe that "long long" is a 64-bit type, what happens
+|>      when you move the code to 128-bit machines?  The "long long"
+
+It is *very* unlikely that there will be any 128-bit-integer CPUs used in
+general-purpose systems in the next few years;
+it would be nice if we could handle them, and the
+64->128 transition earlier in the sequence than we did this time.
+I'd be delighted if a better type system were in place well before the
+time somebody has to worry about.  [I expect to have retired long before that,
+but I do have colleagues young enough that they will have to worry about :-)]
+
+We tell everybody to use typedefs anyway; and some do;
+we do our best to typedef all of the APIs so people use the right things;
+would it have made people happier to have called this int64_t or __int64_t?
+But, in any case, as far as I can tell, anyone who is using this is just
+treating it as a 64-bit integer.  If somebody is doing something else,
+I'd be interested in hearing it.
+
+|>      type will probably map into the X or Y typedef above.  This
+|>      will cause porting problems because whatever "long long" is
+|>      mapped into, some will believe it is (and use it as) ``the
+|>      fastest type of at least 64 bits'' and others will believe it
+|>      is ``exactly 64 bits''.  Thus, in the port to 128-bit machines,
+|>      we have to track down these implicit assumptions because
+|> programmers
+|>      *rarely* document their intent (e.g., ``I want the fastest 32-bit
+|>      type'') and, mostly, they believe the type itself documents
+|>      intent (!).  This is how porting problems are created.
+
+Like I say, I am *seriously* worried about supporting 64-bit integers on
+32-bit machines, and *seriously* worried about source compatibility
+between 32- and 64-bit machines ... 128-bit machines are far away, and
+citing them as a big concern isn't a big help right now, although any
+major change to the type scheme should certainly be played off versus the
+realities, especially before all of us old fogies who've actually gone
+through 2 factor-of-2-up-bits changes are out of this business :-)
+ 
+
+
+|> >    c) Standards committees may well need to sometimes invent new
+|> >       things [like, when volatile was added years ago].
+|> 
+|> This solution wasn't ``just invented'', but developed over years by
+|> analyzing what the *real* problem is.  The nature of the solution matches
+|> the nature of the problem.  BTW, bit/byte ordering/alignment and
+|> representation (e.g., two's complement) will be addressed in separate
+|> proposals.  The SBEIR proposal only addresses range extensions.
+
+Sorry, I didn't mean to imply that committees invented random features on the
+spur of the moment, but rather sometimes had to create features found in
+few, if any existing implementations.  I.e., "invent" was not a pejorative
+in any way.
+
+|> >    e) Again, as I said before, the 1-2 members of the 1992 group were
+|> also
+|> >       in the ANSI C group ... were where I got the opinion above
+|> from,
+|> >       i.e., don't let the non-existence of long long in the standard
+|> >       stop you from making progress - it is better to do something
+|> >       consistent.
+|> 
+|> In 1992, that was probably a reasonable opinion.  Since then we understand
+|> the problem and have solutions being worked now.
+
+Again ... if the solutions are being worked on now ... they are too late,
+I'm afraid.
+
+
+|> I think if we could have fixed "long long", even with a 90% solution,
+|> we would have done it.  Among the reasons for not including "long long"
+|> are: we'd have to solve this problem again 10 years from now when people
+|> were asking for "long long long" for their 128-bit machines; "long long"
+|> causes more portability problems *across different architectures* than
+|> it helps.  Years ago, many people wondered out aloud if we could find
+|> a ``right'' solution that solved the problem for once and all.  The
+|> SBEIR proposal is one solution.
+
+We agree on lots of things; I don't think long long solves all the problems.
+I'd hope there's something better for
+128-bit than long long long ... but I am really concerned that the common
+law "the best is the enemy of the very good" is in operation here.
+
+I think I have good reason to believe that 128-bit-integer machines are
+25 years away, i.e., longer than the existence of C...
+
+Meanwhile, $9B (and growing fast) worth of computers ...  and having long long,
+*demonstrably* has helped a bunch of porting efforts already.
+
+
+-john mashey    DISCLAIMER: &lt;generic disclaimer, I speak for me only, etc>
+UUCP:    mash@sgi.com 
+DDD:    415-390-3090    FAX: 415-967-8496
+USPS:   Silicon Graphics 6L-005, 2011 N. Shoreline Blvd, Mountain View, CA 94039-7311
+</pre>
+<hr>
+<a name="4"></a>
+<pre>
+Subject: <a href="http://groups.google.com/groups/search?as_ugroup=comp.lang.c&amp;as_uauthors=John+Mashey&amp;as_usubject=longs+long+in&amp;as_drrb=b&amp;as_mind=21&amp;as_minm=8&amp;as_miny=1995&amp;as_maxd=23&amp;as_maxm=8&amp;as_maxy=1995&amp;sitesearch=groups.google.com">Re: long longs in c</a>
+From: mash@mash.engr.sgi.com (John R. Mashey) 
+Date: Aug 22 1995
+Newsgroups: comp.lang.c,comp.std.c
+
+In article &lt;danpop.809087008@rscernix>, Dan.Pop@mail.cern.ch (Dan Pop) writes:
+(Hmm, some rather strong and pejorative statements about many people):
+
+|> In &lt;41b0qq$juj@murrow.corp.sgi.com> mash@mash.engr.sgi.com (John R. Mashey) writes:
+|> 
+|> >One more time: I claim "how I get a 64-bit type" IS a problem; I don't
+|> 
+|> And the solution is straightforward: have a 64-bit long.  C has 4 basic
+|> integral types and each of them can have a different size: 8, 16, 32 and
+|> 64 bits.  Only brain dead software, making unwarranted assumptions about
+|> the relative sizes of int's, long's and pointers will be affected.
+
+In the real world, any vendor who, in 1991, declared that in their 32-bit
+environment, the sizeof long would now be 8 bytes, would have been lynched by
+their ISVs.  Worse, such vendors would immediately have dropped to the
+bottom of the port lists, incurring serious financial damage.
+These things may be irrelevant to someone in a research environment, some of
+which place highest priorities on 1) their own code and 2) free software
+and relatively little on software from ISVs.
+But these things are *not* irrelevant to many of the rest of us.  Those
+in research environments, paid for with research funding, may not consider
+these things important ... but a vendor that ignores such issues usually
+gets hurt badly, in many cases, going out of business.  This effect is
+most commonly seen in high-end technical computing, where mean-time to
+bankruptcy is a an important parameter for purchase, and where
+environments difficult to program have died pretty badly.
+
+|> Because of DEC OSF/1, most free software has been already fixed.
+|> It's high time to stop looking at the model imposed by the VAX as being
+|> the holy grail.
+
+Nobody that I know involved in such decisions thinks the VAX model is
+the holy grail...
+
+|> The "long long" pseudo-solution wasn't needed in the first place, it was
+|> a mistake made by vendors who didn't have the balls to do the right thing,
+|> then other vendors followed like lemmings.  It comes a time when the
+|> mistakes of the past have to be admitted and corrected.
+
+These are fairly strong, and unnecessarily impolite words, that cast aspersions
+upon people with whom you may not agree, but may well have to deal with
+differing sets of requirements than yours.
+
+-john mashey    DISCLAIMER: &lt;generic disclaimer, I speak for me only, etc>
+UUCP:    mash@sgi.com 
+DDD:    415-390-3090    FAX: 415-967-8496
+USPS:   Silicon Graphics 6L-005, 2011 N. Shoreline Blvd, Mountain View, CA 94039-7311
+</pre>
+<hr>
+<a name="5"></a>
+<pre>
+Subject: <a href="http://groups.google.com/groups/search?as_ugroup=comp.lang.c&amp;as_uauthors=John+Mashey&amp;as_usubject=longs+long+in&amp;as_drrb=b&amp;as_mind=21&amp;as_minm=8&amp;as_miny=1995&amp;as_maxd=23&amp;as_maxm=8&amp;as_maxy=1995&amp;sitesearch=groups.google.com">Re: long longs in c</a>
+From: mash@mash.engr.sgi.com (John R. Mashey) 
+Date: Aug 22 1995
+Newsgroups: comp.lang.c,comp.std.c
+
+In article &lt;41cv0r$pej@newsbf02.news.aol.com>, ffarance@aol.com
+(FFarance) writes:
+
+|> nightmares.  Thus, "long long" is attractive *now*, but will cause
+|> problems
+|> with 128-bit architectures.  32-bit machines started to arrive around 1978
+|> and 64-bit machines around 1991 (my dates are approximate).  128-bit
+|> machines will become available around 2004.
+
+I agree with many of the comments before this, but we still have the problem
+upon us already.  Again, I make no representation that long long, or
+whatever its called, is a panacea...  Again, we are where we would have
+been if we hadn't had long, years ago, in doing the 16->32 transition.
+
+re: 128-bit machines available in 2004: let me explain why I seriously
+doubt that this is going to happen in any widespread way. You apparently
+got 13 = 1991-1978, then 2004 = 1991+13.
+a) 32-bit machines,. of course, got popular in in the 1960s with S/360s...
+however, the time between generations is more closely related to the
+number of bits of addressing, i.e., proportional to number of bits added.
+b) But in any case, using DRAM curves, and microprocessor history, and
+sizes of physical memory actually shipped by vendors (I've plotted all
+these things at one time or another, some is in the BYTE article I noted):
+        1) DRAM sizes get 4X larger every 3 years; this has been consistent
+           for years; if anything it might slow down a little after the
+           next generation, or maybe not.
+        2) 4X larger = 2 more bits of physical addressing.
+        3) Of course, virtual addressing can consume address bits faster.
+           For a program actually using the data, a reasonable rule-of-thumb
+           is that there are practical programs 4X larger than the physical
+           memory that are still usable, i.e., whose reference patterns
+           don't make them page too much.   Hennessy disagrees with me some,
+           claiming that memory-mapped file usage can burn virtual memory
+           faster, and I somewhat agree, but I also think it takes a while for
+           such techniques to become widely used.  In any case, even this
+           tends to be at least somewhat bound by the actual size of
+           physical disks.
+        4) So, assuming that large microprocessor servers started hitting
+           4GB (32 bits) in 1994 (and that's a reasonable date: SGI sold
+           some 4GB systems in 1994, and some 8GBers either at the end of
+           1994 or beginning of 1995.  So, if I pick a date for 4GB,
+           knowing there are always some bigger systems, it's 1994.
+           1994:        32 bits (4GB)
+           1997:        34 bits (16GB)
+           2000:        36 bits (64GB)
+           2003:        38 bits (256GB)
+           ....
+           2042:        64 bits (16Billion GB)  (hmmm, seems unlikely :-)
+           On the other hand, my 4:1 rule claims that the virtual memory
+           pressure is at least 2 bits ahead of the physical, or 3 years
+           earlier, and then there's the increasing use of mapped files,
+           and then allowing for somebody being more aggressive than the rest
+           of the crowd ....  and I come back to my 2020 estimate.
+        5) Note that IRIX already has a 64-bit file system and files;
+           the largest single file we've seen is 370GB.  Assuming disks
+           somehow maintain their current progress of 2X every 2 years,
+           and that 4GB 3.5" SCSI disks are around in force:
+           Right now, a 64-bit file pointer can address all the data in
+           4Billion 4GB disks ... which not everyone can afford :-)
+           by 2020, assuming straight-line progression, suppose we've gotten
+           13 doublings, you'd want to have a single disk of 32,000 GB (!),
+           and now a 64-bit file pointer can only address 2**19 or,
+           512,000 of such disks, still likely to be adequate for most uses.
+        6) Finally, while the first 64-bit micro came out in 1991/1992,
+           and the second in 1992, it is 1998 (?) before all of the major
+           microprocessor families get there, and whereas there were at least
+           some 64-bit systems many years ago in the supercomputer world,
+           offering some ueful experience, I haven't noticed *any*
+           128-bit systems anywhere.
+        7) Bottom line: something very strange would have to happen to start
+           seeing serious use of 128-bitters in 2004.  While your comments
+           on C have serious credibility ...  I'd like to see some reasoning
+           to justify 2004, because every bit of trend analysis I've done or
+           seen says much later...
+
+
+
+|> From the perspective of WG14, we expect to complete C9X around 1999.  It
+|> seems silly to solve the same problem 10 years from now.  Also, the
+|> portability problems *greatly* increase with the use of "long long" even
+|> if you restrict yourself to 16-bit, 32-bit, and 64-bit architectures.
+
+But again, I've got some serious portability problems, right now, that
+don't seem to get solved except with an integral 64-bit type that is
+useful in 32-bit environments, and of course, must persist into 64's.
+While I used to care about non-power-of-2-sized architectures, that seems
+less of an issue that it was the old days.
+
+Oh well, it looks like we're doomed to a sad state of affairs over the
+next few years: a whole lot of people will write code with an extension
+that won't be part of the standard; the extension won't benefit from the
+standards process, but it will get used, perhaps with yet more flags
+(like -ANSI and -ANSI+longlong, i.e., useANSI, but don't flag long longs.
+Sigh.)
+
+
+-john mashey    DISCLAIMER: &lt;generic disclaimer, I speak for me only, etc>
+UUCP:    mash@sgi.com 
+DDD:    415-390-3090    FAX: 415-967-8496
+USPS:   Silicon Graphics 6L-005, 2011 N. Shoreline Blvd, Mountain View, CA 94039-7311
+</pre>
+<hr>
+<a name="6"></a>
+<pre>
+Subject: <a href="http://groups.google.com/groups/search?as_ugroup=comp.lang.c&amp;as_uauthors=John+Mashey&amp;as_usubject=longs+long+in&amp;as_drrb=b&amp;as_mind=24&amp;as_minm=8&amp;as_miny=1995&amp;as_maxd=26&amp;as_maxm=8&amp;as_maxy=1995&amp;sitesearch=groups.google.com">Re: long longs in c</a>
+From: mash@mash.engr.sgi.com (John R. Mashey) 
+Date: Aug 25 1995
+Newsgroups: comp.lang.c,comp.std.c
+
+In article &lt;41je47$20h@newsbf02.news.aol.com>, ffarance@aol.com (FFarance) writes:
+|> > From: Dan.Pop@mail.cern.ch (Dan Pop)
+
+|> > I must be missing something. 
+
+Yes.
+Frank answered it well:
+
+|> Changing the size, alignment, effective precision, etc., of a "long" or
+|> any other data type will break binaries.  You'll be forced to recompile
+|> and port everything.  For example, your library routine uses a structure
+
+But I'd add a few more:
+a) People use shared-libraries; you need to double those to support
+both cases, since all the binaries a customer has don't magically
+disappear and get replaced when you ship a new system.
+b) Even more, ISVs, especially some rather important ones, create complex
+applications that do things like dyamically loading binaries, that may
+well have come from 3rd parties, and again, they don't all magically
+get recompiled at the same time.
+c) Strangely enough, not every program is self-contained; some read/write
+data to disk.  If they ever wrote data structures containing longs to
+disk, and the compiler then  decides that longs changed size, then even
+a simple, single program breaks.  You can't just recompile it, you've got
+to go through a serious cleanup.  [This, of course, is where "exact"
+descriptors are good things, since they'd be the same under any model.]
+
+DEC changed going from Ultrix to OSF/1 and this was sensible.  I note they
+didn't change VMS...  I make no claim that every vendor that makes
+a difficult transition will die, just that many who've made it hard to
+program have, and that even the survivors have have suffered.
+
+The "reasoned decision" comment was for 32-bit machines, i.e., why
+everybody followed ILP32 in the 1980s.
+
+You comment on ISVs ...  I don't know which ones you talk to, but I
+talk to some pretty serious ones fairly often ... which is where I get
+the opinions.
+-- 
+-john mashey    DISCLAIMER: &lt;generic disclaimer, I speak for me only, etc>
+UUCP:    mash@sgi.com 
+DDD:    415-390-3090    FAX: 415-967-8496
+USPS:   Silicon Graphics 6L-005, 2011 N. Shoreline Blvd, Mountain View, CA 94039-7311
+</pre>
+<hr>
+<a name="7"></a>
+<pre>
+From: mash@mash.engr.sgi.com (John R. Mashey)
+Newsgroups: comp.std.c
+Subject: <a href="http://groups.google.com/groups/search?as_ugroup=comp.std.c&amp;as_uauthors=John+Mashey&amp;as_usubject=standard+ansi+long&amp;as_drrb=b&amp;as_mind=10&amp;as_minm=4&amp;as_miny=1997&amp;as_maxd=12&amp;as_maxm=4&amp;as_maxy=1997&amp;sitesearch=groups.google.com">Re: long long -- part of what ANSI standard?</a>
+Date: 11 Apr 1997 00:55:49 GMT
+
+In article &lt;5ij0f6$b7b@solutions.solon.com>, seebs@solutions.solon.com
+(Peter Seebach) writes:
+
+|> Exactly... For this reason, the correct thing to do is use 64 bit
+|> longs if you need a 64 bit integer type.  Then, all existing correct
+|> code remains correct.  "long long" *breaks existing code*.  (Because
+|> existing code has been given an iron clad guarantee by the standard
+|> that long is the largest type, and yes, real code breaks mysteriously
+|> when this is not true.)
+
+As noted elsewhere, every choice breaks some existing code.
+I posted more on this, but it is *not* a correct choice, on a system
+that has forever used ILP32 (integer, long, pointer = 32 bits), to change
+long to 64-bits; software vendors will definitely kill you.
+
+
+|> &lt;inttypes.h> is also in the standard, and provides (on machines
+|> capable of the support) 8/16/32/64 bit integral types without breaking
+|> the type system.  &lt;inttypes.h> came from the 1991 work mentioned in an
+|> earlier posting.
+
+
+|> A real solution, one which lets the user specify integral sizes, would have
+|> been preferable.  If you doubt this, wait a couple of years and see what
+|> monstrosities are invented as all of the vendors scramble to provide the
+|> 128-bit type, which will probably get called "long long long", except that
+|> some vendors will make it "long long", and some will spell it int128_t.
+
+Given that DRAM expands at 4X (2 bits)/3 years, and that virtual memory
+more-or-less expands ~ memory sizes, and that we're in middle of 32-64-bit
+transition now (call that 1992 start), and we just added ~ 32-bits,
+32 bits / (2/3 bits/year) = 48 years + 1992 = 2040, *assuming*
+DRAM keeps growing at same rate.  *Assuming* heavier use of memory-mapping/
+sparse-file techniques, maybe it gets relevant by 2020.
+
+Of course, 4X/3 (or 2X / 1.5 years = Moore's Law) is guaranteed not to
+run forever, or even until 2040, so it may be that we do not see
+128-bit (integer) processors, in any way like we saw 32, and now 64-bit
+CPUs.  I wouldn't be surprised to see 128-bit floating-point sometime.
+
+======
+16->32, 32->64:P we've done this 2X thing twice; the first one was relatively
+easy: Dennis just added long, well before the 16->32 move, and that was that.
+32->64 has been more painful, for various reasons:
+	- There aren't enough people around who went through the previous time.
+	- It has more constraints that didn't exist 20 years ago, such as
+	  CPUs that run both sizes of code together.
+
+So: *maybe*, if we're lucky, it will go like this:
+
+- By 2000, every microprocessor family used in general-purpose systems
+	will have at least 1 64-bit member delivered in systems.
+- By 2002, 32/64-bit portability will be as well-understood as
+	16/32-bit portability got to be ~1980 inside Bell Labs.
+- If not already in C, surely the scars will be fresh enough that people
+	may adopt extensions that will cover 128-bit, and the
+	difference between types-sizes that want to float and ones
+	that do not (or at least, people will settle into well-accepted
+	#ifdefs that achieve this result).  Hopefully, this could actually
+	be in the standard by 2010.  If it's not, then the problem will be
+	forgotten; everyone will assume that chips are 64-bit,
+	and somebody (else) will get to do this again.
+	In any case: the *right* solution, regardless of syntax, is that
+	first-class-support for 128-bit ints will be in place in compilers
+	for 64- and 32-bit CPUs 2-3 years before the first 128-bitter
+	appears, and hopefully earlier.	
+-- 
+-john mashey    DISCLAIMER: &lt;generic disclaimer: I speak for me only...>
+EMAIL:  mash@sgi.com  DDD:    415-933-3090	FAX: 415-967-8496
+USPS:   Silicon Graphics/Cray Research 6L-005,
+2011 N. Shoreline Blvd, Mountain View, CA 94043-1389
+</pre>
+<hr>
+<a name="8"></a>
+<pre>
+From: mash@mash.engr.sgi.com (John R. Mashey)
+Newsgroups: comp.std.c
+Subject: <a href="http://groups.google.com/groups/search?as_ugroup=comp.std.c&amp;as_uauthors=John+Mashey&amp;as_usubject=extended+integers&amp;as_drrb=b&amp;as_mind=12&amp;as_minm=6&amp;as_miny=1997&amp;as_maxd=14&amp;as_maxm=6&amp;as_maxy=1997&amp;sitesearch=groups.google.com">Re: extended integers</a>
+Date: 13 Jun 1997 22:27:54 GMT
+
+In article &lt;5nfjad$15d@dfw-ixnews10.ix.netcom.com>, Douglas Gwyn
+&lt;gwyn@ix.netcom.com> writes:
+
+|> I just circulated a proposal to formally allow implementations to use
+|> extended integers in their standard headers, which provides a way to
+|> resolve ptrdiff_t issues etc. as well as to sanction what the Committee
+|> consensus was with regard to Kwan's &lt;inttypes.h>. This is not as good
+|> as defining a parameterized integer type along the lines of Frank
+|> Farance's proposal, but it should suffice for the time being.
+|>
+|> Also, "long long int" was adopted for C9x. These have to have at least
+|> 64 bits.
+
+This sounds like a rational and pragmatic outcome: standards work
+is often maddening &amp; usually thankless, so, thanks to the Committee for
+doing something reasonable in the real world, even if,
+in a perfect world, things might have been different. This at least
+means that something sensible will happen to cover the processors that
+we'll have around for the next decade or so, leaving some time to
+figure out if something better need be done.
+
+--
+-john mashey    DISCLAIMER: &lt;generic disclaimer: I speak for me only...>
+EMAIL:  mash@sgi.com  DDD: 415-933-3090 FAX: 415-932-3090 [415=>650 August!]
+USPS:   Silicon Graphics/Cray Research 6L-005,
+2011 N. Shoreline Blvd, Mountain View, CA 94043-1389
+
+</pre>
+<hr>
+<a name="9"></a>
+<pre>
+From: mash@mash.engr.sgi.com (John R. Mashey)
+Newsgroups: comp.std.c
+Subject: <a href="http://groups.google.com/groups/search?as_ugroup=comp.std.c&amp;as_uauthors=John+Mashey&amp;as_usubject=dealing+long&amp;as_drrb=b&amp;as_mind=19&amp;as_minm=6&amp;as_miny=1997&amp;as_maxd=21&amp;as_maxm=6&amp;as_maxy=1997&amp;sitesearch=groups.google.com">Re: Dealing with long long</a>
+Date: 20 Jun 1997 23:03:31 GMT
+
+In article &lt;5oeq4m$de1$1@eskinews.eskimo.com>, scs@eskimo.com (Steve
+Summit) writes:
+
+|> In article &lt;5o9pbq$abs$1@murrow.corp.sgi.com>,
+|> mash@mash.engr.sgi.com (John R. Mashey) wrote:
+|> some day; there's clearly a lot of good information in it.
+|> Apologies if the point I'm about to make was in there somewhere,
+|> and I missed it.]
+
+Thanx; no this wasn't covered, except indirectly under the category of
+"It's harder than it looks, and people looked at it hard 5 years ago..."
+
+|> I think it's worth pointing out one issue which is different
+|> today than back during the first, 16-to-32-bit crisis: function
+|> prototypes.  These don't solve the binary I/O problem, or the
+
+They help, for sure, and I wish they had existed in C earlier
+...but...
+
+|> It seems to me that preparing new header files, containing
+|> new prototypes for functions in precompiled object files and
+|> libraries, *is* a tractable problem.  (But again, I don't
+|> claim that this approach solves all the problems.)
+
+...unfortunately, this tends to break most things where the parameter
+passed is a *pointer* to an integer whose size is changed, or to
+a structure containing such an integer.  Suppose, using Steve's example:
+code compiled as:
+	int f(x)
+	long int x;
+==> got a new declaration:
+	extern int f(int);
+
+had started,  instead:
+	int f(x)
+	long int *x;
+It does not work to provide a prototype:
+	extern int f(int *);
+
+That is, you'd have (64-bit, in this example) longs in your code, which
+worked fine, but when you passed a pointer to one, the receiving code would
+think it had a pointer to a 32-bit item.  Little-endian &amp; big-endian machines
+happen to differ in which of these you might accidentally get away with:
+Suppose we'd started with:
+	int f(x)
+	long int *x;
+	{
+		(*x)++;
+	}
+
+and the calling code looked like:
+	long int y = 0;
+	f(&amp;y);
+
+value of y: L.E.: 0x0000000000000001; B.E.: 0x0000000100000000
+
+This appears to work on a Little-Endian machine, but not on a Big-Endian,
+which fast occasionally came up years ago in letting certain unportable
+code sneak by on Little-Endian systems.
+
+If the example were:
+	long in y = -1;
+	f(&amp;y);
+value of y: 0xffffffff00000000; B.E.: 0x00000000ffffffff
+
+--
+-john mashey    DISCLAIMER: &lt;generic disclaimer: I speak for me only...>
+EMAIL:  mash@sgi.com  DDD: 415-933-3090 FAX: 415-932-3090 [415=>650 August!]
+USPS:   Silicon Graphics/Cray Research 6L-005,
+2011 N. Shoreline Blvd, Mountain View, CA 94043-1389
+
+</pre>
+<hr>
+<a name="10"></a>
+<pre>
+From: mash@mash.engr.sgi.com (John R. Mashey)
+Newsgroups: comp.std.c
+Subject: <a href="http://groups.google.com/groups/search?as_ugroup=comp.std.c&amp;as_uauthors=John+Mashey&amp;as_usubject=dealing+long&amp;as_drrb=b&amp;as_mind=22&amp;as_minm=6&amp;as_miny=1997&amp;as_maxd=24&amp;as_maxm=6&amp;as_maxy=1997&amp;sitesearch=groups.google.com">Re: Dealing with long long</a>
+Date: 23 Jun 1997 02:03:02 GMT
+
+In article &lt;danpop.866823129@news.cern.ch>, Dan.Pop@cern.ch (Dan Pop) writes:
+
+|> But why was long defined as a 32-bit type on 32-bit platforms in the first
+|> place?  Without this blatant proof of short-sightedness, the first real
+|> "crisis" with the C integral types system would have occured at the
+|> transition from 64-bit platforms to 128-bit platforms.
+|>
+|> >The reason DEC could move to the "sane" 8/16/32/64 system was that they
+|> >*were* already requiring their  customers and ISVs to recompile (and
+|> >port) as they *were* requiring their customers to move to a new system.
+|>
+|> What was preventing the other vendors from doing the same thing when they
+|> introduced their 32-bit systems???  At that time, their customers were
+|> in exactly the same position as DEC's customers when the Alpha was
+|> introduced.  This is where Peter's "idiots" and "kooks" actually fit in.
+
+1) With 20 years of hindsight, one might claim that more thought might
+have been given to this (and I don't think any of the relevant people are
+under the misimpression that C is perfect)...... but "blatant
+short-sightedness" and "idiots" and "kooks"???
+
+Perhaps it isn't clear to the readership that such comments effectively
+target Dennis Ritchie, Steve Johnson, and their colleagues' decisions
+of 1974-1976...
+
+2) "long" came about ~1975; it actually *was* 64-bits on the 32-bit XDS
+Sigma 5, but of course XDS got out of the computer business. So,
+how did "long" get to be 32-bits on 32-bit systems?
+
+2) While it might have been nice to have anticipated the industry-wide
+use of C, and the issues to be faced 20 years' later with 64-bit micros,
+these thoughts were not paramount at a time in which:
+	- There were a few hundred systems using C, mostly inside Bell Labs.
+	- The most common machine using C was a 248KB PDP-11/45,
+	  ~.5 VAX-MIP system supporting 10-15 simultaneous users.
+	- People still argued about the wisdom of using languages like
+	  C for systems code; there were numerous lower-level languages,
+	  and in fact, most systems code was still done in assembler in
+	  many places.
+	- People sometimes hoped that some FORTAN &amp; COBOL code would be
+	  somewhat portable across operating systems.
+	- The key efforts were (making UNIX itself more portable and
+	  doing the Portable C compiler) (1977-1978).
+	- For most people in computing, the idea that a system language
+ 	  like C would be portable ... was considered at best a
+	  research topic...
+	- For years, it has been easy enough to buy books that tell you
+	  how to write really portable C code, and the standards efforts
+	  have supported this well, and many people have the relevant
+	  experience and understand msot of the issues.
+	  Such books were *not* available in 1977...
+
+4) "long" came earlier, ~1975: it was desperately needed
+on PDP-11s because neither 16-bit file pointers not int[2]s were really
+very pleasant; in any case, despite use of C on 36-bit Honeywell 6000s,
+and a few IBM S/360s, and a few other systems, PDP-11 was overpoweringly
+the dominant C platform. (On XDS Sigma 5, long actually was 64-bit,
+since it was a 32-bit CPU, but for various reasons, 64-bit integers
+were relevant. Xerox got out of the computer business, however, and the
+BTL-project got cancelled, although it actually had some good
+side-effects on C.)
+
+5) After VAXen (and 3Bs, important inside BTL) appeared, there was a period
+in which code was shifting from PDP-11s to 32-bit machines, but both
+were still important.  The UNIX code base had plenty of longs, because
+PDP-11s needed them.
+
+6) The VAX could have had 64-bit longs, but:
+	- Code sequences would have been necessary, so there would have
+	  been unpleasant performance hits.
+	- They would have been especially unpleasant, since a VAX 11/780
+	  wasn't *that* much faster than a PDP-11/70, that is, there wasn't
+	  some huge leap of technology (the PDP-11 as high-end died
+	  prematurely due to lack of address space).
+	- People didn't understand portability so well; there was still a lot
+	  of non-typedeffed code around.
+	- So, more code would have broken, whereas with sizeof(long) == 4,
+	  lots of stuff just worked...
+
+7) Hence, by the time there were "vendors" of UNIX systems who actually
+did compilers, there was a large body of code on the VAX &amp; elsewhere that
+used long as 32-bit.  That gave these vendors (often startups) a choice
+in the 1980-1984 timeframe:
+
+A: Start with portable C compiler, existing UNIX code, retarget it
+(as onto MC68000), leave the typesizes alone, expect that if the code
+works for other people, it will work for you, and get on with it.
+
+B: Realize that 10-15 years later, there would be 64-bit micros,
+where it might be
+better if sizeof(long) == 8, and that the conversion to 64-bit might be eased,
+if the company were still in business.  Thus:
+	1. Do a lot more work on pcc.
+	2. Clean up all of the code in BSD or ATT UNIX.
+	3. Explain to every ISV that this was a purer approach, and it would be
+	   good for them in the long run, even if they had to do some cleanup
+	   themselves....
+	4. Be prepared to clean up each new release of UNIX that you got.
+	5. Accept the fact that you'd be later to market, cost more, and
+	   have less software ... but be theoretically better.
+
+(Now, perhaps some companies made this decision B; although I don't know of any
+offhand; in any case, they appear not to have survived.)
+
+9. Summary: all of this got this way a *long* time ago; vendors had very little
+choice; in fact, UNIX vendors who made sizeof(int) 2 suffered as well.
+I was managing a SYS III port to MC68K inside BTL in 1982, and we already
+had a 68K Blit compiler, but sizeof(int) == 2 broke a lot of code...
+
+Anyway, in retrospect, it would hae been nice if, in 1974-1975, some
+truly brilliant people had happened to anticipate a few more of these issues,
+but they didn't, because a lot of other things were more important at the
+time.  Those who've followed had to live within the constraints of the past.
+
+
+--
+-john mashey    DISCLAIMER: &lt;generic disclaimer: I speak for me only...>
+EMAIL:  mash@sgi.com  DDD: 415-933-3090 FAX: 415-932-3090 [415=>650 August!]
+USPS:   Silicon Graphics/Cray Research 6L-005,
+2011 N. Shoreline Blvd, Mountain View, CA 94043-1389
+
+
+</pre>
+<hr>
+<a name="11"></a>
+<pre>
+From: mash@mash.engr.sgi.com (John R. Mashey)
+Newsgroups: comp.std.c
+Subject: <a href="http://groups.google.com/groups/search?as_ugroup=comp.std.c&amp;as_uauthors=John+Mashey&amp;as_usubject=dealing+long&amp;as_drrb=b&amp;as_mind=23&amp;as_minm=6&amp;as_miny=1997&amp;as_maxd=25&amp;as_maxm=6&amp;as_maxy=1997&amp;sitesearch=groups.google.com">Re: Dealing with long long</a>
+Date: 24 Jun 1997 21:33:22 GMT
+
+In article &lt;RCB2CECHRurzEwuG@on-the-train.demon.co.uk>, "Clive D.W.
+Feather" &lt;clive@on-the-train.demon.co.uk> writes:
+
+|> In article &lt;5olq6h$79j@news.inforamp.net>, Peter Curran
+|> &lt;pcurran@xacm.org> writes
+|>
+|> >But the issue, to the best of my understanding, is that an
+|> >implementation can introduce "long longs" into code that does not
+|> >contain any, by defining some of the types required by the standard,
+|> >such as "size_t," as "long long." If this is not true, then my
+|> >concerns are greatly alleviate.
+|>
+|> Indeed, and they're not (alleviated).
+
+
+To further understand, maybe people can provide some more information,
+understanding that there is a difference between:
+	1. What a standard says, where there is often a fine line between
+		a. Specifying insufficently, and causing implementations
+		  to diverge for no good reason.
+		b. Specifying the minimum necessary.
+		c. Overspecifying, and thereby disallowing many kinds of
+		   hardware implementations
+and	2. What people are actually doing, where the standard might have
+	allowed something (that wouldn't work), but nobody is building
+	those systems anyway, so it becomes a moot point.
+
+So, the question is:
+	Does anybody know of a specific implementation, whose plans are
+	public, in which size_t is (unsigned long long)
+	and sizeof (unsigned long) !=  sizeof (unsigned long long) ?
+
+Example: in IRIX 6's, code compiled for 32- and 64-bit modes:
+	int	long	long long	ptr	size_t
+32	32	32	64		32	32	ILP32LL
+64	32	64	64		64	64	LP64
+
+I.e., above, size_t is the same size as a long, so the problem appears not
+to arise. &lt;types.h> size_t doesn't use long long as a base.
+
+As far as I know, the main place that long longs get introduced into
+typical 32-bit systems is for off64_t's, i.e., to use the new LFS
+lseek64, tell64, ftruncate64, etc, i.e., if people want to access files
+>2GB, but do not need larger address space [i.e., identical
+to the original use of long on 16-bit PDP-11s].
+
+
+
+--
+-john mashey    DISCLAIMER: &lt;generic disclaimer: I speak for me only...>
+EMAIL:  mash@sgi.com  DDD: 415-933-3090 FAX: 415-932-3090 [415=>650 August!]
+USPS:   Silicon Graphics/Cray Research 6L-005,
+2011 N. Shoreline Blvd, Mountain View, CA 94043-1389
+
+
+</pre>
+<hr>
+<a name="12"></a>
+<pre>
+From: mash@mash.engr.sgi.com (John R. Mashey)
+Newsgroups: comp.std.c,comp.lang.c
+Subject: <a href="http://groups.google.com/groups/search?as_ugroup=comp.std.c&amp;as_uauthors=John+Mashey&amp;as_usubject=int32_t&amp;as_drrb=b&amp;as_mind=31&amp;as_minm=3&amp;as_miny=1999&amp;as_maxd=2&amp;as_maxm=4&amp;as_maxy=1999&amp;sitesearch=groups.google.com">Re: int32_t</a>
+Date: 1 Apr 1999 01:29:45 GMT
+
+In article &lt;7du4ni$e8e$1@eskinews.eskimo.com>, scs@eskimo.com (Steve
+Summit) writes:
+
+|> Organization: better late than never
+|>
+|> In article &lt;37015131.32781085@news.pathcom.com>, pcurran@acm.gov writes:
+
+|> > HP, for one, said a year ago that 64-bit longs is their standard.
+|>
+|> Good for them!  This is clearly the right choice, on a processor
+|> that supports a 64-bit type.
+
+There may be some confusion here, since the original statement
+was so imprecise,  so just be absolutely clear, which is easily findable
+in public web pages:
+
+1) HP/UX was ILP32, and then got to be ILP32LL64, I don't recall when.
+
+2) By HP/UX 11.0, HP provided an entire 64-bit environment,
+and it is LP64 (= I32LLLP64 if you like), and 64-bit HP/UX 11.0s
+run either flavored binaries, which do not mix.
+
+3) long is 32 bits in the 32-bit environment, as HP, like everybody else
+was not about to change that.  I don't know offhand of *anyone* doing
+IP32L64 at this time.
+
+4) long is 64-bits in the 64-bit environment, meaning that HP made the
+same choice as {DEC, SGI, IBM, Sun}.
+
+--
+-john mashey    DISCLAIMER: &lt;generic disclaimer: I speak for me only...>
+EMAIL:  mash@sgi.com  DDD: 650-933-3090 FAX: 650-933-4392
+USPS:   Silicon Graphics/Cray Research 40U-005,
+2011 N. Shoreline Blvd, Mountain View, CA 94043-1389
+
+</pre>
+<hr>
+<a name="13"></a>
+<pre>
+From: mash@mash.engr.sgi.com (John R. Mashey)
+Newsgroups: comp.std.c,comp.lang.c
+Subject: <a href="http://groups.google.com/groups/search?as_ugroup=comp.std.c&amp;as_uauthors=John+Mashey&amp;as_usubject=int32_t&amp;as_drrb=b&amp;as_mind=31&amp;as_minm=3&amp;as_miny=1999&amp;as_maxd=2&amp;as_maxm=4&amp;as_maxy=1999&amp;sitesearch=groups.google.com">Re: int32_t</a>
+Date: 1 Apr 1999 07:15:51 GMT
+
+In article &lt;3702F312.ACDF064D@null.net>, "Douglas A. Gwyn"
+&lt;DAGwyn@null.net> writes:
+
+|> John Mashey is not on the committee, and I rather suspect what
+|> he meant to convey was that initial discussions occurred among
+|> interested parties via e-mail back then.  He seems to think
+|> that the issue was settled by an entirely non-WG14 meeting
+|> among UNIX vendors (HP, Sun, SGI) several years ago.  But WG14
+|> has made its own decisions for its own reasons after considering
+|> arguments from other sources, including some that originated in
+|> netnews discussion groups such as this one.
+
+Yes, to make sure this is perfectly clear:
+1) There was about 6 months of meetings that were NOT WG14,
+and had no official standing whatsoever, but was just a bunch of
+Fellows, Chief Scientists &amp; such from major computer companies
+and software companies getting together physically and by email.
+This was occasioned by the fact that several vendors already had 64-bit
+CPUs, and more were designing some, and file size pressures were growing,
+and anybody who could plan a few years out could see that they'd need
+64-bit pointers for some codes by the mid-1990s. Compiler teams industry-wide
+were planning  64-bit object file formats, compilers, tools, etc.
+
+2) Hence, it was deemed a good idea to see if we could agree on a
+64-bit model, and the preceding related technologies, to try to do something
+that was not irrationally anarchistic.
+
+3) We were unable to get everybody to agree on any one of the 3 choices:
+ILP64, LP64, or P64, and there were several strong proponents of each.
+We did agree on inttypes.h (to help some problems), and we did agree that
+we needed a type that could be 64-bits without breaking existing
+32-bit code (i.e., to convert ILP32LL), and that it might as well be long
+long (amongst the UNIX members anyway), given Amdahl and gcc.
+The P64 groups needed a long long (while ILP64 and LP64 didn't),
+but just about everybody wanted to extend their ILP32 to ILP32LL.
+
+Of course, it turned out that the UNIX crowd generally went LP64,
+at least partially because several of the early implementations were that.
+
+4) There was concern about whether doing long long would cause later trouble
+with C9X (which of course, being years away, meant nobody could wait),
+and since there were several attendess who were WG14 members, they were asked
+for their opinions, which basically came down to:
+	"If you need it, go ahead: it's better that people do something
+	consistently, and while there are no promises about what will happen
+	with the next iteration of the standard, if a big chunk of the industry
+	does it as a common extension that will get serious consideration."
+This seemed both fair and modestly encouraging, so most of us did it.
+Had anyone been able to compelling propose something different, we
+would have done something different.
+
+5) Hence, when I say it was mostly settled in 1992, I do not mean that
+anything officially was settled, I mean that a substantial part of the
+industry agreed to do something, because people couldn't wait any longer.
+The Committee, while having the clear authority to set the standard,
+is also rational in considering substantial experience already
+implemented by many large hardware and software vendors.
+maybe it was actually "settled" in 1983, when Amdahl starting doing this,
+or later, when it got into gcc.
+
+6) Anyway, there was every possible consideration given to standards,
+but subject to the pressing demand that many players felt to have 64-bit
+integers added into their 32-bit environments.
+
+7) In some sense this shouldn't have had to happen this way, but
+C89 didn't provide a type available to add 64-bit into an existing 32-bit
+environment, and the dictates of hardware progress demanded one.
+
+8) Once again, I reiterate, that amongst myriads of propsoals and
+approaches, this was viewed as "the least bad".
+
+--
+-john mashey    DISCLAIMER: &lt;generic disclaimer: I speak for me only...>
+EMAIL:  mash@sgi.com  DDD: 650-933-3090 FAX: 650-933-4392
+USPS:   Silicon Graphics/Cray Research 40U-005,
+2011 N. Shoreline Blvd, Mountain View, CA 94043-1389
+
+</pre>
+<hr>
+<a name="14"></a>
+<pre>
+From: "Douglas A. Gwyn" &lt;DAGwyn@null.net>
+Newsgroups: comp.std.c,comp.lang.c
+Subject: <a href="http://groups.google.com/groups/search?as_ugroup=comp.std.c&amp;as_uauthors=Douglas+Gwyn&amp;as_usubject=int32_t&amp;as_drrb=b&amp;as_mind=31&amp;as_minm=3&amp;as_miny=1999&amp;as_maxd=2&amp;as_maxm=4&amp;as_maxy=1999&amp;sitesearch=groups.google.com">Re: int32_t</a>
+Date: Thu, 01 Apr 1999 22:49:06 GMT
+
+"John R. Mashey" wrote:
+> 7) In some sense this shouldn't have had to happen this way, but
+> C89 didn't provide a type available to add 64-bit into an existing 32-bit
+> environment, and the dictates of hardware progress demanded one.
+
+Yes; the origin of the problem seems to be that C89 lacked the
+foresight to accommodate such expansion.  Something had to give.
+It turned out to be the promise that all standard typedefs of
+integer types could be contained in a (possibly unsigned) long.
+
+</pre>
+<hr>
+<a name="15"></a>
+<pre>
+From: mash@mash.engr.sgi.com (John R. Mashey)
+Newsgroups: comp.std.c
+Subject: <a href="http://groups.google.com/groups/search?as_ugroup=comp.std.c&amp;as_uauthors=John+Mashey&amp;as_usubject=advice+coding+size_t&amp;as_drrb=b&amp;as_mind=4&amp;as_minm=4&amp;as_miny=1999&amp;as_maxd=6&amp;as_maxm=4&amp;as_maxy=1999&amp;sitesearch=groups.google.com">Re: coding style advice for sizeof (long) &lt; sizeof (size_t)?</a>
+Date: 5 Apr 1999 22:18:44 GMT
+
+In article &lt;t81zhzo186.fsf@discus.anu.edu.au>, Geoffrey KEATING
+&lt;geoffk@discus.anu.edu.au> writes:
+
+|> This is why GNU/linux has off64_t.  You can choose between
+|>
+|> a) off_t is 'long' (and there is no off64_t)
+|> b) off_t is 'long', off64_t is 64 bits
+|> c) off_t is 64 bits (and there is no off64_t)
+|> b) off_t is 64 bits, off64_t is 64 bits
+|>
+|> (depending on the system, the list above may have some overlap).
+|>
+|> Don't ask about 128-bit-length files...  This is simply implementing
+|> someone's standard.
+
+1) This is from the Large File Summit, and is widely implemented.
+The LFS spec is partially derived from SGI's IRIX 5.3 XFS implementation
+of 1994, and was driven by ISVs (like SAS) and a bunch of systems/OS vendors.
+
+2) To relate the above to the models often discussed:
+
+			off_t	off64_t			size_t
+ILP32			32	none			32
+ILP32LL (most)		32	64			32
+ILP32LL (SGI -n32)	64	64			32
+
+LP64*			64	64			64
+IL32LLP64 (P64)	**	32	64			32
+ILP64			64	64			64
+
+* = what most UNIX folks do, ** = 64-bit NT
+
+In SGI's case, there are actually 3 models:
+	-o32 (the old 32-bit ILP32, later converted to ILP32LL ~1992)
+	-n64 (LP64, ~1994)
+	-n32 (ILP32LL, but implemented with 64-bit registers, more FP registers,
+		hence impossible to make binary-compatible with the others,
+		and people decided to go ahead and make off_t bigger so that
+		more programs would recompile and automatically get to
+		big files without having to go to LP64.  Neither
+		-n64 nor -n32 is a "replacement" for -o32, in that many
+		programs are still -o32, and there is still a full set of -o32
+		libraries.
+
+This brings me to something I still get questions on:
+
+WHY PEOPLE DON'T JUST *CHANGE* LONG TO BE 64 BITS IN 32-BIT ENVIRONMENT:
+
+In SGI's case (typical) of commerical UNIXes), if you look at a customer's
+system:
+	a) UNIXkernel
+	b) About 60 SGI-provided dynamic-linked libraries for *each* of
+	   the 3 programming models.  Of course, once you ship a dynlinked
+	   library, you can never take it away, although you can replace
+	   it with a 100% upward-compatible superset.  [Not everybody
+	   seems to understand this ... but customers get seriously irate
+	   when a new OS+librarires arrives, and their existing apps suddenly
+	   break because a new dynlinked library isn't quite consistent.
+	   The rules say that if you change an interface, you use versioning
+	   to make sure the old and new versions are distinguishable,
+	   and old programs get the right version.]
+	c) Anywhere from a handful to hundreds of dynlinked libraries
+	   from ISVs, either for use only in their own app suites, or for
+	   others to use.  On NT, there are probably more (DLLs, that is,
+	   in 5 minutes I found several hundred on my wife's NT system.]
+	d) Executable apps, some with static-linked libraries, but most
+	   with dynlinked ones from b) and c), which come from SGI,
+	   multiple ISVs, and sometimes the end-customer.
+	   A typical user of ISV apps probably has 10-20 apiece, but of course,
+	   they are a different 10-20 apiece.
+	e) Think of a giant directed graph, consisting of thousands of
+	   apps (at the top), hundreds of libraries, and a customer, to have
+	   a working system, picks a handful at the top, and all of the
+	   connected pieces undeneath have to be consistent.  People have
+	   proposed using thunks to fix inconsistencies; that doesn't work,
+	   especially in the kind of intermingled dynlinked library setups
+	   now found out there.
+
+For each programming model:
+1) SGI made the kernel support it.
+2) SGI provided compilers, system librarries, tools.
+3) ISV library vnedors recompiled their libraries.
+4) ISV apps vendors recompiled their libraries, and then their apps.
+
+There are thousands of applications, many of which are clean code,
+portable enough to compile under any of the models.  Nevertheless,
+binary compatibility constraints forbid flash-cut replacement of
+one model by another.  Commercial customers expect:
+
+1) A new OS+library setup arrives on new hardware.  One can install
+compatible apps and then work.
+
+2) Later, additional apps arrive (ISV schedules differ), and those
+apps can be installed and work, including data interchange with the
+existing apps.  Major ISVs often have a 1-3-year major release cycle,
+and if you miss a release cycle, you wait until the next one.
+
+3) Later yet, another new OS+library setup arrives, and it is installed
+on the old hardware, and people expect the existing apps to continue to
+work.  A vendor who does the following probably gets to go out of business:
+	"There's a new programming model in which long has changed from
+	32 to 64-bits; to make sure you switch, we've converted to this
+	from our old way, and removed all of the old libraries.
+	Recompile all your code, and rewrite your code to cope with
+	binary data on disk or tape that was written with longs.
+	Here is a list of ISV suppliers who already have converted their
+	code.  Please talk to anyone not on this list and urge them to move
+	up their release schedules, since their apps are broken on your system
+	until they do.  Also, allow in your budget upgrade fees that you
+	hadn't anticipiated."
+
+I have had (unnamed) people recommend this approach to me, in the effort
+to fight off long long... :-)
+
+4) Hence, in practice, sane vendors *keep* the old models around (essentially
+forever), and add new models alongside, but don't expect to intermix binaries.
+Most ISVs strongly prefer to provide exactly 1 port of most of their software
+on any given platform, for rational economic reasons.  If there is a good
+reason to supply two, they might.  [For example, Oracle supplies
+32-bit apps, and both 32- and 64-bit server].
+If there are 2-3 alternate forms, they naturally pick whichever one
+costs them the least to supply, and covers the most machines,
+and switching to a new model must have some clear benefit; for example,
+programs that *really* want to be 64-bit are motivated to convert ... but as
+DEC found out early in Alpha's life, there were lots of apps that didn't
+need to be 64-bit, and it cost a lot to get the apps moved.
+
+5) On true 32-bit CPUs, converting ILP32 to ILP32LL is upward-compatible,
+no slower, occasionally faster, and the binaries intermix with no trouble,
+hence most vendors did this.  Simply replacing ILP32 with IP32L64 is
+not binary-compatible, is never faster, and often slower, and so people
+generally did not do this, starting with VAX UNIX.
+
+6) On 64-bit CPUs, one can have:
+6a) ILP32LL binary-compatible with earlier 32-bit family members.  This
+is the overpoweringly popular choice, especially as augmented with the LFS
+off64_t, etc stuff, which lets people get to big files in a more gradual
+fashion.
+6b) ILP32LL model, but using 64-bit registers, so that LL is fast.
+This is popular in the games/embedded arena, where source compatibility
+with 32-bitters is important, but binary compatibility is less so, and
+the extra performance is worthwhile.
+6c) IP32L64: so far, not a choice that people generally make, because
+it breaks more programs than ILP32LL, and doesn't have big pointers,
+and is usually slower than ILP32LL.
+
+6d) P64 or LP64: for programs that care about large data, this is a major plus,
+so people do use it, for those programs where it matters, and they happen
+to be important programs, albeit relatively few in number.
+
+7) In summary:  source code may be very clean, paranoidly
+portable, good, etc ... but these days, lots of code doesn't exist in a vacuum,
+but depends on *binary* interfaces with huge chunks of other code from
+multiple sources.  While many data declarations are of interest only inside
+the programs that use them, others manifest themselves outside, onto
+disk, tape, or in binary interfaces, and *everybody's* idea of the sizes
+of such data objects needs to change together, or very carefully.
+
+
+
+--
+-john mashey    DISCLAIMER: &lt;generic disclaimer: I speak for me only...>
+EMAIL:  mash@sgi.com  DDD: 650-933-3090 FAX: 650-933-4392
+USPS:   Silicon Graphics/Cray Research 40U-005,
+2011 N. Shoreline Blvd, Mountain View, CA 94043-1389
+
+</pre>
+<hr>
+<a name="16"></a>
+<pre>
+From: mash@mash.engr.sgi.com (John R. Mashey)
+Newsgroups: comp.std.c
+Subject: <a href="http://groups.google.com/groups/search?as_ugroup=comp.std.c&amp;as_uauthors=John+Mashey&amp;as_usubject=advice+coding+size_t&amp;as_drrb=b&amp;as_mind=5&amp;as_minm=4&amp;as_miny=1999&amp;as_maxd=7&amp;as_maxm=4&amp;as_maxy=1999&amp;sitesearch=groups.google.com">Re: coding style advice for sizeof (long) &lt; sizeof (size_t)?</a>
+Date: 6 Apr 1999 17:04:50 GMT
+
+In article &lt;7eca2t$quu$1@shade.twinsun.com>, eggert@twinsun.com (Paul
+Eggert) writes:
+
+|> mash@mash.engr.sgi.com (John R. Mashey) writes:
+|>
+|>                                 off_t   off64_t                 size_t
+|>         ILP32                   32      none                    32
+|>         ILP32LL (most)          32      64                      32
+|>         ILP32LL (SGI -n32)      64      64                      32
+|>
+|>         LP64*                   64      64                      64
+|>         IL32LLP64 (P64) **      32      64                      32
+|>         ILP64                   64      64                      64
+|>
+|>         * = what most UNIX folks do, ** = 64-bit NT
+|>
+|> Is this table correct?  If so, then 64-bit NT
+|> does not have the problem of long being shorter than size_t.
+
+Sorry, I tried to get too many things into this table, editing the NT
+thing in later.  Let me expand &amp; correct it:
+
+				off_t	off64_t			size_t
+1)	IL32LLP64 (P64) UNIX	32	64			32
+2)	IL32LLP64 (P64) UNIX	32	64			64
+3)	IL32LLP64 (P64) NT	32	64			64(sort of, ?)
+
+1) In the first choice, the rationale would have been:
+	a) Of the existing basic datatypes, only pointer changes size.
+	b) Since most data structures on disk/exchanged between programs
+	don't have pointers, such structures would stay the same size.
+	c) Most object sizes fit into 32 bits anyway.
+	d) Keeping most data small gains efficiency.
+	e) yes, it is peculiar that ptr_diff must be bigger than size_t.
+
+2) In the second choice, the rationale would have been:
+	a) As above.
+	b) As above, except size_t's also change size, but there aren't that
+	many for them, and this avoids the surpise of e), and leaves more room
+	for the future, as there get to be more larger objects.
+
+I say "would have been", because AFAIK, none of the major UNIXes went
+this way, although 1-2 vendors argued strenuously for it (although I
+don't recall whether they intended to do 1) or 2), but in any case,
+everybody went LP64 anyway, for consistency.
+
+3) Regarding Microsoft, as I posted earlier, as far as I can tell, you
+aren't supposed to use size_t, you're supposed to use SIZE_T, which is of
+Pointer precision, and therefore 64-bits, and in some sense, doesn't
+belong in the table at all.
+
+So, the bottom line, I think is:
+1) The UNIX folks generally went dual-model ILP32LL + (on 64-bit chips) LP64,
+in both cases size_t has the same size as long.
+2) Microsoft made SIZE_T bigger than long.
+
+--
+-john mashey    DISCLAIMER: &lt;generic disclaimer: I speak for me only...>
+EMAIL:  mash@sgi.com  DDD: 650-933-3090 FAX: 650-933-4392
+USPS:   Silicon Graphics/Cray Research 40U-005,
+2011 N. Shoreline Blvd, Mountain View, CA 94043-1389
+</pre>
+<hr>
+<a name="17"></a>
+<pre>
+From: mash@mash.engr.sgi.com (John R. Mashey)
+Newsgroups: comp.std.c,comp.lang.c
+Subject: <a href="http://groups.google.com/groups/search?as_ugroup=comp.std.c&amp;as_uauthors=John+Mashey&amp;as_usubject=int32_t&amp;as_drrb=b&amp;as_mind=30&amp;as_minm=3&amp;as_miny=1999&amp;as_maxd=1&amp;as_maxm=4&amp;as_maxy=1999&amp;sitesearch=groups.google.com">Re: int32_t</a>
+Date: 31 Mar 1999 01:10:51 GMT
+
+In article &lt;37014A2C.BB88326E@technologist.com>, David R Tribble
+&lt;dtribble@technologist.com> writes:
+
+|> If you don't count Microsoft Windows running on 64-bit platforms.
+|> As I understand it, they've decided that 'long' is still 32 bits
+|> wide on 64-bit platforms.  (I suppose they'll call it Win64 instead
+|> of Win32.)  If that's so, and it's possible to have more than 4 GB
+|> of virtual memory on your desktop (in the near future anyway), then,
+|> yes, it will be a problem for some mainstream platforms.
+
+Clarification:
+At the Intel Hardware Developer Conference a month ago, Microsoft went
+through the same stuff the've been telling developers for a while,
+so here's what they say (extracted from large numbers of foils):
+
+1) They are indeed using "LLP64", and their goals include:
+-	"Porting from win32 to win64 should be simple.
+
+-	Supporting win64 and win32 with a single source base is our goal.
+
+-	No new programming models.
+
+-	Require minimal change to existing win32 code data models."
+
+
+2) They basically recommend the same thing as people often do elsewhere,
+which is to use typedefs layered on top of the basic types, and absolutely
+avoid the basic types in most code.  They say:
+
+3) "Win64 sample types:
+	Name				What it is
+	LONG32, INT32			32-bit signed
+	LONG64, INT64			64-bit signed
+	ULONG32, UINT32, DWORD32	32-bit unsigned
+	ULONG32, UINT32, DWORD64	64-bit unsigned
+	INT_PTR, LONG_PTR		Signed Int of Pointer Precision
+	UINT_PTR, ULONG_PTR, DWORD_PTR	Unsigned Int of Pointer Precision
+	SIZE_T				Unsigned count of Pointer Precision
+	SSIZE_T				Signed count of Pointer Precision
+
+4) Win64 Data Model Rules
+- If you need an integral pointer type, use UINT_PTR, ULONG_PTR, or DWORD_PTR.
+	Do not assume that DWORD, LONG or ULONG can hold a pointer.
+
+- Use SIZE_T to specify byte counts that span the range of a pointer.
+
+- Make no assumptions about the length of a pointer or xxxx_PTR, or xSIZE_T.
+	Just assume these are all compatible precision."
+
+5) 64-bit integers map to __int64.
+
+6) I make no value judgements on this, i.e., it is just posted to make
+sure the facts are clear about what they are doing.  Observe, of course,
+that:
+	a) Microsoft has zero interest in non-power-of-two-bits words, ever,
+	and hence is happy to embed 32s and 64s into typenames.
+
+	b) Microsoft has zero interest in code developed on NT being portable
+	to non-MS environments ... although it actually happens, that if you
+	follow their advice about types, and *never* use int, long, etc
+	directly, you can get code whose non-OS-dependent pieces might port
+	easier amongst other 32- and 64-bit OSs, i.e., because they have
+	attempted to remove the overloaded assumptions sizes by having more
+	types that people actually use.  Hence the following odd effect occurs:
+	Win64 code may be more portable amongst 32&amp;64-bit UNIXes,
+	than is slopper old UNIX code... :-)
+
+	c) This is the way Win64 is, regardless of anything in C9X.
+
+--
+-john mashey    DISCLAIMER: &lt;generic disclaimer: I speak for me only...>
+EMAIL:  mash@sgi.com  DDD: 650-933-3090 FAX: 650-933-4392
+USPS:   Silicon Graphics/Cray Research 40U-005,
+2011 N. Shoreline Blvd, Mountain View, CA 94043-1389
+
+</pre>
+<hr>
+<a name="18"></a>
+<pre>
+From: mash@mash.engr.sgi.com (John R. Mashey)
+Newsgroups: comp.std.c,comp.lang.c
+Subject: <a href="http://groups.google.com/groups/search?as_ugroup=comp.std.c&amp;as_uauthors=John+Mashey&amp;as_usubject=advice+coding+size_t&amp;as_drrb=b&amp;as_mind=21&amp;as_minm=4&amp;as_miny=1999&amp;as_maxd=23&amp;as_maxm=4&amp;as_maxy=1999&amp;sitesearch=groups.google.com">Re: coding style advice for sizeof (long) &lt; sizeof (size_t)?</a>
+Date: 22 Apr 1999 20:19:34 GMT
+
+In article &lt;7fno4u$fje@agora.dmz.khoral.com>, "Richard Krehbiel"
+&lt;rich@kastle.com> writes:
+
+|> (<a href="http://msdn.microsoft.com/developer/news/feature/win64/64bitwin.htm">http://msdn.microsoft.com/developer/news/feature/win64/64bitwin.htm</a>) and I
+|> saw no mention of size_t anywhere, only SIZE_T (which is new for Win64).
+|>
+|> Sounds like you're probably right, and I'm probably wrong.
+|>
+|> It means malloc can't create objects larger than 4G.  I suppose that means
+|> Win64 programmers will begin migrating to VirtualAlloc and further away from
+|> Standard C - and I suspect MS sees that as A Good Thing.
+
+Microsoft presentation at Intel Developer Forum includes foil that says
+(look carefully at the last line):
+
+Pointer/Length Issues
+- Many APIs accept a pointer to data and the length of the data
+- In almost all cases, 4GB is more than enough to describe the length of
+  the data.
+- In very rare cases, >4GB of length is needed.
+- We classify these as Normal objects, or Large objects
+
+Another slide says (I think I posted this before):
+- Use SIZE_T to specify byte counts that span the range of a pointer
+- Make no assumptions about the length of a pointer or xxxx_PTR or xSIZE_t.
+Just assume these are all compatible precision.'
+
+And yet another slide syas:
+- Supporting win64 and win32 with a single source base is our goal
+
+I think Microsoft is giving very clear advice:
+	- Forget you ever heard of size_t, use SIZE_t (or SSIZE_T) in
+	both win32 and win64 code.
+--
+-john mashey    DISCLAIMER: &lt;generic disclaimer: I speak for me only...>
+EMAIL:  mash@sgi.com  DDD: 650-933-3090 FAX: 650-933-4392
+USPS:   Silicon Graphics/Cray Research 40U-005,
+2011 N. Shoreline Blvd, Mountain View, CA 94043-1389
+
+</pre>
+<hr>
+<a name="19"></a>
+<pre>
+From: mash@mash.engr.sgi.com (John R. Mashey)
+Newsgroups: comp.std.c,comp.lang.c
+Subject: <a href="http://groups.google.com/groups/search?as_ugroup=comp.std.c&amp;as_uauthors=John+Mashey&amp;as_usubject=advice+coding+size_t&amp;as_drrb=b&amp;as_mind=22&amp;as_minm=4&amp;as_miny=1999&amp;as_maxd=24&amp;as_maxm=4&amp;as_maxy=1999&amp;sitesearch=groups.google.com">Re: coding style advice for sizeof (long) &lt; sizeof (size_t)?</a>
+Date: 23 Apr 1999 03:08:12 GMT
+
+In article &lt;371FBBF3.1D1889A5@jps.net>, Dennis Yelle &lt;dennis51@jps.net> writes:
+|> "John R. Mashey" wrote:
+
+|> > I think Microsoft is giving very clear advice:
+|> >         - Forget you ever heard of size_t, use SIZE_t (or SSIZE_T) in
+|> >         both win32 and win64 code.
+|>
+|> I don't read it that way.
+|> I think they are saying:
+|>
+|>     Use size_t for Normal objects, and SIZE_T for Large objects.
+|>
+|> If you are correct, why did they introduce the terminology
+|> "Large objects" ?
+
+Beats me .. it's just that in the info I looked at, I couldn't find any
+mention of size_t where one might have expected it, and their directions
+seemed very explicit to prefer SIZE_T ... which would let them have
+SIZE_T to act like the long of ILP32LL and of LP64, but while using
+P64 (= IL32LLP64, to be explicit).
+--
+-john mashey    DISCLAIMER: &lt;generic disclaimer: I speak for me only...>
+EMAIL:  mash@sgi.com  DDD: 650-933-3090 FAX: 650-933-4392
+USPS:   Silicon Graphics/Cray Research 40U-005,
+2011 N. Shoreline Blvd, Mountain View, CA 94043-1389
+
+</pre>
+<hr>
+</body>
+</html>
