@@ -1,0 +1,1339 @@
+Chapter 5Part I: The Basics
+
+In This Chapter:
+
+*  [_XREF Arrays_]
+
+*  [_XREF Strings_]
+
+*  [_XREF Reading Data_]
+
+*  [_XREF Initializing Variables_]
+
+*  [_XREF Multidimensional
+Arrays_]
+
+*  [_XREF Types of Integers_]
+
+*  [_XREF Types of Floats_]
+
+*  Declarations
+
+*  Qualifiers
+
+*  Hexadecimal and Octal
+Constants
+
+*  Operators for Performing
+Shortcuts
+
+*  Programming Exercises
+
+5	
+
+5: Arrays, Qualifiers, and Reading
+Numbers
+
+That mysterious independent variable
+of political calculations, Public
+Opinion.
+
+---Thomas Henry Huxley
+
+[_A_]  Arrays
+
+So far in constructing our building we have named each brick
+(variable). That is fine for a small number of bricks, but what
+happens when we want to construct something larger? We would
+like to point to a stack of bricks and say, "That's for the left wall.
+That's brick 1, brick 2, brick 3. . . ."
+
+Arrays allow us to do something similar with variables. An array is
+a set of consecutive memory locations used to store data. Each item
+in the array is called an element. The number of elements in an
+array is called the dimension of the array. A typical array declaration
+is:
+
+[_Code_] // List of data to be sorted and averaged
+
+[_Code_] int    data_list[3];
+
+This declares data_list to be an array of the three elements data_
+list[0], data_list[1], and data_list[2], which are separate
+variables. To reference an element of an array, you use a number
+called the index (the number inside the square brackets [ ]). C++ is a
+funny language and likes to start counting at 0, so these three
+elements are numbered 0-2.
+
+[_NOTE_]  Common sense tells you that when you declare
+data_list to be three elements long, data_list[3] would
+be valid. Common sense is wrong and data_list[3] is
+illegal.
+
+[_XREF Example 5-1_] computes the total and average of five
+numbers.
+
+Example 5-1
+
+. five/five.cc
+
+[_Code_] #include <iostream.h>
+
+[_Code_]
+[_Code_] float data[5];  // data to average and total
+
+[_Code_] float total;    // the total of the data items
+
+[_Code_] float average;  // average of the items
+
+[_Code_]
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     data[0] = 34.0;
+
+[_Code_]     data[1] = 27.0;
+
+[_Code_]     data[2] = 46.5;
+
+[_Code_]     data[3] = 82.0;
+
+[_Code_]     data[4] = 22.0;
+
+[_Code_]
+[_Code_]     total = data[0] + data[1] + data[2] + data[3] + data[4];
+
+[_Code_]     average =  total / 5.0;
+
+[_Code_]     cout << "Total " << total << " Average " << average << '\n';
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+This program outputs:
+
+[_Code_] Total 211.5 Average 42.3
+
+[_A_]  Strings
+
+Strings are arrays of characters. The special character '\0' (NUL) is
+used to indicate the end of a string.
+
+Example:
+
+[_Code_] char    name[4];
+
+[_Code_]
+
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     name[0] = 'S';
+
+[_Code_]     name[1] = 'a';
+
+[_Code_]     name[2] = 'm';
+
+[_Code_]     name[3] = '\0';
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+This creates a character array four elements long. Note that we had
+to allocate one character for the end-of-string marker.
+
+String constants consist of text enclosed in double quotes ("). You
+may have already noticed that we've used string constants
+extensively for output with the cout standard class. C++ does not
+allow one array to be assigned to another, so you can't write an
+assignment of the form:
+
+[_Code_]     name = "Sam";    // Illegal
+
+Instead you must use the standard library function strcpy to copy
+the string constant into the variable. (strcpy copies the whole
+string including the end-of-string character.) To initialize the
+variable name to "Sam" you would write:
+
+[_Code_] #include <string.h>
+
+[_Code_]
+
+[_Code_] char    name[4];
+
+[_Code_]
+
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     strcpy(name, "Sam");    // Legal
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+[_NOTE_]  The line #include <string.h> is needed to
+inform C++ that you are using the string function library.
+
+C++ uses variable-length strings. For example, the declaration:
+
+[_Code_] #include <string.h>
+
+[_Code_]
+
+[_Code_] char string[50];
+
+[_Code_]
+
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     strcpy(string, "Sam");
+
+creates an array (string) that can contain up to 50 characters. The
+size of the array is 50, but the length of the string is 3. Any string up
+to 49 characters long can be stored in string. (One character is
+reserved for the NULL that indicates the end of the string.)
+
+There are several standard routines that work on string variables.
+These are listed in [_XREF Table 5-1_].
+
+Table 5-1
+
+. String Functions
+
+Function
+
+Description
+
+strcpy(string1, string2)
+
+Copies string2 into string1
+
+strcat(string1, string2)
+
+Concatenates string2 onto the end of string1
+
+length = strlen(string)
+
+Gets the length of a string
+
+strcmp(string1, string2)
+
+0 if string1 equals string2; otherwise, nonzero
+
+[_XREF Example 5-2_] illustrates how strcpy is used.
+
+Example 5-2
+
+. str/sam.cc
+
+[_Code_] #include <iostream.h>
+
+[_Code_] #include <string.h>
+
+[_Code_]
+[_Code_] char name[30];  // First name of someone
+
+[_Code_]
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]    strcpy(name, "Sam");
+
+[_Code_]    cout << "The name is " << name << '\n';
+
+[_Code_]    return (0);
+
+[_Code_] }
+
+[_XREF Example 5-3_] takes a first name and a last name and
+combines the two strings. The program works by initializing the
+variable first to the first name (Steve). The last name (Oualline) is
+put in the variable last. To construct the full name, the first name
+is copied into full_name. Then strcat is used to add a space. We
+call strcat again to tack on the last name.
+
+The dimension of the string variables is 100 because we know that
+no one we are going to encounter has a name more than 99
+characters long. (If we get a name more than 99 characters long,
+our program will screw up and split the name in two.)
+
+Example 5-3
+
+. name2/man2.cc
+
+[_Code_] #include <string.h>
+
+[_Code_] #include <iostream.h>
+
+[_Code_]
+[_Code_] char first[100];        // first name
+
+[_Code_] char last[100];         // last name
+
+[_Code_] char full_name[100];    // full version of first and last name
+
+[_Code_]
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     strcpy(first, "Steve");     // Initialize first name
+
+[_Code_]     strcpy(last, "Oualline");   // Initialize last name
+
+[_Code_]
+[_Code_]     strcpy(full_name, first);   // full = "Steve"
+
+[_Code_]                                 // Note: strcat not strcpy
+
+[_Code_]     strcat(full_name, " ");     // full = "Steve "
+
+[_Code_]     strcat(full_name, last);    // full = "Steve Oualline"
+
+[_Code_]
+[_Code_]     cout << "The full name is " << full_name << '\n';
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+The output of this program is:
+
+[_Code_] The full name is Steve Oualline
+
+[_A_]  Reading Data
+
+So far you've learned how to compute expressions and output the
+results. You need to have your programs read numbers as well. The
+output class variable cout uses the operator << to write numbers.
+The input class variable cin uses the operator >> to read them. For
+example, the code:
+
+[_Code_] cin >> price >> number_on_hand;
+
+reads two numbers: price and number_on_hand. The input to this
+program should be two numbers, separated by white space. For
+example, if you type:
+
+[_Code_] 32 5
+
+then price gets the value 32 and number_on_hand gets 5.
+
+[_NOTE_]  This does not give you very precise control over
+your input. C++ does a reasonable job for simple input. If
+your program expects a number and you type <enter>
+instead, the program will skip the <enter> (it's white space)
+and wait for you to type a number. Sometimes this may lead
+you to think your program's stuck.
+
+In [_XREF Example 5-4_], we use cin to get a number from the user
+and then we double it:
+
+Example 5-4
+
+. double/double.cc
+
+[_Code_] #include <iostream.h>
+
+[_Code_] char  line[100];   // input line from console
+
+[_Code_] int   value;       // a value to double
+
+[_Code_]
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     cout << "Enter a value: ";
+
+[_Code_]     cin >> value;
+
+[_Code_]     cout << "Twice " << value << " is " << value * 2 << '\n';
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+This program asks the user for a single number and doubles it.
+Notice that there is no \n at the end of Enter a value:. This is
+because we do not want the computer to print a newline after the
+prompt. For example, a sample run of the program might look like:
+
+[_Code_] Enter a value: 12
+
+[_Code_] Twice 12 is 24
+
+If we replaced Enter a value: with Enter a value:\n the
+result would be:
+
+[_Code_] Enter a value:
+
+[_Code_] 12
+
+[_Code_] Twice 12 is 24
+
+Question 5-1:  [_XREF Example 5-5_] is designed to compute the area of a triangle,
+given its width and height. For some strange reason, the compiler refuses to believe
+that we declared the variable width. The declaration is right there on line two, just
+after the definition of height. Why isn't the compiler seeing it?
+
+Example 5-5
+
+. comment/comment.cc
+
+[_Code_] #include <iostream.h>
+
+[_Code_]
+[_Code_] int  height;   /* the height of the triangle
+
+[_Code_] int  width;    /* the width of the triangle */
+
+[_Code_] int  area;     /* area of the triangle (computed) */
+
+[_Code_]
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     cout << "Enter width height? ";
+
+[_Code_]     cin >> width >> height;
+
+[_Code_]     area = (width * height) / 2;
+
+[_Code_]     cout << "The area is " << area << '\n';
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+The general form of a cin statement is:
+
+[_Code_] cin >> variable;
+
+This works for all types of simple variables such as int, float,
+and char.
+
+Reading strings is a little more difficult. To read a string, use the
+statement:
+
+[_Code_] cin.getline(string, sizeof(string));
+
+For example:
+
+[_Code_] char name[100];    // The name of a person
+
+[_Code_]
+
+[_Code_] cin.getline(name, sizeof(name));
+
+We discuss the getline and sizeof functions in Chapter 16, File
+Input/Output.
+
+When reading a string, the cin class considers anything up to the
+end-of-line part of the string. [_XREF Example 5-6_] reads a line
+from the keyboard and reports the line's length.
+
+Example 5-6
+
+. len/len.cc
+
+[_Code_] #include <string.h>
+
+[_Code_] #include <iostream.h>
+
+[_Code_]
+[_Code_] char line[100]; // A line of data
+
+[_Code_]
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     cout << "Enter a line:";
+
+[_Code_]     cin.getline(line, sizeof(line));
+
+[_Code_]
+[_Code_]     cout << "The length of the line is: " << strlen(line) << '\n';
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+When we run this program we get:
+
+[_Code_] Enter a line:test
+
+[_Code_] The length of the line is: 4
+
+[_A_]  Initializing Variables
+
+C++ allows variables to be initialized in the declaration statement.
+For example, the following statement declares the integer counter
+and initializes it to 0.
+
+[_Code_]    int counter(0);    // number cases counted so far
+
+The older C style syntax is also supported:
+
+[_Code_]    int counter = 0;    // number cases counted so far
+
+Arrays can also be initialized in a similar manner. The element list
+must be enclosed in curly braces ({}). For example:
+
+[_Code_] // Product numbers for the parts we are making
+
+[_Code_] int product_codes[3] = {10, 972, 45};
+
+This is equivalent to:
+
+[_Code_] product_codes[0] = 10;
+
+[_Code_] product_codes[1] = 972;
+
+[_Code_] product_codes[2] = 45;
+
+The number of elements in the curly braces ({}) does not have to
+match the array size. If too many numbers are present, a warning
+will be issued. If there are not enough numbers, the extra elements
+will be initialized to 0.
+
+If no dimension is given, C++ will determine the dimension from
+the number of elements in the initialization list. For example, we
+could have initialized our variable product_codes with the
+statement:
+
+[_Code_] // Product numbers for the parts we are making
+
+[_Code_] int product_codes[] = {10, 972, 45};
+
+Strings can be initialized in a similar manner. To initialize the
+variable name to the string "Sam" we use the statement:
+
+[_Code_] char name[] = {'S', 'a', 'm', '\0'};
+
+C++ has a special shorthand for initializing strings, by using double
+quotes (") to simplify the initialization. The previous example could
+have been written:
+
+[_Code_] char name[] = "Sam";
+
+The dimension of name is 4, because C++ allocates a place for the
+'\0' character that ends the string.
+
+C++ uses variable-length strings. For example, the declaration:
+
+[_Code_] char string[50] = "Sam";
+
+creates an array (string) that can contain up to 50 characters. The
+size of the array is 50, and the length of the string is 3. Any string
+up to 49 characters long can be stored in string. (One character is
+reserved for the NUL that indicates the end of the string.)
+
+[_NOTE_]  Our statement initialized only 4 of the 50 values in
+string. The other 46 elements are not initialized and may
+contain random data.
+
+[_A_]  Multidimensional Arrays
+
+Arrays can have more than one dimension. The declaration for a
+two-dimensional array is:
+
+[_Code_] type variable[size1][size2]; // comment
+
+Example:
+
+[_Code_] // a typical matrix
+
+[_Code_] int matrix[2][4];
+
+Notice that C++ does not follow the notation used in other
+languages of matrix[10,12].
+
+To access an element of the matrix we use the notation:
+
+[_Code_] matrix[1][2] = 10;
+
+C++ allows you to use as many dimensions as needed (only limited
+by the amount of memory available). Additional dimensions can be
+tacked on.
+
+[_Code_] four_dimensions[10][12][9][5];
+
+Initializing multidimensional arrays is similar to initializing single-
+dimension arrays. A set of curly braces { } encloses each element.
+The declaration:
+
+[_Code_] // a typical matrix
+
+[_Code_] int matrix[2][4];
+
+can be thought of as a declaration of an array of dimension 2 whose
+elements are arrays of dimension 4. This array is initialized as
+follows:
+
+[_Code_] // a typical matrix
+
+[_Code_] int matrix[2][4] =
+
+[_Code_]     {
+
+[_Code_]         {1, 2, 3, 4},
+
+[_Code_]         {10, 20, 30, 40}
+
+[_Code_]     };
+
+This is shorthand for:
+
+[_Code_] matrix[0][0] = 1;
+
+[_Code_] matrix[0][1] = 2;
+
+[_Code_] matrix[0][2] = 3;
+
+[_Code_] matrix[0][3] = 4;
+
+[_Code_]
+
+[_Code_] matrix[1][0] = 10;
+
+[_Code_] matrix[1][1] = 20;
+
+[_Code_] matrix[1][2] = 30;
+
+[_Code_] matrix[1][3] = 40;
+
+Question 5-2: Why does the following program print incorrect answers?
+
+Example 5-7
+
+. array/array.cc
+
+[_Code_] #include <iostream.h>
+
+[_Code_]
+[_Code_] int array[3][5] = {     // Two dimensional array
+
+[_Code_]    { 0,  1,  2,  3,  4 },
+
+[_Code_]    {10, 11, 12, 13, 14 },
+
+[_Code_]    {20, 21, 22, 23, 24 }
+
+[_Code_] };
+
+[_Code_]
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     cout << "Last element is " << array[2,4] << '\n';
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+When run on a Sun 3/50 this program generates:
+
+[_Code_] Last element is 0x201e8
+
+Your answers may vary.
+
+[_A_]  Types of Integers
+
+C++ is considered a medium-level language because it allows you
+to get very close to the actual hardware of the machine. Some
+languages, such as BASIC, go to great lengths to completely isolate
+the user from the details of how the processor works. This
+consistency comes at a great loss of efficiency. C++ lets you give
+detailed information about how the hardware is to be used.
+
+For example, most machines let you use different-length numbers.
+Simple BASIC allows the programmer to use only one number type.
+This simplifies the programming, but BASIC programs are extremely
+inefficient. C++ allows the programmer to specify many different
+kinds of integers, so the programmer can make best use of the
+hardware.
+
+The type specifier int tells C++ to use the most efficient size (for the
+machine you are using) for the integer. This can be 2 to 4 bytes
+depending on the machine. Sometimes you need extra digits to
+store numbers larger than are allowed in a normal int. The
+declaration:
+
+[_Code_] long int answer;        // the answer of our calculations
+
+is used to allocate a long integer. The long quantifier informs C++
+that you wish to allocate extra storage for the integer. If you are
+going to use small numbers and wish to reduce storage, use the
+quantifier short.
+
+[_Code_] short int year;         // Year including the 19xx part
+
+C++ guarantees that the storage for short <= int <= long. In actual
+practice, short almost always allocates 2 bytes; long, 4 bytes; and
+int, 2 or 4 bytes. (See Appendix B for numeric ranges.)
+
+Long integer constants end with the character "L." For example:
+
+[_Code_] long int var = 1234L;    // Set up a long variable
+
+Actually you can use either an uppercase or a lowercase "L."
+Uppercase is preferred since lowercase easily gets confused with
+the digit "1."
+
+[_Code_] long int funny = 12l;   // Is this 12<long> or one hundred twenty-one?
+
+The type short int uses 2 bytes, or 16 bits. Fifteen bits are used
+normally for the number and 1 bit for the sign. This gives it a range
+of -32,768 (-215) to 32,767 (215 - 1). An unsigned short int
+uses all 16 bits for the number, giving it the range of 0 to 65,535
+(216 - 1). All int declarations default to signed, so that the
+declaration:
+
+[_Code_]     signed long int answer;     // final result
+
+is the same as:
+
+[_Code_]     long int answer;            // final result
+
+Finally there is the very short integer, the type char. Character
+variables take up 1 byte. They can also be used for numbers in the
+range of -128 to 127 or 0 to 255. Unlike integers, they do not
+default to signed; the default is compiler dependent.
+
+Question: Is the following character variable signed or unsigned?
+
+[_Code_] char foo;
+
+Answers:
+
+a.	It's signed.
+
+b. 	It's unsigned.
+
+c.	It's compiler dependent.
+
+d.	If you always specify signed or unsigned you don't have to worry about
+problems like this.
+
+Reading and writing very short integers is a little tricky. If you try to
+use a char variable in an output statement, it will be written, as a
+character. You need to trick C++ into believing that the char
+variable is an integer. This can be accomplished with the int
+operator. Example 5-8 shows how to write out a very short integer
+as a number.
+
+Example 5-8
+
+. two2/two2.cc
+
+[_Code_] #include <iostream.h>
+
+[_Code_]
+[_Code_] signed char ch; // Very short integer
+
+[_Code_]                 // Range is -128 to 127
+
+[_Code_]
+[_Code_] int main()
+
+[_Code_] {
+
+[_Code_]    ch = 37;
+
+[_Code_]    cout << "The number is " << int(ch) << '\n';
+
+[_Code_]    return (0);
+
+[_Code_] }
+
+We start by declaring a character variable ch. This variable is
+assigned the value 37. This is actually an integer, not a character,
+but C++ doesn't care. On the next line we write out the value of the
+variable. If we tried to write ch directly, C++ would treat it as a
+character. The code int(ch) tells C++, "Treat this character as an
+integer."
+
+Reading a very short integer is not possible. You must first read it as
+a short int and then assign it to a very short integer.
+
+[_B_]  Summary of Integer Types
+
+long int declarations allow the programmer to explicitly specify
+extra precision where it is needed (at the expense of memory).
+short int numbers save space but have a more limited range.
+The most compact integers have type char. They also have the
+most limited range.
+
+unsigned numbers provide a way of doubling the range at the
+expense of eliminating negative numbers. The kind of number you
+use will depend on your program and storage requirements. The
+range of the various types of integers is listed in Appendix B.
+
+[_A_]  Types of Floats
+
+The float type also comes in various flavors. float denotes
+normal precision (usually 4 bytes). double indicates double
+precision (usually 8 bytes). Double precision gives the programmer
+twice the range and precision of single-precision (float) variables.
+
+The quantifier long double denotes extended precision. On
+some systems this is the same as double; on others, it offers
+additional precision. All types of floating-point numbers are always
+signed.
+
+On most machines, single-precision floating-point instructions
+execute faster (but less accurately) than double precision. Double
+precision gains accuracy at the expense of time and storage. In most
+cases float is adequate; however, if accuracy is a problem, switch
+to double (see Chapter 19, Floating Point).
+
+[_A_]  Constant and Reference Declarations
+
+Sometimes you want to use a value that does not change, such as p.
+The keyword const indicates a variable that never changes. To
+declare a value for pi we use the statement:
+
+[_Code_] const float PI = 3.1415926;    // The classic circle constant
+
+[_NOTE_]  By convention variable names use lowercase only
+while constants use uppercase only. However, there is
+nothing in the language that requires this, and several
+programming systems use a different convention.
+
+Constants must be initialized at declaration time and can never be
+changed. For example, if we tried to reset the value of PI to 3.0
+we would generate an error message:
+
+[_Code_] PI = 3.0;      // Illegal
+
+Integer constants can be used as a size parameter when declaring
+an array:
+
+[_Code_] const int TOTAL_MAX = 50;    // Max. number of elements in total list
+
+[_Code_] float total_list[TOTAL_MAX]; // Total values for each category
+
+[_NOTE_]  C++ allows you to use integer expressions when
+declaring an array. For example, you can say total_
+list[10] or total_list[7+3]. However, some compilers,
+such as Borland-C++ Version 3.1, won't allow integer
+constants in this type of expression. For example:
+
+[_Code_] const int first_part = 3;
+
+[_Code_] const int second_part = 7;
+
+[_Code_]
+
+[_Code_] float total[3+7];              // Works even in Borland C++ Version 3.1
+
+[_Code_] float total2[first_part + 7];  // Fails in Borland C++ version 3.1
+
+[_Code_] float total3[first_part + second_part];  // Also fails
+
+Another special variable type is the reference type. A typical
+reference declaration is:
+
+[_Code_] int count;                  // Number of items so far
+
+[_Code_] int &actual_count = count;  // Another name for count
+
+The special character "&" is used to tell C++ that actual_count is
+a reference. The declaration causes the names count and actual_
+count to refer to the same variable. For example, the following two
+statements are equivalent:
+
+[_Code_] count = 5;            // "Actual_count" changes too
+
+[_Code_] actual_count = 5;     // "Count" changes too
+
+In other words, a simple variable declaration declares a box to put
+data in. A reference variable slaps another name on the box, as
+illustrated in [_XREF Figure 5-1_].
+
+Figure 5-1
+
+. Reference variables
+
+This form of the reference variable is not very useful. In fact, in
+actual programming it is almost never used. In Chapter 9, Variable
+Scope and Functions, you'll see how another form of the reference
+variable can be very useful.
+
+[_A_]  Qualifiers
+
+As you've seen, C++ allows you to specify a number of qualifiers for
+variable declarations. Qualifiers may be thought of as adjectives that
+describe the type that follows. [_XREF Table 5-2_] summarizes the
+various qualifiers.
+
+Table 5-2
+
+. Qualifiers and Simple Types
+
+Special
+
+Class
+
+Size
+
+Sign
+
+Type
+
+volatile
+
+register
+
+long
+
+signed
+
+int
+
+<blank>
+
+static
+
+short
+
+unsigned
+
+float
+
+extern
+
+double
+
+<blank>
+
+char
+
+auto
+
+<blank>
+
+<blank>
+
+<blank>
+
+[_B_]  Special
+
+The volatile keyword is used for specialized programming such
+as I/O drivers and shared memory applications. It is an advanced
+modifier whose use is far beyond the scope of this book.
+
+volatile
+Indicates a special variable whose value may change at any time
+
+<blank>
+Normal variable
+
+[_B_]  Class
+
+The class of a variable is discussed in detail in Chapter 9, Variable
+Scope and Functions. A brief description of the various classes
+follows:
+
+register
+This indicates a frequently used variable that should be kept in a machine
+register. See Chapter 17, Debugging and Optimization.
+
+static
+The meaning of this word depends on the context. This keyword is described
+in Chapter 9, Variable Scope and Functions, and Chapter 23, Modular
+Programming.
+
+extern
+The variable is defined in another file. See Chapter 23 for more information.
+
+auto
+A variable allocated from the stack. This keyword is hardly ever used.
+
+<blank>
+Indicates that the default class (auto) is selected.
+
+[_B_]  Size
+
+The size qualifier allows you to select the most efficient size for the
+variable.
+
+long
+Indicates a larger than normal integer. (Some nonstandard compilers use
+long double to indicate a very large floating-point variable.)
+
+short
+A smaller than normal integer.
+
+double
+A double-size floating-point number.
+
+<blank>
+Indicates a normal size number.
+
+[_B_]  Sign
+
+Numbers can be signed or unsigned. This qualifier applies only
+to char and int types. Floating-point numbers are always signed.
+The default is signed for int and undefined for characters.
+
+[_B_]  Type
+
+This specifies the type of the variable. Simple types include:
+
+int
+Integer
+
+float
+Floating-point number
+
+char
+Single characters, but can also be used for very short integers
+
+[_A_]  Hexadecimal and Octal Constants
+
+Integer numbers are specified as a string of digits, such as 1234, 88,
+-123, and so on. These are decimal (base 10) numbers: 174 or
+17410. Computers deal with binary (base 2) numbers: 101011102.
+The octal (base 8) system easily converts to and from binary. Each
+group of three digits (23 = 8) can be transformed into a single octal
+digit. Thus 101011102 can be written as 10  101  1102 and changed
+to the octal 2568. Hexadecimal (base 16) numbers have a similar
+conversion, but 4 bits at a time are used. For example, 100101002 is
+1000 0100, or 8416.
+
+The C++ language has conventions for representing octal and
+hexadecimal values. Leading zeros are used to signal an octal
+constant. For example, 0123 is 123 (octal) or 83 (decimal). Starting a
+number with "0x" indicates a hexadecimal (base 16) constant. So
+0x15 is 21 (decimal). [_XREF Table 5-3_] shows several numbers in
+all three bases.
+
+Table 5-3
+
+. Integer Examples
+
+Base 10
+
+Base 8
+
+Base 16
+
+6
+
+06
+
+0x6
+
+9
+
+011
+
+0x9
+
+15
+
+017
+
+0xF
+
+Question 5-3: Why does the following program fail to print the correct zip code?
+What does it print instead?
+
+[_Code_] long int zip;         // Zip code
+
+[_Code_]
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]    zip = 02137L;       // Use the zip code for Cambridge MA
+
+[_Code_]
+[_Code_]    cout << "New York's zip code is: " << zip << '\n';
+
+[_Code_]    return(0);
+
+[_Code_] }
+
+[_A_]  Operators for Performing Shortcuts
+
+C++ not only provides you with a rich set of declarations, but also
+gives you a large number of special-purpose operators. Frequently a
+programmer wants to increment (add 1 to) a variable. Using a
+normal assignment statement, this would look like:
+
+[_Code_] total_entries = total_entries + 1;
+
+C++ provides you a shorthand for performing this common task.
+The ++ operator is used for incrementing.
+
+[_Code_] ++total_entries;
+
+A similar operator, --, can be used for decrementing (subtracting 1
+from) a variable.
+
+[_Code_]     --number_left;
+
+[_Code_]     // Is the same as
+
+[_Code_]     number_left = number_left - 1;
+
+But suppose you want to add 2 instead of 1. Then you can use the
+following notation:
+
+[_Code_] total_entries += 2;
+
+This is equivalent to:
+
+[_Code_] total_entries = total_entries + 2;
+
+Each of the simple operators shown in [_XREF Table 5-4_] can be
+used in this manner.
+
+Table 5-4
+
+. Shorthand Operators
+
+Operator
+
+Shorthand
+
+Equivalent Statement
+
++=
+
+x += 2;
+
+x = x + 2;
+
+-=
+
+x -= 2;
+
+x = x - 2;
+
+*=
+
+x *= 2;
+
+x = x * 2;
+
+/=
+
+x /= 2;
+
+x = x / 2;
+
+%=
+
+x %= 2;
+
+x = x % 2;
+
+[_A_]  Side Effects
+
+Unfortunately, C++ allows the programmer to use side effects. A side
+effect is an operation that is performed in addition to the main
+operation executed by the statement. For example, the following is
+legal C++ code:
+
+[_Code_] size = 5;
+
+[_Code_] result = ++size;
+
+The first statement assigns size the value of 5. The second
+statement:
+
+1.  Increments size (side effect)
+
+2.  Assigns result the value of size (main operation)
+
+But in what order? There are four possible answers:
+
+1.  result is assigned the value of size (5), and then size is
+incremented.
+
+result is 5 and size is 6.
+
+2.  size is incremented, and then result is assigned the value
+of size (6).
+
+result is 6 and size is 6.
+
+3.  The answer is compiler dependent and varies from computer
+to computer.
+
+4.  If you don't write code like this, you don't have to worry
+about these sorts of questions.
+
+The correct answer is 2: The increment occurs before the
+assignment. However, 4 is a much better answer. The main effects
+of C++ are confusing enough without having to worry about side
+effects.
+
+[_NOTE_]  Some programmers highly value compact code.
+This is a holdover from the early days of computing when
+storage cost a significant amount of money. It is my view that
+the art of programming has evolved to the point where
+clarity is much more valuable than compactness. (Great
+novels, which a lot of people enjoy reading, are not written
+in shorthand.)
+
+C++ actually provides two forms of the ++ operator. One is
+variable++ and the other is ++variable. The first:
+
+[_Code_]     number = 5;
+
+[_Code_]     result = number++;
+
+evaluates the expression and then increments the number, so
+result is 5. The second:
+
+[_Code_]     number = 5;
+
+[_Code_]     result = ++number;
+
+increments first and then evaluates the expression. In this case
+result is 6. However, using ++ or -- in this way can lead to some
+surprising code:
+
+[_Code_]     o = --o - o--;
+
+The problem with this is that it looks like someone is writing Morse
+code. The programmer doesn't read this statement, he decodes it. If
+you never use ++ or -- as part of any other statement, but always
+put them on a line by themselves, the difference between the two
+forms of these operators is not noticeable.
+
+[_NOTE_]  The prefix form ++variable is preferred over the
+suffix form variable++ because it allows the compiler to
+generate slightly simpler code.
+
+More complex side effects can confuse even the C++ compiler.
+Consider the following code fragment:
+
+[_Code_] value = 1;
+
+[_Code_] result = (value++ * 5) + (value++ * 3);
+
+This expression tells C++ to perform the steps:
+
+1.  Multiply value by 5 and add 1 to value.
+
+2.  Multiply value by 3 and add 1 to value.
+
+3.  Add the results of the two multiples together.
+
+Steps 1 and 2 are of equal priority, unlike the previous example, so
+the compiler can execute them in any order it wants to. Suppose it
+decides to execute step 1 first, as shown in [_XREF Figure 5-2_].
+
+Figure 5-2
+
+. Expression evaluation, method 1
+
+But it may execute step 2 first, as shown in [_XREF Figure 5-3_].
+
+Figure 5-3
+
+. Expression evaluation, method 2
+
+By using the first method, we get a result of 11; using the second
+method the result is 13. The result of this expression is ambiguous.
+By using the operator ++ in the middle of a larger expression, we
+created a problem. (This is not the only problem that ++ and -- can
+cause. We will get into more trouble in Chapter 10, The C++
+Preprocessor.)
+
+To avoid trouble and keep the program simple, always put ++ and -
+- on a line by themselves.
+
+[_A_]  Programming Exercises
+
+Exercise 5-1: Write a program that converts Celsius to Fahrenheit.
+
+[_EQUATION_]
+
+Exercise 5-2: Write a program to calculate the volume of a sphere, .
+
+Exercise 5-3: Write a program to print out the perimeter of a rectangle given its
+height and width.
+
+[_EQUATION_]
+
+Exercise 5-4: Write a program that converts kilometers per hour to miles per hour.
+
+[_EQUATION_]
+
+Exercise 5-5: Write a program that takes hours and minutes as input and outputs
+the total number of minutes (1 hour 30 minutes = 90 minutes).
+
+Exercise 5-6: Write a program that takes an integer as the number of minutes and
+outputs the total hours and minutes (90 minutes = 1 hour 30 minutes).
+
+[_A_]  Answers to Chapter Questions
+
+Answer 5-1: The programmer accidentally omitted the end-comment symbol ( */ )
+after the comment for height. The comment continues onto the next line and
+engulfs the width variable declaration. [_XREF Example 5-9_] shows the program
+with the comments underlined.
+
+Example 5-9
+
+. tempconv.c
+
+[_Code_] #include <iostream.h>
+
+[_Code_]
+[_Code_] int  height;   /* The height of the triangle
+
+[_Code_] int  width;    /* The width of the triangle*/
+
+[_Code_] int  area;     /* Area of the triangle (computed) */
+
+[_Code_]
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     cout << "Enter width and height? ";
+
+[_Code_]     cin >> width >> height;
+
+[_Code_]     area = (width * height) / 2;
+
+[_Code_]     cout << "The area is " << area << '\n';
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+Answer 5-2: The problem is with the way we specified the element of the array:
+array[2,4]. This should have been written: array[2] [4].
+
+The reason that the specification array[2,4] does not generate a
+syntax error is that it is legal (but strange) C++. There is a comma
+operator in C++ (See C++'s Darker Corners) so the expression 2,4
+evaluates to 4. So array[2,4] is the same as array[4].  C++
+treats this as a pointer (See Simple pointers) and written shows up
+as a memory address.
+
+Answer 5-3: The problem is that the zip code 02137 begins with a zero. That tells
+C++ that 02137 is an octal constant. When we print it, we print in decimal.
+Because 021378 is 111910 the program prints:
+
+[_Code_] New York's zip code is: 1119

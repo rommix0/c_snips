@@ -1,0 +1,738 @@
+Chapter 2Part I: The Basics
+
+In This Chapter:
+
+*  [_XREF Programs from
+Conception to Execution_]
+
+*  [_XREF Creating a Real
+Program_]
+
+*  [_XREF Creating a Program
+Using a Command-Line
+Compiler_]
+
+*  [_XREF Creating a Program
+Using an Integrated
+Development Environment_]
+
+*  Getting Help
+
+*  [_XREF Programming
+Exercises_]
+
+2	
+
+2: The Basics of Program Writing
+
+The first and most important thing of
+all, at least for writers today, is to
+strip language clean, to lay it bare
+down to the bone.
+
+---Ernest Hemingway
+
+Computers are very powerful tools that can store, organize, and
+process a tremendous amount of information. However, they can't
+do anything until someone gives them detailed instructions.
+
+Communicating with computers is not easy. They require
+instructions that are exact and detailed. Wouldn't life be easier if we
+could write programs in English? Then we could tell the computer,
+"Add up all my checks and deposits, and then tell me the total," and
+the machine would balance our checkbooks.
+
+But English is a lousy language when you must write exact
+instructions. The language is full of ambiguity and imprecision.
+Grace Hopper, the grand old lady of computing, once commented
+on the instructions she found on a bottle of shampoo:
+
+Wash
+
+Rinse
+
+Repeat
+
+She tried to follow the directions, but she ran out of shampoo.
+(Wash-rinse-repeat. Wash-rinse-repeat. Wash-rinse-repeat. . . .)
+
+Of course, we can try to write in precise English. We'd have to be
+careful and make sure to spell everything out and be sure to
+include instructions for every contingency. If we worked really
+hard, we could write precise English instructions, right?
+
+As it turns out, there is a group of people who spend their time
+trying to write precise English. They're called the government, and
+the documents they write are called government regulations.
+Unfortunately, in their effort to make the regulations precise, the
+government also has made the documents almost unreadable. If
+you've ever read the instruction book that comes with your tax
+forms, you know what precise English can be like.
+
+Still, even with all the extra verbiage the government puts in,
+problems can occur. A few years ago California passed a law
+requiring all motorcycle riders to wear a helmet. Shortly after this
+law went into effect a cop stopped a guy for not wearing a helmet.
+The man suggested the police officer take a closer look at the law.
+
+The law had two requirements: 1) that motorcycle riders have an
+approved crash helmet and 2) that it be firmly strapped on. The cop
+couldn't give the motorcyclist a ticket because the man did have a
+helmet firmly strapped on - to his knee.
+
+So English, with all its problems, is out as a computer language.
+Now, how do we communicate with a computer?
+
+The first computers cost millions of dollars, while at the same time a
+good programmer cost about $15,000 a year. Programmers were
+forced to program in a language where all the instructions were
+reduced to a series of numbers, called machine language. This
+language could be directly input into the computer. A typical
+machine-language program looks like:
+
+[_Code_] 1010 1111
+
+[_Code_] 0011 0111
+
+[_Code_] 0111 0110
+
+[_Code_] .. and so on for several hundred instructions
+
+Whereas machines "think" in numbers, people don't. To program
+these ancient machines, software engineers would write out their
+programs using a simple language where each word would stand
+for a single instruction. This was called assembly language because
+the programmers had to manually translate, or assemble, each line
+into machine code.
+
+A typical program might look like:
+
+[_Code_] Program			Translation
+
+[_Code_] MOV A,47 	1010 1111
+
+[_Code_] ADD A,B 			0011 0111
+
+[_Code_] HALT 			0111 0110
+
+[_Code_] .. and so on for several hundred instructions
+
+This process is illustrated by [_XREF Figure 2-1_].
+
+Figure 2-1
+
+.  Assembling a program
+
+Translation was a difficult, tedious, exacting task. One software
+engineer decided this was a perfect job for a computer, so he wrote
+a program, called an assembler, that would do the job automatically.
+
+He showed his new creation to his boss and was immediately
+chewed out: "How dare you even think of using such an expensive
+machine for a mere `clerical' task?" Given the cost of an hour of
+computer time versus the cost of an hour of programmer's time, this
+was not an unreasonable attitude.
+
+Fortunately, as time passed the cost of programmers went up and
+the cost of computers went down. So it became more cost-effective
+to let the programmers write programs in assembly language and
+then use a program called an assembler to translate the programs
+into machine language.
+
+Assembly language organized programs in a way that was easier for
+the programmers to understand. However, the program was more
+difficult for the machine to use. The program had to be translated
+before the machine could execute it. This was the start of a trend.
+Programming languages became more and more convenient for
+programmers to use and started requiring more and more computer
+time to translate them into something useful for computers.
+
+Over the years a series of high-level languages has been devised.
+These languages are attempts to let programmers write in something
+that is easy for them to understand and that is also precise and
+simple enough for computers to understand.
+
+Early high-level languages were designed to handle specific types of
+applications. FORTRAN was designed for number crunching;
+COBOL, for writing business reports; and PASCAL, for student use.
+(Many of these languages have far outgrown their initial uses. It is
+rumored that Nicklaus Wirth has said, "If I had known that PASCAL
+was going to be so successful, I would have been more careful in
+its design.")
+
+Later on, Brian Kernighan and Dennis Ritchie developed C and
+Bjarne Stroustrup turned it into C++.
+
+[_A_]  Programs from Conception to Execution
+
+C++ programs are written in a high-level language using letters,
+numbers, and the other symbols you find on a computer keyboard.
+Computers actually execute a very low-level language called
+machine code (a series of numbers). So, before a program can be
+used, it must undergo several transformations.
+
+Programs start out as an idea in a programmer's head. He writes
+down his thoughts in a file, called a source file or source code, using
+a text editor. This file is transformed by the compiler into an object
+file. Next a program called the linker takes the object file, combines
+it with predefined routines from a standard library, and produces
+an executable program (a set of machine-language instructions). In
+the following sections, you'll see how these various forms of the
+program work together to produce the final program.
+
+[_XREF Figure 2-2_] shows the steps that must be taken to transform
+a program written in a high-level language into an executable
+program.
+
+Figure 2-2
+
+. Transformation of a high-level language into a program
+
+[_B_]  Wrappers
+
+Fortunately you don't have to run the compiler, assembler, and
+linker individually. Most C++ compilers use "wrapper" programs,
+which determine which tools need to be run and then run them.
+
+Some programming systems go even farther and provide the
+developer with an integrated development environment (IDE). The
+IDE contains an editor, compiler, linker, project manager, debugger,
+and more in one convenient package. Both Borland and Microsoft
+provide IDEs with their compilers.
+
+[_A_]  Creating a Real Program
+
+Before you can actually start creating your own programs you need
+to know how to use the basic programming tools. This section will
+take you step by step through the process of entering, compiling,
+and running a simple program.
+
+This section describes how to use two different types of compilers.
+The first type is the standalone or command-line compiler. This type
+of compiler is operated in a batch mode from the command line. In
+other words, you type a command and the compiler turns your
+source code into an executable program. The other type of
+compiler is contained in an IDE.
+
+Most UNIX systems use command-line compilers. A few IDE-type
+compilers are available for UNIX, but they are rare. On the other
+hand almost all the compilers used with MS-DOS and Windows
+contain an integrated development environment. For command-line
+die-hards, these compilers do contain command-line compilers as
+well.
+
+[_A_]  Creating a Program Using a
+Command-Line Compiler
+
+In this section you'll go through the step-by-step process needed to
+create a program using a command-line compiler. Instruction is
+given for using a generic UNIX compiler, the Free Software
+Foundation's g++ compiler, Turbo-C++, Borland C++, and Microsoft
+Visual C++.
+
+However, if you are using a Borland or Microsoft compiler, you
+might want to skip ahead to the section on using the IDE.
+
+[_B_]  Step 1: Create a Place for Your Program
+
+It is easier to manage things if you create a separate directory for
+each program you are working on. In this case you'll create a
+directory called hello to hold your hello program.
+
+In UNIX, type:
+
+[_Code_] % mkdir hello
+
+[_Code_] % cd hello
+
+In MS-DOS, type:
+
+[_Code_] C: MKDIR HELLO
+
+[_Code_] C: CD HELLO
+
+[_B_]  Step 2: Create the Program
+
+A program starts out as a text file. [_XREF Example 2-1_] shows the
+hello program in source form.
+
+Example 2-1. Source for the hello.cc program
+
+[_Code_] #include <iostream.h>
+
+[_Code_] int main()
+
+[_Code_] {
+
+[_Code_]     cout << "Hello World\n";
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+Use your favorite text editor to enter the program. In UNIX your file
+should be named hello.cc and in MS-DOS/Windows the file should be
+named HELLO.CPP.
+
+[_WARNING_]  MS-DOS/Windows users should not use a word-
+processing program such as Microsoft Word or WordPerfect
+to write their programs. Word-processing programs add
+formatting codes to the file that confuse the compiler. You
+must use a text editor such as the MS-DOS EDIT program that is
+capable of editing ASCII files.
+
+[_B_]  Step 3: Run the Compiler
+
+The compiler changes the source file you just created into an
+executable program. Each compiler has a different command line.
+The commands for the most popular compilers are listed below.
+
+[_C_]  UNIX CC Compiler (Generic UNIX)
+
+Most UNIX-based compilers follow the same generic standard. The
+C++ compiler is named CC. To compile our hello program we need
+the following command:
+
+[_Code_] % CC -g -ohello hello.cc
+
+The -g option enables debugging. (The compiler adds extra
+information to the program to make it easier to debug.) The switch -
+ohello tells the compiler that the program is to be called hello,
+and the final hello.cc is the name of the source file. See your
+compiler manual for details on all the possible options. There are
+several different C++ compilers for UNIX, so your command line may
+be slightly different.
+
+[_C_]  Free Software Foundation's g++ Compiler
+
+The Free Software Foundation, the GNU people, publishes a number
+of high- quality programs. (See the glossary entry "Free Software
+Foundation" for information on how to get their software.) Among
+their offerings is a C++ compiler called g++.
+
+To compile a program using the g++ compiler, use the following
+command line:
+
+[_Code_] % g++ -g -Wall -ohello hello.cc
+
+The additional switch -Wall turns on all the warnings.
+
+[_C_]  Borland's Turbo C++ in MS-DOS
+
+Borland International makes a low-cost MS-DOS C++ compiler called
+Turbo-C++. This compiler is ideal for learning. The command line
+for Turbo-C++ is:
+
+[_Code_] C:> tcc -ml -v -N -P -w -ehello hello.cpp
+
+The -ml tells Turbo-C++ to use the large memory model. (This PC
+has a large number of different memory models that can be used
+when creating programs. This book discusses none of them. Instead
+we take the attitude, "Use large and don't worry about it until you
+become an expert programmer.")
+
+The -v switch tells Turbo-C++ to put debugging information in the
+program. Warnings are turned on by -w; stack checking by -N. The
+compiler will actually compile both C and C++. We force a C++
+compile using the -P switch. Finally,    -ehello tells Turbo-C++ to
+create a program named hello, and hello.cpp is the name of the
+source file. See the Turbo-C++ reference manual for a complete list
+of options.
+
+[_C_]  Borland C++ in MS-DOS and Windows
+
+In addition to Turbo-C++, Borland International also makes a full-
+featured, professional compiler for MS-DOS/Windows called Borland
+C++. Its command line is:
+
+[_Code_] C:> bcc -ml -v -N -P -w -ehello hello.cpp
+
+The command-line options are the same for both Turbo-C++ and
+Borland C++.
+
+[_C_]  Microsoft Visual C++
+
+Microsoft Visual C++ is another C++ compiler for MS-DOS/Windows.
+It is not as robust or full featured as its Borland counterpart, but it
+will compile most of the programs in this book. (Version 1.5 fails to
+handle templates and exceptions.)
+
+To compile, use the following command line:
+
+[_Code_] C:> cl /AL /Zi /W1 hello.cpp
+
+The /AL option tells the program to use the large memory model. Debugging is
+turned on with the /Zi option and warnings with the /W1 option.
+
+Step 4: Execute the Program
+
+Now, when you run the program by typing, for example:
+
+[_Code_] hello
+
+at the UNIX or MS-DOS prompt, the message:
+
+[_Code_] Hello World
+
+will appear on the screen.
+
+Creating a Program Using an
+Integrated Development Environment
+
+Integrated development environments provide a one-stop shop when it comes to
+programming. They take a compiler, editor, and debugger and wrap them into
+one neat package for the programmer.
+
+Since development environments tend to change, the particular version you use
+may require slightly different keystrokes.
+
+Step 1: Create a Place for Your Program
+
+It is easier to manage things if you create a separate directory for each program
+you are working on. In this case you'll create a directory called HELLO to hold
+your hello program.
+
+In MS-DOS, type:
+
+[_Code_] C: MKDIR HELLO
+
+[_Code_] C: CD HELLO
+
+Step 2: Enter, Compile, and Run Your Program
+
+Each IDE is a little different, so we've included separate instructions for each one.
+
+[_C_]  Turbo-C++
+
+1.  Start the Turbo-C++ IDE with the command:
+
+[_Code_] C: TC
+
+2.  Use the Options|Compiler|Code Generation command to pull
+up the Code Generation dialog box as seen in [_XREF
+Figure 2-3_]. Change the memory model to large.
+
+Figure 2-3
+
+. Code Generation dialog box
+
+3.  Use the Options|Compiler|Entry/Exit command to turn stack
+checking on, as shown in [_XREF Figure 2-4_].
+
+Figure 2-4
+
+. Entry/Exit Code Generation dialog box
+
+4.  Use the Options|Compiler|Messages|Display command to bring
+up the Compiler Messages dialog box as seen in [_XREF
+Figure 2-5_]. Select All to display all the warning messages.
+
+Figure 2-5
+
+. Compiler Messages dialog box
+
+5.  Use the Options|Save command to save all the options you've
+used so far.
+
+6.  Use the Open Project File dialog box to select a project file. In
+this case your project file is called HELLO.PRJ. The screen should
+look like [_XREF Figure 2-6_] when you're finished.
+
+Figure 2-6
+
+. Open Project File dialog box
+
+7.  Press the Insert key to add a file to the project. The file you want
+to add is HELLO.CPP as seen in [_XREF Figure 2-7_].
+
+Figure 2-7
+
+. Add to Project List dialog box
+
+8.  Press ESC to get out of the "add file" cycle.
+
+9.  Press the up-arrow key to go up one line. The line with hello.cpp
+should now be highlighted as seen in [_XREF Figure 2-8_].
+
+Figure 2-8
+
+.  "Hello" project
+
+10.  Press Return to edit this file.
+
+11.  Enter the following code.
+
+[_Code_] #include <iostream.h>
+
+[_Code_] int main()
+
+[_Code_] {
+
+[_Code_]     cout << "Hello World\n";
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+The results should look like [_XREF Figure 2-9_].
+
+Figure 2-9
+
+. Finished project
+
+12.  Use the Run|Run command to execute the program.
+
+13.  After the program runs, control returns to the IDE. This means
+that you can't see what your program output. To see the results
+of the program you must switch to the user screen using the
+command Window|User.
+
+Pressing any key will return you to the IDE. [_XREF Figure 2-10_]
+shows the output of the program.
+
+Figure 2-10
+
+. User screen
+
+14.  When you are finished you can save your program with the
+File|Save command.
+
+15.  To exit the IDE use the File|Quit command.
+
+[_C_]  Borland C++
+
+1.  Create a directory called HELLO to hold the files for our hello
+program. You can create a directory using the Windows' File
+Manager Program or by typing the following command at the
+MS-DOS prompt:
+
+[_Code_] mkdir \HELLO
+
+2.  From Windows, double-click on the Borland C++ icon to start
+the IDE. The program begins execution and displays a blank
+workspace as seen in Figure 2-11.
+
+Figure 2-11
+
+. Borland C++ initial screen
+
+3.  Select the Project|New Project item to create a project for our
+program. Fill in the "Project Path and Name:" blank with c:\
+hello\hello.ide. For the Target Type select EasyWin[.exe]. The
+Target Model is set to Large. The results are shown in
+Figure 2-12.
+
+Figure 2-12
+
+. New Target dialog box
+
+4.  Click on the Advanced button to bring up the Advanced Options
+dialog. Clear the .rc and .def items as shown in Figure 2-13.
+
+Figure 2-13
+
+. Advanced Options dialog box
+
+5.  Click on OK to return to the New Target dialog.
+
+6.  Press Alt-F10 to bring up node sub-menu shown in
+Figure 2-14.
+
+Figure 2-14
+
+. Target Options sub-menu
+
+7.  Select Edit Node Attributes to bring up the dialog shown in
+Figure 2-15. In the Style Sheet blank, select the item "Debug Info
+and Diagnostics." Click on OK to return to the main window.
+
+Figure 2-15
+
+. Node Attributes dialog box
+
+8.  Go to the Project Options dialog by selecting the
+Options|Project Options item. Go down to the Compiler item
+and click on the "+" to expand the options.
+Turn on the Test stack overflow option shown in Figure 2-16.
+Click on OK to save these options.
+
+9.  Click on OK to return to the main window. Press the down
+arrow to select the hello[.cpp] item in the project (see in
+Figure 2-17).
+
+10.  Press Return to start editing the file hello.cpp. Type in the
+following code:
+
+[_Code_] #include <iostream.h>
+
+[_Code_] int main()
+
+[_Code_] {
+
+[_Code_]     cout << "Hello World\n";
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+When you have finished, your screen will look like Figure 2-18.
+
+Figure 2-16
+
+. Project Options dialog box
+
+Figure 2-17
+
+. Hello Project
+
+Figure 2-18
+
+. "Hello World" program
+
+11.  Compile and run the program by selecting the Debug|Run
+menu item. The program will run and display "Hello World" in a
+window, as shown in Figure 2-19.
+
+Figure 2-19
+
+. "Hello World" after execution
+
+[_C_]  Microsoft Visual C++
+
+1.  Create a directory called HELLO to hold the files for our hello
+program. You can create a directory using the Windows File
+Manager Program or by typing the following command at the MS-
+DOS prompt:
+
+[_Code_] mkdir \HELLO
+
+2.  From Windows, double-click on the Visual C++ icon to start the
+IDE. A blank
+workspace will be displayed as shown in Figure 2-20.
+
+Figure 2-20
+
+. Microsoft Visual C++ initial screen
+
+3.  Click on Project|New to bring up the New Project dialog shown
+in Figure 2-21.
+
+Figure 2-21
+
+. Project create screen
+
+Fill in the Project Name blank with \hello\hello.mak. Change the
+Project Type to QuickWin application [.EXE].
+
+4.  Visual C++ goes to the Edit dialog to allow you to name the
+source files in this project (see Figure 2-22). In this case we have
+only file hello.cpp. Click on Add to enter the name in the project
+and then click on Close to tell Visual C++ that there are no more
+files in the program.
+
+Figure 2-22
+
+. Project edit dialog box
+
+5.  Select Options|Project Options to bring up the Project Options
+dialog shown in Figure 2-23.
+
+Figure 2-23
+
+. Project Options dialog box
+
+Click on the Compiler button to change the compiler options.
+
+6.  Go down to the Custom Options item in the Category and
+change the warning level to 4 as shown in Figure 2-24.
+
+7.  Change to the Memory Model category and change the memory
+model to large (see Figure 2-25).
+
+8.  Close the dialog by clicking on the OK button. This brings you
+back to the Project Options dialog. Click on OK to dismiss this
+dialog as well.
+
+9.  Select "File|New" to start a new program file. Type in the
+following lines:
+
+[_Code_] #include <iostream.h>
+
+[_Code_] int main()
+
+[_Code_] {
+
+[_Code_]     cout << "Hello World\n";
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+Your results should look like Figure 2-26.
+
+Figure 2-24
+
+. Compiler Options dialog box
+
+Figure 2-25
+
+. Memory Model options
+
+Figure 2-26
+
+. Visual C++ with "Hello World" entered
+
+10.  Use the File|Save As menu item to save the file under the name
+hello.cpp.
+
+11.  Use the Project|Build command to compile the program. The
+compiler will output messages as it builds. When it is finished
+your screen should look like Figure 2-27.
+
+Figure 2-27
+
+. Visual C++ build screen
+
+12.  The program can now be started with the Debug|Go
+command. The results appear in Figure 2-28.
+
+Figure 2-28
+
+. "Hello World" results
+
+[_A_]  Getting Help in UNIX
+
+Most UNIX systems have an online documentation system called the
+"man pages." These can be accessed with the man command. (UNIX
+uses man as an abbreviation for "manual.") To get information about
+a particular subject, use the command:
+
+[_Code_] man subject
+
+For example, to find out about the classes defined in the iostream
+package, you would type:
+
+[_Code_] man iostream
+
+The command also has a keyword search mode:
+
+[_Code_] man -k keyword
+
+To determine the name of every man page with the word "output"
+in its title, use the command:
+
+[_Code_] man -k output
+
+[_A_]  Getting Help in an Integrated Development
+Environment
+
+Integrated development environments such as Turbo-C++, Borland
+C++, and Microsoft C++ have a Help menu item. This item activates
+a hypertext-based Help system.
+
+[_A_]  Programming Exercises
+
+Exercise 2-1: On your computer, type in the hello program and execute it.
+
+Exercise 2-2: Take several programming examples from any source, enter them
+into the computer, and run them.

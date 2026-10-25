@@ -1,0 +1,1951 @@
+Chapter 18Part IV: Advanced Programming Concepts
+
+In This Chapter:
+
+*  [_XREF Operator Functions_]
+
+*  [_XREF Operator Member
+Functions_]
+
+*  [_XREF Full Definition of the
+Complex Class_]
+
+*  [_XREF Programming
+Exercises_]
+
+*  [_XREF Answers to Chapter
+Questions_]
+
+18	
+
+18: Operator Overloading
+
+Overloaded, undermanned, ment to
+flounder, we Euchred God Almighty's
+storm, bluffed the Eternal Sea!
+
+---Kipling
+
+We all know what happens when we add two integers. But C++
+doesn't have a built-in complex type, so it doesn't know how to add
+two complex numbers. However, through a C++ feature called
+operator overloading, you can "teach" C++ how to handle complex
+numbers. Operator overloading is used to define a set of functions
+to add, subtract, multiply and divide complex numbers using the
+normal operators +, -, *, and /.
+
+In this section we define a complex number class. Let's start by
+defining the basic C++ complex class. A complex number consists of
+two parts, the real and the imaginary:
+
+[_Code_] class complex
+
+[_Code_] {
+
+[_Code_]     protected:
+
+[_Code_]         //
+
+[_Code_]         // Complex numbers consist of two parts
+
+[_Code_]         //
+
+[_Code_]         double real_part;       // The real part
+
+[_Code_]         double imaginary_part;  // The imaginary part
+
+[_Code_]         // ...
+
+Next we define several member functions. These include the usual
+constructors and destructors as well as routines to get at the real
+and imaginary parts of the number.
+
+[_Code_]     public:
+
+[_Code_]         // Default constructor initializes the number to (0 + 0i)
+
+[_Code_]         complex(void)
+
+[_Code_]         {
+
+[_Code_]            real_part = 0;
+
+[_Code_]            imaginary_part = 0;
+
+[_Code_]         }
+
+[_Code_]         // Copy constructor - initialize one complex from another
+
+[_Code_]         complex(const complex& other_complex)
+
+[_Code_]         {
+
+[_Code_]             real_part = other_complex.real_part;
+
+[_Code_]             imaginary_part = other_complex.imaginary_part;
+
+[_Code_]         }
+
+[_Code_]         // Construct a complex from two reals
+
+[_Code_]         // If only real supplied assume the imaginary part is .0
+
+[_Code_]         complex(double init_real, double init_imaginary = 0.0)
+
+[_Code_]         {
+
+[_Code_]             real_part = init_real;
+
+[_Code_]             imaginary_part = init_imaginary;
+
+[_Code_]         }
+
+[_Code_]         // Destructor does nothing
+
+[_Code_]         ~complex() {}
+
+[_Code_]
+
+[_Code_]         //
+
+[_Code_]         // Functions to return the parts of the number
+
+[_Code_]         //
+
+[_Code_]         double real(void) const   // "const" is discussed later
+
+[_Code_]         {
+
+[_Code_]             return (real_part);
+
+[_Code_]         }
+
+[_Code_]         double imaginary(void) const
+
+[_Code_]         {
+
+[_Code_]             return (imaginary_part);
+
+[_Code_]         }
+
+[_Code_]
+
+[_Code_]         // Define functions to set parts of a number
+
+[_Code_]         void set_real(double real) {
+
+[_Code_]             real_part = real;
+
+[_Code_]         }
+
+[_Code_]         void set_imaginary(double imaginary) {
+
+[_Code_]             imaginary_part = imaginary;
+
+[_Code_]         }
+
+[_Code_]
+
+[_Code_] };
+
+[_NOTE_]  As you may recall, the const appearing after
+some functions was discussed in Chapter 14, More on Classes.
+
+Now we want to use our complex numbers. Declaring variables is
+simple. Even initializing them with numbers such as (3 + 2i) is easy.
+
+[_Code_] complex start;    // Starting point for the graph
+
+[_Code_] complex end(3.0, 2.0);    // Ending point
+
+But what happens when we want to add two complex numbers?
+We need to define a function to do it:
+
+[_Code_] // Version 1 of the complex add function
+
+[_Code_] inline complex add(const complex &oper1, const complex &oper2)
+
+[_Code_] {
+
+[_Code_]     complex result(oper1.real() + oper2.real(),
+
+[_Code_]                    oper1.imaginary() + oper2.imaginary());
+
+[_Code_]     return (result);
+
+[_Code_] }
+
+A few things should be noted about this function. First, we defined
+it to take two complex numbers and return a complex number. That
+way we group additions:
+
+[_Code_] // Add three complex numbers
+
+[_Code_] answer = add(first, add(second, third));
+
+Constant reference parameters are used (const complex &) for our
+two arguments. This is the most efficient way of passing structures
+into a function. Finally, because it is such a small function, we've
+defined it as an inline function for efficiency.
+
+In this function, we explicitly declare a result and return it. We can
+do both in one step:
+
+[_Code_] // Version 2 of the complex add function
+
+[_Code_] inline complex add(const complex &oper1, const complex &oper2)
+
+[_Code_] {
+
+[_Code_]     return (complex(oper1.real() + oper2.real(),
+
+[_Code_]                     oper1.imaginary() + oper2.imaginary()));
+
+[_Code_] }
+
+Although it is a little harder to understand, it is more efficient.
+
+It is important to understand what C++ does behind your back.
+Even such a simple statement as:
+
+[_Code_] answer = add(first, second);
+
+calls a constructor, an assignment operator, and a destructor-all in
+that little piece of code.
+
+In version 1 of the add function we explicitly allocated a variable
+for the result. In version 2, C++ automatically creates a temporary
+variable for the result. This number has no name and doesn't really
+exist outside the return statement.
+
+Creating the temporary variable causes the constructor to be called.
+The temporary variable is then assigned to answer; thus we have a
+call to the assignment function. After the assignment, C++ no longer
+has any use for the temporary variable and throws it away by
+calling the destructor.
+
+[_A_]  Operator Functions
+
+Using the add function for complex numbers is a little awkward. It
+would be nice to be able to convince C++ to automatically call this
+function whenever we try to add two complex numbers together
+with the + operator. That's where operator overloading comes in.
+All we have to do is to write the add function as:
+
+[_Code_] inline complex operator +(const complex &oper1, const complex &oper2)
+
+[_Code_] {
+
+[_Code_]     return (complex(oper1.real() + oper2.real(),
+
+[_Code_]                     oper1.imaginary() + oper2.imaginary()));
+
+[_Code_] }
+
+and C++ handles the rest.
+
+Note: The operator overloading functions should be used carefully.
+You should try to design them so they follow common-sense rules.
+That is, + should have something to do with addition; -, with
+subtraction; and so on. The C++ I/O streams break this rule by
+defining the shift operators (<< and >>) as input and output
+operators. This can lead to some confusion, such as:
+
+[_Code_] cout << 8 << 2;
+
+Does this output "8" followed by "2," or does it output the value of
+the expression (8 << 2)? Unless you're an expert you can't tell. In
+this case the numbers "8" and "2" will be output.
+
+You've seen how you can overload the + operator. Now let's
+explore what other operators you can use.
+
+[_B_]  Binary Arithmetic Operators
+
+Binary operators take two arguments, one on each side of the
+operator. For example, multiplication and division are binary
+operators:
+
+[_Code_] x * y;
+
+[_Code_] a / b;
+
+Unary operators take a single parameter. Unary operators include
+unary - and the address of (&) operator;
+
+[_Code_] -x
+
+[_Code_] &y
+
+The binary arithmetic operator functions take two constant
+parameters and produce a result. One of the parameters must be a
+class or structure. The result can be anything. For example, the
+following functions are legal for binary addition:
+
+[_Code_] complex operator +(complex v1, complex v2);
+
+[_Code_] complex operator +(complex v1, real v2);
+
+[_Code_] complex operator +(real v1,    complex v2);
+
+[_Code_] complex operator +(real v1,    real v2);
+
+We've had to define a lot of different functions just to support the
+addition of our complex class. Such diarrhea of the definition is
+typical when overloading operators.
+
+[_XREF Table 18-1_] lists the binary operators that can be overloaded.
+
+Table 18-1
+
+. Binary Operators That Can Be Overloaded
+
+Operator
+
+Meaning
+
++
+
+Addition
+
+-
+
+Subtraction
+
+*
+
+Multiplication
+
+/
+
+Division
+
+%
+
+Modulus
+
+^
+
+Bitwise exclusive OR
+
+&
+
+Bitwise AND
+
+|
+
+Bitwise OR
+
+<<
+
+Left shift
+
+>>
+
+Right shift
+
+[_B_]  Relational Operators
+
+The relational operators include such things as equals (==) and not
+equals (!=). Normally they take two constant classes and return
+either a 0 or a 1. (Actually they can return anything, but that would
+violate the spirit of relational operators.)
+
+The equality operator for our complex class is:
+
+[_Code_] inline int operator == (const complex& oper1, const complex& oper2)
+
+[_Code_] {
+
+[_Code_]     return ((oper1.real() == oper2.real()) &&
+
+[_Code_]             (oper1.imaginary() == oper2.imaginary()));
+
+[_Code_] }
+
+[_XREF Table 18-2_] lists the relational operators.
+
+Table 18-2
+
+. Relational Operators
+
+Operator
+
+Meaning
+
+==
+
+Equality
+
+!=
+
+Inequality
+
+<
+
+Less than
+
+>
+
+Greater than
+
+<=
+
+Less than or equal to
+
+>=
+
+Greater than or equal to
+
+[_B_]  Unary operators
+
+Unary operators, such as negative (-), take a single parameter. The
+negative operator for our complex type is:
+
+[_Code_] inline complex operator -(const complex &oper)
+
+[_Code_] {
+
+[_Code_]     return (complex(-oper.real(), -oper.imaginary()));
+
+[_Code_] }
+
+[_XREF Table 18-3_] lists the unary operators.
+
+Table 18-3
+
+. Unary Operators
+
+Operator
+
+Meaning
+
++
+
+Positive
+
+-
+
+Negative
+
+*
+
+Dereference
+
+&
+
+Address of
+
+~
+
+Ones complement
+
+[_B_]  Shortcut Operators
+
+Operators such as += and -= are shortcuts for more complicated
+operators. But what are the return values of += and -=? A very close
+examination of the C++ standard reveals that these operators return
+the value of the variable after the increase or decrease. For example:
+
+[_Code_] i = 5;
+
+[_Code_] j = i += 2;    // Don't code like this
+
+assigns j the value 7. The += function for our complex class is:
+
+[_Code_] inline complex &operator +=(complex &oper1, const complex &oper2)
+
+[_Code_] {
+
+[_Code_]     oper1.set_real(oper1.real() + oper2.real());
+
+[_Code_]     oper1.set_imaginary(oper1.imaginary() + oper2.imaginary());
+
+[_Code_]     return (oper1);
+
+[_Code_] }
+
+Note that unlike the other operator functions we've defined, the first
+parameter is not a constant. Also we, return a reference to the first
+variable, not a new variable or a copy of the first parameter.
+
+[_XREF Table 18-4_] lists the shortcut operators.
+
+Table 18-4
+
+. Simple Shortcut Operators
+
+Operator
+
+Meaning
+
++=
+
+Increase
+
+-=
+
+Decrease
+
+*=
+
+Multiply by
+
+/=
+
+Divide by
+
+%=
+
+Remainder
+
+^=
+
+Exclusive OR into
+
+&=
+
+AND into
+
+|=
+
+OR into
+
+<<=
+
+Shift left
+
+>>=
+
+Shift right
+
+[_B_]  Increment and Decrement Operators
+
+The increment and decrement operators have two forms: prefix and
+suffix. For example:
+
+[_Code_] i = 5;
+
+[_Code_] j = i++;    // j = 5
+
+[_Code_] i = 5;
+
+[_Code_] j = ++i;    // j = 6
+
+Both these operators use a function named operator++. So how
+do you tell them apart? The C++ language contains a hack to handle
+this case. The prefix form of the operator takes one argument, the
+item to be incremented. The suffix takes two, the item to be
+incremented and an integer. The actual integer used is meaningless;
+it's just a position holder to differentiate the two forms of the
+operation.
+
+If we define ++ for the complex type to mean increment the real
+part, then our functions to handle the two forms of ++ are:
+
+[_Code_] // Prefix      x = ++c
+
+[_Code_] inline complex &operator ++(complex &oper)
+
+[_Code_] {
+
+[_Code_]     oper.set_real(oper.real() + 1.0);
+
+[_Code_]     return (oper);
+
+[_Code_] }
+
+[_Code_]
+
+[_Code_] // Suffix      x = c++
+
+[_Code_] inline complex operator ++(complex oper, int)
+
+[_Code_] {
+
+[_Code_]     complex result(oper);   // Result before we incremented
+
+[_Code_]     oper.set_real(oper.real() + 1.0);
+
+[_Code_]     return (result);
+
+[_Code_] }
+
+This is messy. C++ has reduced us to using cute tricks: the unused
+integer parameter. In actual practice, I never use the suffix version
+of increment and always put the prefix version on a line by itself.
+That way, I can avoid most of these problems.
+
+The choice, prefix versus suffix, was decided by looking at the code
+for the two versions. As you can see, the prefix version is much
+simpler than the suffix version. So restricting yourself to the prefix
+version not only simplifies your code, but it also makes the
+compiler's job a little easier.
+
+[_XREF Table 18-5_] lists the increment and decrement operators.
+
+Table 18-5
+
+. Increment and Decrement operators
+
+Operator
+
+Meaning
+
+++
+
+Increment
+
+--
+
+Decrement
+
+[_B_]  Logical Operators
+
+Logical operators include AND (&&), OR (||), and NOT (!). They
+can be overloaded, but just because you can do it doesn't mean
+you should. In theory, logical operators work only on Boolean
+values. In practice, because C++ doesn't have a Boolean type, they
+work on integers. Don't confuse the issue more by overloading
+them.
+
+[_XREF Table 18-6_] lists the logical operators.
+
+Table 18-6
+
+. Logical Operators
+
+Operation
+
+Meaning
+
+||
+
+Logical OR
+
+&&
+
+Logical AND
+
+!
+
+Logical NOT
+
+[_B_]  I/O Operators
+
+You've been using the operators << and >> for input and output.
+Actually these operators are overloaded versions of the shift
+operators. This has the advantage of making I/O fairly simple, at the
+cost of some minor confusion.
+
+We would like to be able to output our complex numbers just like
+any other data type. To do this we need to define a << operator for
+it.
+
+We are sending our data to the output stream class ostream. The
+data itself is complex. So our output function is:
+
+[_Code_] inline ostream &operator << (ostream &out_file, const complex &number)
+
+[_Code_] {
+
+[_Code_]     out_file << '(' << number.real() << ',' <<
+number.imaginary() << ')';
+
+[_Code_]     return (out_file);
+
+[_Code_] }
+
+The function returns a reference to the output file. This enables the
+caller to string a series of << operations together, such as:
+
+[_Code_] complex a_complex(1.2, 3.4);
+
+[_Code_] cout << "The answer is " << a_complex << '\n';
+
+The result of this code is:
+
+[_Code_] The answer is (1.2, 3.4)
+
+Normally the << operator takes two constant arguments. In this case
+the first parameter is a non-constant ostream. This is because the
+<< operator when used for output has side effects, the major one
+being that the data goes to the output stream. In general, however,
+it's not a good idea to add side effects to an operator that doesn't
+already have them.
+
+Input should be just as simple as output. You might think all we
+have to do is read the numbers (and the related extra characters):
+
+[_Code_] // Simple-minded input operation
+
+[_Code_] inline istream &operator >> (istream &in_file, complex &number) {
+
+[_Code_]     double real, imaginary;  // Parts of the number
+
+[_Code_]     char l_paren, comma, r_paren; // Extra chracters output as part of
+
+[_Code_]     in_file >> l_paren >> real >> comma >> imaginary >> r_paren;
+
+[_Code_]     number.set(real, imaginary);
+
+[_Code_]     return (in_file);
+
+[_Code_] }
+
+In practice, it's not so simple. First of all, we must call a special
+member function ipfx to tell the I/O system that we are planning a
+formatted read.
+
+[_Code_] inline istream &operator >> (istream &in_file, complex &number)
+
+[_Code_] {
+
+[_Code_]     // ...
+
+[_Code_]     in_file.ipfx(1);    // Tell the I/O system we are reading formatted
+
+Next we skip any leading white space.
+
+[_Code_]     in_file >> ws;      // Skip white space
+
+We should now be pointing to the "(" at the beginning of the
+number. But before we can read this character, we need to check
+for trouble and abort if necessary.
+
+[_Code_]     if (in_file.bad()) return (in_file);
+
+Now, let's grab the "(". Of course, just to make sure, we check to
+see that we really get a "(" and abort if necessary.
+
+[_Code_]     in_file >> ch;      // Get character after white space
+
+[_Code_]     if (ch != '(') {
+
+[_Code_]         in_file.set(ios::failbit);      // We have an error
+
+[_Code_]         return (in_file);
+
+[_Code_]     }
+
+The function set is used to set a flag indicating that the input
+operation found a problem. This allows the caller to test to see
+whether the input worked by calling the bad function. (This
+function can also cause an exception to be thrown. See Chapter 22,
+Exceptions, for more information.)
+
+We have reached the "(". Let's read the real part of the number.
+
+[_Code_]     in_file >> real;
+
+Now we take care of the "," and related white space between the
+numbers. At each step we check for errors:
+
+[_Code_]     if (in_file.bad()) return (in_file);
+
+[_Code_]     in_file >> ws >> ch;        // Get first character after number
+
+[_Code_]     if (in_file.bad()) return (in_file);
+
+[_Code_]
+
+[_Code_]     if (ch != ',') {
+
+[_Code_]        in_file.set(ios::failbit);
+
+[_Code_]        return (in_file);
+
+[_Code_]     }
+
+Next is the imaginary part.
+
+[_Code_]     in_file >> imaginary;
+
+Finally, we make sure that the number ends with a ")".
+
+[_Code_]     in_file >> ws >> ch;
+
+[_Code_]     if (in_file.bad()) return (in_file);
+
+[_Code_]
+
+[_Code_]     if (ch != ')') {
+
+[_Code_]        in_file.set(ios::failbit);
+
+[_Code_]        return (in_file);
+
+[_Code_]     }
+
+The work's complete, so we store the result and get out.
+
+[_Code_]     number.set(real, imaginary);
+
+[_Code_]     return (in_file);
+
+[_Code_] }
+
+The complete version of the complex reader (pun intended)
+appears in [_XREF Example 18-1_].
+
+Example 18-1
+[_Code_] inline istream &operator >> (istream &in_file, complex &number)
+
+[_Code_] {
+
+[_Code_]     double real, imaginary;  // Real and imaginary part
+
+[_Code_]     char ch;            // Random character used to verify input
+
+[_Code_]
+[_Code_]     number.set(0.0, 0.0);       // Initialize the number (just in case)
+
+[_Code_]
+[_Code_]     in_file.ipfx(1);    // Tell the I/O system we are reading formatted
+
+[_Code_]     in_file >> ws;      // Skip white space
+
+[_Code_]
+[_Code_]     if (in_file.bad()) return (in_file);
+
+[_Code_]
+[_Code_]     in_file >> ch;      // Get character after white space
+
+[_Code_]     if (ch != '(') {
+
+[_Code_]         in_file.set(ios::failbit);      // We have an error
+
+[_Code_]         return (in_file);
+
+[_Code_]     }
+
+[_Code_]
+[_Code_]     in_file >> real;
+
+[_Code_]
+[_Code_]     if (in_file.bad()) return (in_file);
+
+[_Code_]
+[_Code_]     in_file >> ws >> ch;        // Get first character after number
+
+[_Code_]
+[_Code_]     if (in_file.bad()) return (in_file);
+
+[_Code_]
+[_Code_]     if (ch != ',') {
+
+[_Code_]        in_file.set(ios::failbit);
+
+[_Code_]        return (in_file);
+
+[_Code_]     }
+
+[_Code_]
+[_Code_]     in_file >> imaginary;
+
+[_Code_]
+[_Code_]     in_file >> ws >> ch;
+
+[_Code_]     if (in_file.bad()) return (in_file);
+
+[_Code_]
+[_Code_]     if (ch != ')') {
+
+[_Code_]        in_file.set(ios::failbit);
+
+[_Code_]        return (in_file);
+
+[_Code_]     }
+
+[_Code_]     number.set(real, imaginary);
+
+[_Code_]     return (in_file);
+
+[_Code_] }
+
+[_B_]  Index Operator "[ ]"
+
+The operator [ ] is used by C++ to index arrays. As we will see in
+Chapter 20, Advanced Pointers, this operator is very useful when
+defining a class that mimics an array. Normally, this function takes
+two arguments, a class that simulates an array and an index, and
+returns a reference to an item in the array.
+
+[_Code_] double &operator[](array_class &array, int index)
+
+We cover the [] operator in more detail in Chapter 23, Modular
+Programming.
+
+[_B_]  new and delete
+
+We'll say very little about overloading the global operators new and
+delete at this time. First of all, they aren't introduced until
+Chapter 20, Advanced Pointers, so you don't know what they do.
+Second, when you know what they do, you won't want to override
+them.
+
+I've seen only one program where the new and delete operators
+were overridden (or at least their C equivalents). That program was
+written by a very clever programmer who liked to do everything a
+little strangely. The result was code that was a nightmare to debug.
+
+So unless you are a very clever programmer, leave new and
+delete alone. And if you are a clever programmer, please leave
+new and delete alone anyway. Some day I might have to debug
+your code.
+
+[_B_]  Exotic Operators
+
+C++ contains a very rich set of operators. Some of these are rarely,
+if ever, used. These include:
+
+()	Allows you to define a default function for a class.
+
+,	Comma operator. Allows two expressions to be concatenated. It is rarely used
+and probably should not be overloaded.
+
+->*	Pointer to member. Rarely used.
+
+->	Class member.
+
+All of these operators are discussed in Chapter 28, C++'s Dustier
+Corners.
+
+[_A_]  Operator Member Functions
+
+So far we've been using operator overloading functions just like
+ordinary functions. They can also be defined as member functions.
+The only difference is that as member functions the first argument,
+the class itself, is implied. So, for example, you can write the
+operator += as an ordinary function or as a member function. Here's
+the ordinary version that you've already seen.
+
+[_Code_] inline complex &operator +=(complex &oper1, const complex &oper2)
+
+[_Code_] {
+
+[_Code_]     oper1.set_real(oper1.real() + oper2.real());
+
+[_Code_]     oper1.set_imaginary(oper1.imaginary() + oper2.imaginary());
+
+[_Code_]     return (oper1);
+
+[_Code_] }
+
+Here's the member function:
+
+[_Code_] class complex {
+
+[_Code_]     // .....
+
+[_Code_]     public:
+
+[_Code_]         inline complex &operator +=(const complex &oper2)
+
+[_Code_]         {
+
+[_Code_]             real_part += oper2.real();
+
+[_Code_]             imaginary_part += oper2.imaginary();
+
+[_Code_]             return (*this);
+
+[_Code_]         }
+
+The only trick used in this function is the keyword this. This is a
+predefined variable that refers to the current object. For example,
+you can access the data member real_part using the statement:
+
+[_Code_] real_part += oper2.real();
+
+The same statement can be written as:
+
+[_Code_] this->real_part += oper2.real();
+
+In most cases, you don't need to use this. However, in a few, such
+as the += operator, it comes in handy.
+
+Which flavor of the operator overloading functions should you use?
+The one that makes your program the clearest and easiest to read.
+In general, we use the standard functions for the simple operators,
+such as +, -, *, and /, while I use member functions for the shortcut
+and unary operators, such as +=, -=, ++, and unary -.
+
+Some overloaded functions only work as member functions. These
+include the casting operators as well as class specific versions of
+new and delete.
+
+[_B_]  Casting
+
+Finally we come to the cast operators. Casting is a way of changing
+one type to another. For example, let's say that when we cast our
+complex type to a double, we want the real part. We can define a
+cast operator for this function as:
+
+[_Code_] class complex:
+
+[_Code_]     public:
+
+[_Code_]         // (We didn't really put this in our complex class)
+
+[_Code_]         double operator double() {return (real_part);}
+
+C++ automatically calls this function whenever it wants to turn a
+complex into a double.
+
+The trouble is that by defining a cast, you give C++ something else
+that it can call behind your back. Personally, I like to know
+whenever C++ calls something, so I avoid creating cast operators.
+Unless you have a very good reason to define one, don't create a
+cast operator function.
+
+[_A_]  Full Definition of the Complex Class
+
+[_XREF Example 18-2_] lists the entire complex class. The beginning
+of the header file summarizes all the functions that are defined. In
+creating this class I discovered that it consisted of many (29 to be
+exact) little one- and two-line functions. Commenting each of these
+with a full-function comment block would obscure the code. In
+other words, this is one of the few cases (the very few) where
+adding comments would cause confusion, so most of the small
+functions have no comments.
+
+When creating this class, I noticed that a lot of the functions have a
+similar structure. For example, += looks a lot like -= and so on. As a
+matter of fact, I created the -= operator by copying the += functions
+and editing a little. C++ contains a rich operator set that causes this
+sort of repetition to happen when you're trying to define a complete
+set of operators for a class.
+
+Finally, the simple operations are defined in the file complex.h
+while the longer functions are left in the file complex.cc.
+
+Example 18-2
+
+. complex/complex.h, complex/complex.cc
+
+[_Code_] File: complex.h
+
+[_Code_]
+[_Code_] #ifndef __complex_h__   // Avoid double includes
+
+[_Code_] #define __complex_h__   // Prevent double include
+
+[_Code_]
+[_Code_] #include <iostream.h>
+
+[_Code_] #include <math.h>
+
+[_Code_]
+[_Code_] /********************************************************
+
+[_Code_]  * Complex class                                        *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Members defined                                      *
+
+[_Code_]  *      complex()               // Default constructor  *
+
+[_Code_]  *      complex(real, imaginary)// Specify two parts    *
+
+[_Code_]  *                              // for construction     *
+
+[_Code_]  *      complex(complex)        // Copy constructor     *
+
+[_Code_]  *                                                      *
+
+[_Code_]  *      real()                  // Get real part        *
+
+[_Code_]  *      imaginary()             // Get imaginary part   *
+
+[_Code_]  *                                                      *
+
+[_Code_]  *      set(real, imaginary)    // Set both parts of #  *
+
+[_Code_]  *      set_real(real)          // Set real part of #   *
+
+[_Code_]  *      set_imaginary(imaginary)// Set imaginary part   *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Operator member functions                            *
+
+[_Code_]  *                      c -- a complex number           *
+
+[_Code_]  *                      s -- a scalar (double)          *
+
+[_Code_]  *      c = c                                           *
+
+[_Code_]  *      c += c;                                         *
+
+[_Code_]  *      c += s;                                         *
+
+[_Code_]  *      c -= c;                                         *
+
+[_Code_]  *      c -= s;                                         *
+
+[_Code_]  *      c /= c;                                         *
+
+[_Code_]  *      c /= s;                                         *
+
+[_Code_]  *      c *= c;                                         *
+
+[_Code_]  *      c *= s;                                         *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * The following functions don't really make a lot of   *
+
+[_Code_]  * sense for complex numbers, but they are defined      *
+
+[_Code_]  * for the purpose of illustration                      *
+
+[_Code_]  *      c++                                             *
+
+[_Code_]  *      ++c                                             *
+
+[_Code_]  *      c--                                             *
+
+[_Code_]  *      --c                                             *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Arithmetic operators defined                         *
+
+[_Code_]  *      c = c + c;                                      *
+
+[_Code_]  *      c = s + c;                                      *
+
+[_Code_]  *      c = c + s;                                      *
+
+[_Code_]  *      c = c - c;                                      *
+
+[_Code_]  *      c = s - c;                                      *
+
+[_Code_]  *      c = c - s;                                      *
+
+[_Code_]  *      c = c * c;                                      *
+
+[_Code_]  *      c = s * c;                                      *
+
+[_Code_]  *      c = c * s;                                      *
+
+[_Code_]  *      c = c / c;                                      *
+
+[_Code_]  *      c = s / c;                                      *
+
+[_Code_]  *      c = c / s;                                      *
+
+[_Code_]  *      -c                                              *
+
+[_Code_]  *      +c                                              *
+
+[_Code_]  *      ostream << c    // Output function              *
+
+[_Code_]  *      istream >> c    // Input function               *
+
+[_Code_]  ********************************************************/
+
+[_Code_] class complex
+
+[_Code_] {
+
+[_Code_]     private:
+
+[_Code_]         //
+
+[_Code_]         // Complex numbers consist of two parts
+
+[_Code_]         //
+
+[_Code_]         double real_part;       // The real part
+
+[_Code_]         double imaginary_part;  // The imaginary part
+
+[_Code_]
+[_Code_]     public:
+
+[_Code_]         // Default constructor, zero everything
+
+[_Code_]         complex(void)
+
+[_Code_]         {
+
+[_Code_]            real_part = 0.0;
+
+[_Code_]            imaginary_part = 0.0;
+
+[_Code_]         }
+
+[_Code_]
+[_Code_]         // Copy constructor
+
+[_Code_]         complex(const complex& other_complex)
+
+[_Code_]         {
+
+[_Code_]             real_part = other_complex.real_part;
+
+[_Code_]             imaginary_part = other_complex.imaginary_part;
+
+[_Code_]         }
+
+[_Code_]
+
+[_Code_]         // Construct a complex out of two real numbers
+
+[_Code_]         complex(double init_real, double init_imaginary = 0.0)
+
+[_Code_]         {
+
+[_Code_]             real_part = init_real;
+
+[_Code_]             imaginary_part = init_imaginary;
+
+[_Code_]         }
+
+[_Code_]
+[_Code_]         // Destructor does nothing
+
+[_Code_]         ~complex() {}
+
+[_Code_]
+[_Code_]         //
+
+[_Code_]         // Function to return the parts of the number
+
+[_Code_]         //
+
+[_Code_]         double real(void) const
+
+[_Code_]         {
+
+[_Code_]             return (real_part);
+
+[_Code_]         }
+
+[_Code_]         double imaginary(void) const
+
+[_Code_]         {
+
+[_Code_]             return (imaginary_part);
+
+[_Code_]         }
+
+[_Code_]
+[_Code_]         // Functions to set parts of a number
+
+[_Code_]         void set(double real, double imaginary) {
+
+[_Code_]            real_part = real;
+
+[_Code_]            imaginary_part = imaginary;
+
+[_Code_]         }
+
+[_Code_]
+[_Code_]         void set_real(double real) {
+
+[_Code_]             real_part = real;
+
+[_Code_]         }
+
+[_Code_]
+[_Code_]         void set_imaginary(double imaginary) {
+
+[_Code_]             imaginary_part = imaginary;
+
+[_Code_]         }
+
+[_Code_]
+[_Code_]         complex operator = (const complex& oper2) {
+
+[_Code_]            set(oper2.real_part, oper2.imaginary_part);
+
+[_Code_]            return (*this);
+
+[_Code_]         }
+
+[_Code_]
+[_Code_]         complex& operator += (const complex& oper2) {
+
+[_Code_]            real_part += oper2.real();
+
+[_Code_]            imaginary_part += oper2.imaginary();
+
+[_Code_]            return (*this);
+
+[_Code_]         }
+
+[_Code_]
+[_Code_]         complex& operator += (double oper2) {
+
+[_Code_]            real_part += oper2;
+
+[_Code_]            return (*this);
+
+[_Code_]         }
+
+[_Code_]
+[_Code_]         complex& operator -= (const complex& oper2) {
+
+[_Code_]            real_part -= oper2.real();
+
+[_Code_]            imaginary_part -= oper2.imaginary();
+
+[_Code_]            return (*this);
+
+[_Code_]         }
+
+[_Code_]
+[_Code_]         complex& operator -= (double oper2) {
+
+[_Code_]            real_part -= oper2;
+
+[_Code_]            return (*this);
+
+[_Code_]         }
+
+[_Code_]
+[_Code_]         complex& operator *= (const complex& oper2) {
+
+[_Code_]            // Place to hold the real part of the result
+
+[_Code_]            // while we compute the imaginary part
+
+[_Code_]            double real_result = real_part * oper2.real() -
+
+[_Code_]                                 imaginary_part * oper2.imaginary();
+
+[_Code_]
+[_Code_]            imaginary_part = real_part * oper2.imaginary() +
+
+[_Code_]                             imaginary_part * oper2.real();
+
+[_Code_]
+[_Code_]            real_part = real_result;
+
+[_Code_]            return *this;
+
+[_Code_]         }
+
+[_Code_]
+[_Code_]         complex& operator *= (double oper2) {
+
+[_Code_]            real_part *= oper2;
+
+[_Code_]            imaginary_part *= oper2;
+
+[_Code_]            return (*this);
+
+[_Code_]         }
+
+[_Code_]
+[_Code_]         complex& operator /= (const complex& oper2);
+
+[_Code_]
+[_Code_]         complex& operator /= (double oper2) {
+
+[_Code_]            real_part /= oper2;
+
+[_Code_]            imaginary_part /= oper2;
+
+[_Code_]            return (*this);
+
+[_Code_]         }
+
+[_Code_]
+[_Code_]         // c++
+
+[_Code_]         complex operator ++(int) {
+
+[_Code_]            complex result(*this);
+
+[_Code_]            real_part += 1.0;
+
+[_Code_]            return (result);
+
+[_Code_]         }
+
+[_Code_]
+[_Code_]         // ++c
+
+[_Code_]         complex &operator ++(void) {
+
+[_Code_]            real_part += 1.0;
+
+[_Code_]            return (*this);
+
+[_Code_]         }
+
+[_Code_]
+[_Code_]         // c--
+
+[_Code_]         complex operator --(int) {
+
+[_Code_]            complex result(*this);
+
+[_Code_]            real_part -= 1.0;
+
+[_Code_]            return (result);
+
+[_Code_]         }
+
+[_Code_]
+[_Code_]         // --c
+
+[_Code_]         complex &operator --(void) {
+
+[_Code_]            real_part -= 1.0;
+
+[_Code_]            return (*this);
+
+[_Code_]         }
+
+[_Code_] };
+
+[_Code_]
+[_Code_] inline complex operator + (const complex& oper1, const complex& oper2)
+
+[_Code_] {
+
+[_Code_]   return complex(oper1.real()      + oper2.real(),
+
+[_Code_]                  oper1.imaginary() + oper2.imaginary());
+
+[_Code_] }
+
+[_Code_]
+[_Code_] inline complex operator + (const complex& oper1, double oper2)
+
+[_Code_] {
+
+[_Code_]   return complex(oper1.real() + oper2,
+
+[_Code_]                  oper1.imaginary());
+
+[_Code_] }
+
+[_Code_]
+[_Code_] inline complex operator + (double oper1, const complex& oper2)
+
+[_Code_] {
+
+[_Code_]   return complex(oper1 + oper2.real(),
+
+[_Code_]                  oper2.imaginary());
+
+[_Code_] }
+
+[_Code_]
+[_Code_] inline complex operator - (const complex& oper1, const complex& oper2)
+
+[_Code_] {
+
+[_Code_]   return complex(oper1.real()      - oper2.real(),
+
+[_Code_]                  oper1.imaginary() - oper2.imaginary());
+
+[_Code_] }
+
+[_Code_]
+[_Code_] inline complex operator - (const complex& oper1, double oper2)
+
+[_Code_] {
+
+[_Code_]   return complex(oper1.real() - oper2,
+
+[_Code_]                  oper1.imaginary());
+
+[_Code_] }
+
+[_Code_]
+[_Code_] inline complex operator - (double oper1, const complex& oper2)
+
+[_Code_] {
+
+[_Code_]   return complex(oper1 - oper2.real(),
+
+[_Code_]                  -oper2.imaginary());
+
+[_Code_] }
+
+[_Code_]
+[_Code_] inline complex operator * (const complex& oper1, const complex& oper2)
+
+[_Code_] {
+
+[_Code_]   return complex(
+
+[_Code_]     oper1.real() * oper2.real() - oper1.imaginary() * oper2.imaginary(),
+
+[_Code_]     oper1.real() * oper2.imaginary() + oper1.imaginary() * oper2.real());
+
+[_Code_] }
+
+[_Code_]
+[_Code_] inline complex operator * (const complex& oper1, const double oper2)
+
+[_Code_] {
+
+[_Code_]   return complex(oper1.real()      * oper2,
+
+[_Code_]                  oper1.imaginary() * oper2);
+
+[_Code_] }
+
+[_Code_]
+[_Code_] inline complex operator * (const double oper1, const complex& oper2)
+
+[_Code_] {
+
+[_Code_]   return complex(oper1 * oper2.real(),
+
+[_Code_]                  oper1 * oper2.imaginary());
+
+[_Code_] }
+
+[_Code_]
+[_Code_] extern complex operator / (const complex &oper1, const complex &oper2);
+
+[_Code_]
+[_Code_] inline complex operator / (const double &oper1, const complex &oper2) {
+
+[_Code_]    return (complex(oper1, 0.0) / oper2);
+
+[_Code_] }
+
+[_Code_]
+[_Code_] inline complex operator / (const complex &oper1, const double &oper2) {
+
+[_Code_]    return (oper1 / complex(oper2, 0.0));
+
+[_Code_] }
+
+[_Code_]
+[_Code_] inline int operator == (const complex& oper1, const complex& oper2)
+
+[_Code_] {
+
+[_Code_]   return ((oper1.real() == oper2.real()) &&
+
+[_Code_]           (oper1.imaginary() == oper2.imaginary()));
+
+[_Code_] }
+
+[_Code_]
+[_Code_] inline int operator != (const complex& oper1, const complex& oper2)
+
+[_Code_] {
+
+[_Code_]   return (!(oper1 == oper2));
+
+[_Code_] }
+
+[_Code_]
+[_Code_] inline complex operator - (const complex& oper1)
+
+[_Code_] {
+
+[_Code_]   return complex(-oper1.real(), -oper1.imaginary());
+
+[_Code_] }
+
+[_Code_]
+[_Code_] inline complex operator + (const complex& oper1)
+
+[_Code_] {
+
+[_Code_]   return complex(+oper1.real(), +oper1.imaginary());
+
+[_Code_] }
+
+[_Code_]
+[_Code_] inline ostream &operator << (ostream &out_file, const complex &number)
+
+[_Code_] {
+
+[_Code_]     out_file << '(' << number.real() << ',' << number.imaginary() << ')';
+
+[_Code_]     return (out_file);
+
+[_Code_] }
+
+[_Code_]
+[_Code_] extern istream &operator >> (istream &in_file, complex &number);
+
+[_Code_]
+[_Code_] #endif /* __complex_h__ */      // Avoid double includes
+
+[_Code_]
+[_C_]  File: complex.cc
+
+[_Code_]
+[_Code_] #include "complex.h"
+
+[_Code_]
+[_Code_] /********************************************************
+
+[_Code_]  * c = c / c -- complex division                        *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Parameters                                           *
+
+[_Code_]  *      oper1, oper2 -- two operands of the divide      *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Returns                                              *
+
+[_Code_]  *      result of the divide                            *
+
+[_Code_]  ********************************************************/
+
+[_Code_] complex operator / (const complex& oper1, const complex& oper2)
+
+[_Code_] {
+
+[_Code_]   // Denominator of the result
+
+[_Code_]   double den = fabs(oper2.real()) + fabs(oper2.imaginary());
+
+[_Code_]
+[_Code_]   // Real part of the oper1 factor
+
+[_Code_]   double oper1_real_den = oper1.real() / den;
+
+[_Code_]   // Imaginary part of the oper1 factor
+
+[_Code_]   double oper1_imag_den = oper1.imaginary() / den;
+
+[_Code_]
+[_Code_]   // Real part of the oper2 factor
+
+[_Code_]   double oper2_real_den = oper2.real() / den;
+
+[_Code_]   // Imaginary part of the oper2 factor
+
+[_Code_]   double oper2_imag_den = oper2.imaginary() / den;
+
+[_Code_]
+[_Code_]   // Normalization factor
+
+[_Code_]   double normalization   = oper2_real_den * oper2_real_den +
+
+[_Code_]                            oper2_imag_den * oper2_imag_den;
+
+[_Code_]
+[_Code_]   return complex((oper1_real_den * oper2_real_den +
+
+[_Code_]                   oper1_imag_den * oper2_imag_den) / normalization,
+
+[_Code_]                  (oper1_imag_den * oper2_real_den -
+
+[_Code_]                   oper1_real_den * oper2_imag_den) / normalization);
+
+[_Code_] }
+
+[_Code_]
+[_Code_] /********************************************************
+
+[_Code_]  *  c /= c -- complex divide by                         *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Parameters                                           *
+
+[_Code_]  *      oper2 -- operator to divide by                  *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Returns                                              *
+
+[_Code_]  *      reference to the result of the divide           *
+
+[_Code_]  ********************************************************/
+
+[_Code_] complex& complex::operator /= (const complex& oper2)
+
+[_Code_] {
+
+[_Code_]   // Denominator of the result
+
+[_Code_]   double den = fabs(oper2.real()) + fabs(oper2.imaginary());
+
+[_Code_]
+[_Code_]   // Denominator -- operator 1 real part
+
+[_Code_]   double oper1_real_den = real_part / den;
+
+[_Code_]
+[_Code_]   // Denominator -- operator 1 imaginary part
+
+[_Code_]   double oper1_imag_den = imaginary_part / den;
+
+[_Code_]
+[_Code_]   // Denominator -- operator 2 real part
+
+[_Code_]   double oper2_real_den = oper2.real() / den;
+
+[_Code_]
+[_Code_]   // Denominator -- operator 2 imaginary part
+
+[_Code_]   double oper2_imag_den = oper2.imaginary() / den;
+
+[_Code_]
+[_Code_]   // Normalization factor
+
+[_Code_]   double normalization = oper2_real_den * oper2_real_den +
+
+[_Code_]                          oper2_imag_den * oper2_imag_den;
+
+[_Code_]   real_part      = (oper1_real_den * oper2_real_den +
+
+[_Code_]                     oper1_imag_den * oper2_imag_den) / normalization;
+
+[_Code_]   imaginary_part = (oper1_imag_den * oper2_real_den -
+
+[_Code_]                     oper1_real_den * oper2_imag_den) / normalization;
+
+[_Code_]   return (*this);
+
+[_Code_] }
+
+[_Code_]
+[_Code_] /********************************************************
+
+[_Code_]  * istream >> complex -- read a complex number          *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Parameters                                           *
+
+[_Code_]  *      in_file -- file to read                         *
+
+[_Code_]  *      number -- place to put the number               *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Returns                                              *
+
+[_Code_]  *      reference to the input file                     *
+
+[_Code_]  ********************************************************/
+
+[_Code_] istream &operator >> (istream &in_file, complex &number)
+
+[_Code_] {
+
+[_Code_]     double real, imaginary;  // Real and imaginary part
+
+[_Code_]     char ch;            // Random character used to verify input
+
+[_Code_]
+[_Code_]     number.set(0.0, 0.0);       // Initialize the number (just in case)
+
+[_Code_]
+[_Code_]     in_file.ipfx(1);    // Tell the I/O system we are reading formatted
+
+[_Code_]     in_file >> ws;      // Skip white space
+
+[_Code_]
+[_Code_]     if (in_file.bad()) return (in_file);
+
+[_Code_]
+[_Code_]     in_file >> ch;      // Get character after white space
+
+[_Code_]     if (ch != '(') {
+
+[_Code_]         in_file.setf(ios::failbit);     // We have an error
+
+[_Code_]         return (in_file);
+
+[_Code_]     }
+
+[_Code_]
+[_Code_]     in_file >> real;
+
+[_Code_]
+[_Code_]     if (in_file.bad()) return (in_file);
+
+[_Code_]
+[_Code_]     in_file >> ws >> ch;        // Get first character after number
+
+[_Code_]
+[_Code_]     if (in_file.bad()) return (in_file);
+
+[_Code_]
+[_Code_]     if (ch != ',') {
+
+[_Code_]        in_file.setf(ios::failbit);
+
+[_Code_]        return (in_file);
+
+[_Code_]     }
+
+[_Code_]
+[_Code_]     in_file >> imaginary;
+
+[_Code_]
+[_Code_]     in_file >> ws >> ch;
+
+[_Code_]     if (in_file.bad()) return (in_file);
+
+[_Code_]
+[_Code_]     if (ch != ')') {
+
+[_Code_]        in_file.setf(ios::failbit);
+
+[_Code_]        return (in_file);
+
+[_Code_]     }
+
+[_Code_]     number.set(real, imaginary);
+
+[_Code_]     return (in_file);
+
+[_Code_] }
+
+Question 18-1: Why does [_XREF Example 18-3_] fail? When run it prints out:
+
+[_Code_] Copy constructor called
+
+[_Code_] Copy constructor called
+
+over and over. Hint: Review the section "Copy Constructor" in Chapter 13. Thanks
+to Jeff Hewett for this problem.
+
+Example 18-3
+
+. equal/equal.cc
+
+[_Code_]  1 #include <iostream.h>
+
+[_Code_]  2
+
+[_Code_]  3 class trouble {
+
+[_Code_]  4     public:
+
+[_Code_]  5      int data;
+
+[_Code_]  6
+
+[_Code_]  7      trouble(void);
+
+[_Code_]  8      trouble(const trouble &old);
+
+[_Code_]  9      trouble operator = (trouble old_trouble);
+
+[_Code_] 10 };
+
+[_Code_] 11
+
+[_Code_] 12 trouble::trouble(void) {
+
+[_Code_] 13    data = 0;
+
+[_Code_] 14 }
+
+[_Code_] 15
+
+[_Code_] 16 trouble::trouble(const trouble &old) {
+
+[_Code_] 17    cout << "Copy constructor called\n";
+
+[_Code_] 18    *this = old;
+
+[_Code_] 19 }
+
+[_Code_] 20
+
+[_Code_] 21 trouble trouble::operator = (trouble old_trouble) {
+
+[_Code_] 22     cout << "Operator = called\n";
+
+[_Code_] 23     data = old_trouble.data;
+
+[_Code_] 24     return (*this);
+
+[_Code_] 25 }
+
+[_Code_] 26
+
+[_Code_] 27 int main()
+
+[_Code_] 28 {
+
+[_Code_] 29     trouble trouble1;
+
+[_Code_] 30     trouble trouble2(trouble1);
+
+[_Code_] 31
+
+[_Code_] 32     return (0);
+
+[_Code_] 33 }
+
+[_A_]  Programming Exercises
+
+Exercise 18-1: Write a class to handle fractions such as "1/3." Define addition,
+subtraction, multiplication, and division operators for these fractions.
+
+For example: 1/3 + 1/2 = 5/6.
+
+Exercise 18-2: Write a fixed-point number class to handle numbers. All numbers
+are of the form DDDDD.D. In other words, all numbers have only a single digit to
+the right of the decimal point. Use integers to implement this class.
+
+Exercise 18-3: Write a class to implement a sparse integer array. This is much like
+a simple integer array:
+
+[_Code_] int simple_array[100];
+
+But unlike a simple array, the indices can go from 0 to 1,000,000.
+That's the bad news. The good news is that at most 100 elements
+will be set at any time. The rest of the elements will be zero.
+
+Exercise 18-4: Write a time class. Implement functions to add, subtract, read, and
+print times.
+
+Exercise 18-5: Write a date class that allows you to add, subtract, read, and print
+simple dates of the form MM/DD. Assume year is not a leap year.
+
+Exercise 18-6: (Advanced) Write a full-date class that allows you to add, subtract,
+read, and print dates of the form MM/DD/YY.
+
+[_A_]  Answers to Chapter Questions
+
+Answer 18-1: The copy constructor calls the operator = function. The parameter
+list to this function is:
+
+[_Code_] trouble trouble::operator = (trouble old_trouble) {
+
+The parameter to this function is being passed as a call-by-value
+parameter. When C++ sees this type of parameter it calls the copy
+constructor to put the parameter on the stack.
+
+[_Code_] trouble trouble::operator = (trouble old_trouble) {
+
+[_Code_]     cout << "Operator = called\n";
+
+[_Code_]     data = old_trouble.data;
+
+[_Code_]     return (*this);
+
+[_Code_] }
+
+So we have an infinite loop. The copy constructor calls the
+operator = function. C++ sees the call-by-value parameter and
+calls the copy constructor, which calls operator = and causes the
+copy constructor to be called. This keeps up until the system runs
+out of stack space or the user gets disgusted and aborts the program.
+
+The solution is to pass the parameter to operator = as a reference.
+This not only is more efficient, but also works.
+
+[_Code_] trouble trouble::operator = (const trouble &old_trouble) {
+[_Code_] trouble::trouble(
+    const trouble &old) called

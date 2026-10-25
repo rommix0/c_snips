@@ -1,0 +1,771 @@
+Chapter 6Part I: The Basics
+
+In This Chapter:
+
+*  [_XREF if Statement_]
+
+*  [_XREF else Statement_]
+
+*  [_XREF How Not to Use
+strcmp_]
+
+*  [_XREF Looping Statements_]
+
+*  [_XREF while Statement_]
+
+*  [_XREF Break Statement_]
+
+*  [_XREF continue Statement_]
+
+*  [_XREF The Assignment
+Anywhere Side Effect_]
+
+*  [_XREF Programming
+Exercises_]
+
+*  [_XREF Answers to Chapter
+Questions_]
+
+6	
+
+6: Decision and Control Statements
+
+Once a decision was made, I did not
+worry about it afterward.
+
+---Harry Truman
+
+Calculations and expressions are only a small part of computer
+programming. Decision and control statements also are needed, to
+specify the order in which statements are to be executed.
+
+So far you have constructed linear programs, which are programs
+that execute in a straight line, one statement after another. In this
+chapter you will see how to change the control flow of a program
+with branching statements and looping statements. Branching
+statements cause one section of code to be executed or not,
+depending on a conditional clause. Looping statements are used to
+repeat a section of code a number of times or until some condition
+occurs.
+
+[_A_]  if Statement
+
+The if statement allows you to put some decision making into
+your programs. The general form of the if statement is:
+
+[_Code_] if (condition)
+
+[_Code_]     statement;
+
+If the expression is true (nonzero) the statement will be executed. If
+the expression is zero, the statement will not be executed. For
+example, suppose you are writing a billing program. At the end, if
+the customer owes nothing or if he has credit (owes a negative
+amount) you want to print a message. In C++ this is written:
+
+[_Code_] if (total_owed <= 0)
+
+[_Code_]     cout << "You owe nothing.\n";
+
+The operator <= is a relational operator that represents less than or
+equal to. This statement reads "if the total_owed is less than or
+equal to zero, print the message." The complete list of relational
+operators is found in Table 6-1.
+
+Table 6-1
+
+. Relational Operators
+
+Operator
+
+Meaning
+
+<=
+
+Less than or equal to
+
+<
+
+Less than
+
+>
+
+Greater than
+
+>=
+
+Greater than or equal to
+
+==
+
+Equal
+
+!=
+
+Not equal
+
+Multiple relational expressions may be grouped together with
+logical operators. For example, the statement:
+
+[_Code_] if ((oper_char == 'Q') || (oper_char == 'q'))
+
+[_Code_]     cout << "Quit\n";
+
+uses the logical OR operator (||) to cause the if statement to print
+"Quit" if oper_char is either a lowercase "q" or an uppercase "Q."
+[_XREF Table 6-2_] lists the logical operators.
+
+Table 6-2
+
+.  Logical Operators
+
+Operator
+
+Usage
+
+Meaning
+
+Logical OR (||)
+
+(expr1) || (expr2)
+
+True if expr1 or expr2 is true
+
+Logical AND (&&)
+
+(expr1) && (expr2)
+
+True if expr1 and expr2 are true
+
+Logical NOT (!)
+
+!(expr)
+
+Returns false if expr is true or
+
+returns true if expr is false
+
+Multiple statements after the if may be grouped by putting them
+inside curly braces ({ }). For example:
+
+[_Code_] if (total_owed <= 0) {
+
+[_Code_]     ++zero_count;
+
+[_Code_]     cout << "You owe nothing.\n";
+
+[_Code_] }
+
+For readability, the statements enclosed in curly braces are usually
+indented. This allows the programmer to quickly tell which
+statements are to be conditionally executed. As you will see later,
+mistakes in indentation can result in programs that are misleading
+and hard to read.
+
+[_A_]  else Statement
+
+An alternative form of the if statement is:
+
+[_Code_] if (condition)
+
+[_Code_]     statement;
+
+[_Code_] else
+
+[_Code_]     statement;
+
+If the condition is true, the first statement is executed. If it is false,
+the second statement is executed. In our accounting example, we
+wrote out a message only if nothing was owed. In real life we
+probably want to tell the customer how much he owes if there is a
+balance due.
+
+[_Code_] if (total_owed <= 0)
+
+[_Code_]     cout << "You owe nothing.\n";
+
+[_Code_] else
+
+[_Code_]     cout << "You owe " << total_owed << " dollars\n";
+
+Note to PASCAL programmers: Unlike PASCAL, C++ requires you to
+put a semicolon at the end of the statement before the else.
+
+Now consider this program fragment:
+
+[_Code_] if (count < 10)     // If #1
+
+[_Code_]     if ((count % 4) == 2)   // If #2
+
+[_Code_]         cout << "Condition:White\n";
+
+[_Code_]   else   // (Indentation is wrong)
+
+[_Code_]       cout << "Condition:Tan\n";
+
+There are two if statements and one else. To which if does the
+else belong? Pick one:
+
+1.  It belongs to if #1.
+
+2.  It belongs to if #2.
+
+3.  You don't have to worry about this situation if you never
+write code like this.
+
+The correct answer is 3. According to the C++ syntax rules, the
+else goes with the nearest if, so 2 is syntactically correct. But
+writing code like this violates the KISS principle (Keep It Simple,
+Stupid). It is best to write your code as clearly and simply as
+possible. This code fragment should be written as:
+
+[_Code_] if (count < 10) {       // If #1
+
+[_Code_]     if ((count % 4) == 2)   // If #2
+
+[_Code_]         cout << "Condition:White\n";
+
+[_Code_]     else
+
+[_Code_]         cout << "Condition:Tan\n";
+
+[_Code_] }
+
+From our original example, it was not clear which if statement had
+the else clause; however, adding an extra set of braces improves
+readability, understanding, and clarity.
+
+[_A_]  How Not to Use strcmp
+
+The function strcmp compares two strings and returns zero if they
+are equal and nonzero if they are different. To check whether two
+strings are equal, we use the code:
+
+[_Code_]     // Check for equal
+
+[_Code_]     if (strcmp(string1, string2) == 0)
+
+[_Code_]        cout << "Strings equal\n";
+
+[_Code_]     else
+
+[_Code_]        cout << "Strings not equal\n";
+
+Some programmers omit the comment and the == 0 clause, leading
+to the following, confusing code:
+
+[_Code_]     if (strcmp(string1, string2))
+
+[_Code_]         cout << "......";
+
+At first glance, this program obviously compares two strings and
+executes the cout statement if they are equal. Unfortunately, the
+obvious is wrong. If the strings are equal strcmp returns zero, and
+the cout is not executed. Because of this backwards behavior of
+strcmp, you should be very careful in your use of strcmp and
+always comment its use.
+
+[_A_]  Looping Statements
+
+Computers not only do calculations, but also will do them over and
+over and over. To get a computer to repeat its work, you need a
+loop statement. Looping statements have many uses. For example,
+loops are used to count the number of words in a document or to
+count the number of accounts that have past due balances.
+
+[_A_]  while Statement
+
+The while statement is used when the program needs to perform
+repetitive tasks. The general form of a while statement is:
+
+[_Code_] while (condition)
+
+[_Code_]     statement;
+
+The program will repeatedly execute the statement inside the
+while until the condition becomes false (0). (If the condition is
+initially false, the statement will not be executed.)
+
+For example, [_XREF Example 6-1_] computes all the Fibonacci
+numbers that are less than 100. The Fibonacci sequence is:
+
+[_Code_] 1 1 2 3 5 8 . . .
+
+The terms are computed from the equations:
+
+[_Code_] 1
+
+[_Code_] 1
+
+[_Code_] 2 = 1 + 1
+
+[_Code_] 3 = 2 + 1
+
+[_Code_] 5 = 3 + 2
+
+[_Code_] etc.
+
+In general terms this is:
+
+This is a mathematical equation using math-style variable names
+(fn). Mathematicians use this very terse style of naming variables. In
+programming, terse is dangerous, so we translate these names into
+something verbose for C++.
+
+fn
+
+translates to
+
+next_number
+
+fn-1
+
+translates to
+
+current_number
+
+fn-2
+
+translates to
+
+old_number
+
+So in C++ code, the equation is expressed as:
+
+[_Code_]     next_number = current_number + old_number;
+
+We want to loop until our current term is 100 or larger. The while
+loop:
+
+[_Code_]     while (current_number < 100)
+
+will repeat our computation and printing until we reach this limit.
+
+In our while loop we compute the value of current_number and
+print it. Next we need to advance one term.
+
+This completes the body of the loop. The first two terms of the
+Fibonacci sequence are 1 and 1. We initialize our first two terms to
+these values.
+
+[_XREF Figure 6-1_] shows what happens to the variables during the
+execution of the program. At the beginning current_number and
+old_number are 1. We print the value of the current term. Then the
+variable next_number is computed (value 2). Next we advance one
+term by putting next_number into current_number and current_
+number into old_number. This is repeated until we compute the
+last term and the while loop exits.
+
+[_XREF Example 6-1_] shows this written as C++ code.
+
+Figure 6-1
+
+. Fibonacci execution
+
+Example 6-1
+
+. fib/fib.cc
+
+[_Code_] #include <iostream.h>
+
+[_Code_] int   old_number;     // previous Fibonacci number
+
+[_Code_] int   current_number; // current Fibonacci number
+
+[_Code_] int   next_number;    // next number in the series
+
+[_Code_]
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     // start things out
+
+[_Code_]     old_number = 1;
+
+[_Code_]     current_number = 1;
+
+[_Code_]
+[_Code_]     cout << "1\n"; // Print first number
+
+[_Code_]
+[_Code_]     while (current_number < 100) {
+
+[_Code_]
+[_Code_]         cout << current_number << '\n';
+
+[_Code_]         next_number = current_number + old_number;
+
+[_Code_]
+[_Code_]         old_number = current_number;
+
+[_Code_]         current_number = next_number;
+
+[_Code_]     }
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+[_A_]  Break Statement
+
+We have used a while statement to compute Fibonacci numbers
+less than 100. The loop exits when the condition at the beginning
+becomes false. Loops also can be exited at any point through the
+use of a break statement.
+
+Suppose you want to add a series of numbers and you don't know
+how many numbers are to be added together. You need some way
+of letting the program know it has reached the end of the list. In
+Program 6-2 you use the number zero (0) to signal the end of the
+list.
+
+Note that the while statement begins with:
+
+[_Code_]     while (1) {
+
+The program will loop forever because the while will exit only
+when the expression 1 is zero. The only way to exit this loop is
+through a break statement.
+
+When we see the end-of-list indicator (zero), we use the statement:
+
+[_Code_]     if (item == 0)
+
+[_Code_]          break;
+
+to exit the loop.
+
+Example 6-2
+
+. total/total.cc
+
+[_Code_] #include <iostream.h>
+
+[_Code_] int   total;  // Running total of all numbers so far
+
+[_Code_] int   item;   // next item to add to the list
+
+[_Code_]
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     total = 0;
+
+[_Code_]     while (1) {
+
+[_Code_]         cout << "Enter # to add \n";
+
+[_Code_]         cout << "  or 0 to stop:";
+
+[_Code_]         cin >> item;
+
+[_Code_]
+[_Code_]         if (item == 0)
+
+[_Code_]             break;
+
+[_Code_]
+[_Code_]         total += item;
+
+[_Code_]         cout << "Total: " << total << '\n';
+
+[_Code_]     }
+
+[_Code_]     cout << "Final total " << total << '\n';
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+[_A_]  continue Statement
+
+The continue statement is very similar to the break statement,
+except that instead of terminating the loop, it starts executing the
+body of the loop over from the top. For example, if you modify the
+previous program to total only numbers larger than 0, you get [_
+XREF Example 6-3_].
+
+Example 6-3
+
+. total2/total2.cc
+
+[_Code_] #include <iostream.h>
+
+[_Code_] int   total;       // Running total of all numbers so far
+
+[_Code_] int   item;        // next item to add to the list
+
+[_Code_] int   minus_items; // number of negative items
+
+[_Code_]
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     total = 0;
+
+[_Code_]     minus_items = 0;
+
+[_Code_]     while (1) {
+
+[_Code_]         cout << "Enter # to add\n";
+
+[_Code_]         cout << "  or 0 to stop:";
+
+[_Code_]         cin >> item;
+
+[_Code_]
+[_Code_]         if (item == 0)
+
+[_Code_]             break;
+
+[_Code_]
+[_Code_]         if (item < 0) {
+
+[_Code_]             ++minus_items;
+
+[_Code_]             continue;
+
+[_Code_]         }
+
+[_Code_]         total += item;
+
+[_Code_]         cout << "Total: " << total << '\n';
+
+[_Code_]     }
+
+[_Code_]
+[_Code_]     cout << "Final total " << total << '\n';
+
+[_Code_]     cout << "with " << minus_items << " negative items omitted\n";
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+[_A_]  The Assignment Anywhere Side Effect
+
+C++ allows the use of assignment statements almost anyplace. For
+example, you can put assignment statements inside another
+assignment statement:
+
+[_Code_] // don't program like this
+
+[_Code_] average = total_value / (number_of_entries = last - first);
+
+This is the equivalent of saying:
+
+[_Code_] // program like this
+
+[_Code_] number_of_entries = last - first;
+
+[_Code_]
+
+[_Code_] average = total_value / number_of_entries;
+
+The first version buries the assignment of number_of_entries
+inside the expression. Programs should be clear and simple and
+should not hide anything. The most important rule of programming
+is KEEP IT SIMPLE.
+
+C++ also allows you to put assignment statements in the while
+conditional. For example:
+
+[_Code_] // do not program like this
+
+[_Code_] while ((current_number = last_number + old_number) < 100)
+
+[_Code_]     cout << "Term " << current_number << '\n';
+
+Avoid this type of programming. Notice how much clearer the logic
+is in the following version:
+
+[_Code_] // program like this
+
+[_Code_] while (1) {
+
+[_Code_]     current_number = last_number + old_number;
+
+[_Code_]
+
+[_Code_]     if (current_number >= 100)
+
+[_Code_]          break;
+
+[_Code_]
+
+[_Code_]     cout << "Term " << current_number << '\n';
+
+[_Code_] }
+
+Question 6-1: For some strange reason, the program in Example 6-4 thinks that
+everyone owes a balance of 0 dollars. Why?
+
+Example 6-4
+
+. balance/balance.cc
+
+[_Code_] #include <iostream.h>
+
+[_Code_] int   balance_owed;     // amount owed
+
+[_Code_]
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     cout << "Enter number of dollars owed:";
+
+[_Code_]     cin >> balance_owed;
+
+[_Code_]
+[_Code_]     if (balance_owed = 0)
+
+[_Code_]         cout << "You owe nothing.\n";
+
+[_Code_]     else
+
+[_Code_]         cout << "You owe " << balance_owed << " dollars.\n";
+
+[_Code_]
+[_Code_]     return (0);
+
+[_Code_] }
+
+Sample output:
+
+[_Code_] Enter number of dollars owed: 12
+
+[_Code_] You owe 0 dollars.
+
+[_A_]  Programming Exercises
+
+Exercise 6-1: Write a program to find the square of the distance between two
+points. Find the distance only if you want to do the independent research needed
+to perform a square root in C++.
+
+Exercise 6-2: A professor generates letter grades using [_XREF Table 6-3_].
+
+Table 6-3
+
+. Grade Values
+
+% Correct
+
+Grade
+
+0-60
+
+F
+
+61-70
+
+D
+
+71-80
+
+C
+
+81-90
+
+B
+
+91-100
+
+A
+
+Given a numeric grade, print the letter.
+
+Exercise 6-3: Modify the previous program to print out a + or - after the letter
+grade based on the last digit of the score. The modifiers are listed in [_XREF
+Table 6-4_].
+
+Table 6-4
+
+. Grade-Modification Values
+
+Last digit
+
+Modifier
+
+1-3
+
+-
+
+4-7
+
+<blank>
+
+8-0
+
++
+
+For example, 81=B-, 94=A, and 68=D+. Note: An F is only an F.
+There is no F+ or F-.
+
+[_NOTE_]  Programmers frequently have to modify code that
+someone else wrote. A good exercise is to take someone
+else's Exercise 6-2 and modify it.
+
+Exercise 6-4: Given an amount (less than $1.00), compute the number of quarters,
+dimes, nickels, and pennies needed.
+
+Exercise 6-5: A leap year is any year divisible by 4 unless it is divisible by 100, but
+not 400. Write a program to tell whether a year is a leap year.
+
+Exercise 6-6: Write a program that, given the number of hours an employee
+worked and his hourly wage, computes his weekly pay. Count any hours over 40
+as overtime at time-and-a-half.
+
+[_A_]  Answers to Chapter Questions
+
+Answer 6-1: This program illustrates the most common C++ error and one of the
+most frustrating. The problem is that C++ allows assignment statements inside of
+if conditionals. The statement:
+
+[_Code_] if (balance_owed = 0)
+
+uses a single equal sign instead of the double equal. C++ will assign
+balance_owed the value 0 and then test the result (which is zero).
+If the result were nonzero (true), the if clause would be executed.
+Since the result is zero (false), the else clause is executed and the
+program prints the wrong answer.
+
+The statement
+
+[_Code_] if (balance_owed = 0)
+
+is equivalent to
+
+[_Code_] balance_owed = 0;
+
+[_Code_] if (balanced_owed != 0)
+
+The statement should be written:
+
+[_Code_] if (balance_owed == 0)
+
+This is the most common error that beginning programmers make.
+It is also one of the most difficult and frustrating to find.
+
+I once taught a course in C programming. One day about a month
+after the course had ended I saw one of my former students on the
+street. He greeted me and said, "Steve, I have to tell you the truth.
+During the class I thought you were going a bit overboard on this =
+vs. == bug, until now. You see, I just wrote the first C program for
+my job, and guess what mistake I made."
+
+One trick many programmers use is to put the constant first in any
+== statement. For example:
+
+[_Code_] if (0 == balanced_owed)
+
+In this way, if the programmer makes a mistake and puts in =
+instead of ==, the result is:
+
+[_Code_] if (0 = balanced_owed)
+
+which causes a compiler error. (You can't assign balance_owed to
+0.)

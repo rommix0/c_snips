@@ -1,0 +1,693 @@
+Chapter 14Part III: Advanced Types and Classes
+
+In This Chapter:
+
+*  [_XREF Friends_]
+
+*  [_XREF Constant Functions_]
+
+*  [_XREF Constant Members_]
+
+*  [_XREF Static Member
+Variables_]
+
+*  [_XREF Static Member
+Functions_]
+
+*  [_XREF The Meaning of static_]
+
+*  [_XREF Programming
+Exercises_]
+
+14	
+
+14: More on Classes
+
+This method is, to define as the
+number of a class the class of all
+classes similar to the given class.
+
+---Bertrand Russell
+
+Principles of Mathematics, Part II,
+Chapter 11, Section iii, 1903
+
+[_A_]  Friends
+
+In Chapter 13, Simple Classes, you defined a basic stack class.
+Suppose you want to write a function to see whether two stacks are
+equal. At first glance this is simple. The function looks like Example
+14-1.
+
+Example 14-1
+
+. stack_c/s_equal.cc
+
+[_Code_] /********************************************************
+
+[_Code_]  * stack_equal -- Test to see whether two stacks are    *
+
+[_Code_]  *                equal                                 *
+
+[_Code_]  *                                                      *
+
+[_Code_]  *      s1, s2 -- the two stacks                        *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Returns                                              *
+
+[_Code_]  *      0 -- stacks are not equal                       *
+
+[_Code_]  *      1 -- stacks are equal                           *
+
+[_Code_]  ********************************************************/
+
+[_Code_] int stack_equal(const stack &s1, const stack &s2)
+
+[_Code_] {
+
+[_Code_]     int index;  // Index into the items in the array
+
+[_Code_]
+[_Code_]     // Check number of items first
+
+[_Code_]     if (s1.count != s2.count)
+
+[_Code_]         return (0);
+
+[_Code_]
+[_Code_]     for (index = 0; index < s1.count; ++index) {
+
+[_Code_]         if (s1.data[index] != s2.data[index])
+
+[_Code_]             return (0);
+
+[_Code_]     }
+
+[_Code_]     return (1);
+
+[_Code_] }
+
+Like many programs, this solution is simple, clear, and wrong. The
+problem is that the member variables count and data are private.
+That means you can't access them.
+
+So what do you do? One solution is to make these variables public.
+That gives the function stack_equal access to count and data.
+The problem is that it also gives everyone else access, and you
+don't want that.
+
+Fortunately C++ gives you a way to say, "Let stack_equal and
+only stack_equal have access to the private data of the class
+stack." This is accomplished through the friend directive.
+Classes must declare their friends. No function from the outside may
+access the private data from the class, unless the class allows it.
+
+Example 14-2
+
+.  stack_c/f_stack.cc
+
+[_Code_] // The stack itself
+
+[_Code_] class stack {
+
+[_Code_]     private:
+
+[_Code_]         int count;              // Number of items in the stack
+
+[_Code_]         int data[STACK_SIZE];   // The items themselves
+
+[_Code_]     public:
+
+[_Code_]         // Initialize the stack
+
+[_Code_]         void init(void);
+
+[_Code_]
+[_Code_]         // Push an item on the stack
+
+[_Code_]         void push(const int item);
+
+[_Code_]
+[_Code_]         // Pop an item from the stack
+
+[_Code_]         int pop(void);
+
+[_Code_]
+[_Code_]         friend int stack_equal(const stack &s1, const stack &s2);
+
+[_Code_] };
+
+[_NOTE_]  stack_equal is not a member function of the
+class stack. It is a normal, simple function. The only
+difference is that because the function is a friend it has
+access to private data for any class that calls it friend.
+
+[_B_]  Friend Classes
+
+Friends are not restricted to just functions. One class can be a friend
+of another. For example:
+
+[_Code_] class item {
+
+[_Code_]     private:
+
+[_Code_]         int data;
+
+[_Code_]
+
+[_Code_]     friend class set_of_items;
+
+[_Code_] };
+
+[_Code_] class set_of_items {
+
+[_Code_]     // ...
+
+[_Code_] };
+
+In this case since the class set_of_items is a friend of item it has
+access to all the members of item.
+
+[_A_]  Constant Functions
+
+C++ lets you define two types of numbers: constant and
+nonconstant. For example:
+
+[_Code_] int index;      // Current index into the data array
+
+[_Code_] const int DATA_MAX(100);  // Maximum number of items in the array
+
+These two items are treated differently. For example, you can
+change the value of index but you can't change DATA_MAX.
+
+Now let's consider a class to implement a set of numbers from 0 to
+31. The definition of this class is:
+
+[_Code_] // Warning: The member functions in this class are incomplete
+
+[_Code_] //          See below for a better definition of this class
+
+[_Code_] class int_set {
+
+[_Code_]     private:
+
+[_Code_]         // ... whatever
+
+[_Code_]     public:
+
+[_Code_]         int_set(void);         // Default constructor
+
+[_Code_]         int_set(const int_set &old_set); // Copy constructor
+
+[_Code_]         void set(int value);   // Set a value
+
+[_Code_]         void clear(int value); // Clear an element
+
+[_Code_]         int test(int value);   // See whether an element is set
+
+[_Code_] };
+
+As with numbers, C++ will let you define two types of sets: constant
+and nonconstant.
+
+[_Code_] int_set var_set;      // A variable set (we can change this)
+
+[_Code_]
+
+[_Code_] var_set.set(1);       // Set an element in the set
+
+[_Code_]
+
+[_Code_] // Define a constant version of the set (we cannot change this)
+
+[_Code_] const int_set const_set(var_set);
+
+In the int_set class there are member functions such as set and
+clear that change the value of the set. There is also a function
+test that changes nothing.
+
+Obviously you don't want to allow set and clear to be used on a
+constant. However, it is okay to use the test member function.
+
+But how does C++ know what can be used on a constant and what
+can't? The trick is to put the keyword const at the end of the
+function header. This tells C++ that this member function can be
+used for a constant variable. So if you put const after the
+member function test, C++ will allow it to be used in a constant.
+The member functions set and clear do not have this keyword,
+so they can't be used in a constant.
+
+[_Code_] class int_set {
+
+[_Code_]     private:
+
+[_Code_]         // ... whatever
+
+[_Code_]     public:
+
+[_Code_]         int_set(void);         // Default constructor
+
+[_Code_]         int_set(const int_set &old_set); // Copy constructor
+
+[_Code_]         void set(int value);   // Set a value
+
+[_Code_]         void clear(int value); // Clear an element
+
+[_Code_]         int test(int value) const;   // See whether an element is set
+
+[_Code_] };
+
+So in your code you can do the following:
+
+[_Code_] int_set var_set;      // A variable set (we can change this)
+
+[_Code_]
+
+[_Code_] var_set.set(1);       // Set an element in the set (legal)
+
+[_Code_]
+
+[_Code_] // Define a constant version of the set (we cannot change this)
+
+[_Code_] const int_set const_set(var_set);
+
+[_Code_]
+
+[_Code_] // In the next statement we use the member function "test" legally
+
+[_Code_] cout << "Testing element 1. Value=" << const_set.test() << '\n';
+
+[_Code_]
+
+[_Code_] const_set.set(5);    // Illegal (set is not allowed on a const)
+
+[_A_]  Constant Members
+
+Classes may contain constant members. The problem is that
+constants behave a little differently inside classes than outside.
+Outside, a constant variable declaration must be initialized. For
+example:
+
+[_Code_] const int data_size = 1024;	 // Number of data items in the input stream
+
+Inside a class, constants are not initialized when they are declared.
+For example:
+
+[_Code_] class data_list {
+
+[_Code_]     public:
+
+[_Code_]         const int data_size;   // Number of items in the list
+
+[_Code_]     // ... rest of the class
+
+[_Code_] };
+
+Constant member variables are initialized by the constructor. It's not
+as simple as:
+
+[_Code_] class data_list {
+
+[_Code_]     public:
+
+[_Code_]         const int data_size;   // Number of items in the list
+
+[_Code_]
+
+[_Code_]         data_list(void) {
+
+[_Code_]             data_size = 1024;   // This code won't work
+
+[_Code_]         };
+
+[_Code_]     // ... rest of the class
+
+[_Code_] };
+
+Instead, because data_size is a constant it must be initialized with
+a special syntax:
+
+[_Code_]         data_list(void) : data_size(1024) {
+
+[_Code_]         };
+
+But what happens if you want just a simple constant inside your
+class? Unfortunately C++ doesn't allow you to do:
+
+[_Code_] class foo {
+
+[_Code_]     public:
+
+[_Code_]         const int foo_size = 100;  // Illegal
+
+You are left with two choices:
+
+1. Put the constant outside the code:
+
+[_Code_] const int foo_size = 100;	    // Number of data items in the list
+
+[_Code_]
+
+[_Code_] class foo {
+
+This makes foo_size available to all the world.
+
+2. Use a syntax trick to fool C++ into defining a constant:
+
+[_Code_] class foo {
+
+[_Code_]     public:
+
+[_Code_]         enum {foo_size = 100};  // Number of data items in the list
+
+This defines foo_size as a constant whose value is 100. It does
+this by actually declaring foo_size as a element of an enum type
+and giving it the explicit value 100. Because C++ treats enums as
+integers, this works for defining integer constants.
+
+The drawbacks to the method are that it's tricky, it only works for
+integers, and it exploits some holes in the C++ syntax that may go
+away as the language is better defined. Such code can easily cause
+difficulties for other programmers trying to maintain your code who
+aren't familiar with the trick.
+
+[_A_]  Static Member Variables
+
+Suppose you want to keep a running count of the number of stacks
+in use at any given time. One way to do this is to create a global
+variable stack_count that is incremented in the stack constructor
+and decremented in the destructor.
+
+[_Code_] int stack_count = 0; // Number of stacks currently in use
+
+[_Code_]
+
+[_Code_] class stack {
+
+[_Code_]     private:
+
+[_Code_]         int count;         // Number of items in the stack
+
+[_Code_]         // ... member variables
+
+[_Code_]     public:
+
+[_Code_]         int data_count;  // Number of items in the stack
+
+[_Code_]         // ... member variables
+
+[_Code_]         stack() {
+
+[_Code_]             // We just created a stack
+
+[_Code_]             ++stack_count;
+
+[_Code_]             count = 0;
+
+[_Code_]         }
+
+[_Code_]         ~stack() {
+
+[_Code_]             // We now have one less stack
+
+[_Code_]             --stack_count;
+
+[_Code_]         }
+
+[_Code_]         // ... other member functions
+
+[_Code_] };
+
+Note that stack_count is a single global variable. No matter how
+many different stacks you create, there is one and only one stack_
+count.
+
+Although this system works, it has some drawbacks. The definition
+of the class stack contains everything about the stack, except the
+variable stack_count. It would be nice to put stack_count in the
+class, but if you define it as a member variable, you'll get a new
+copy of stack_count each time you declare a stack class variable.
+
+C++ has a special modifier for member variables: static. This
+tells C++ that one and only one variable is to be defined for the
+class.
+
+[_Code_] class stack {
+
+[_Code_]     private:
+
+[_Code_]         static int stack_count; // Number of stacks currently in use
+
+[_Code_]         int count;         // Number of items in the stack
+
+[_Code_]         // ... member variables
+
+[_Code_]     public:
+
+[_Code_]         stack() {
+
+[_Code_]             // We just created a stack
+
+[_Code_]             ++stack_count;
+
+[_Code_]             count = 0;
+
+[_Code_]         }
+
+[_Code_]         ~stack() {
+
+[_Code_]             // We now have one less stack
+
+[_Code_]             --stack_count;
+
+[_Code_]         }
+
+[_Code_]         // ... other member functions
+
+[_Code_] };
+
+This new version looks almost the same as the global variable
+version. There is, however, one thing missing: the initialization of
+stack_count. This is done with the statement:
+
+[_Code_] int stack::stack_count = 0; // No stacks have been defined
+
+The difference between static and non-static member variables is
+that if you define three stacks, you create three different data_
+count member variables, but there is one and only one stack_
+count. Member variables belong to the individual stack. Static
+variables belong to the class.
+
+So if you have:
+
+[_Code_] 	stack a_stack;
+
+[_Code_] stack b_stack;
+
+[_Code_]
+
+Then a_stack.stack_count is the same as b_stack.stack_
+count. There is only one stack_count for the class stack. C++
+allows you to access this using the syntax:
+
+[_Code_] <class>::<variable>
+
+Thus you can get to stack_count with the statement:
+
+[_Code_] cout << "The number of active stacks is " << stack::stack_count << '\n';
+
+(Or at least you could if stack_count was not private.)
+
+[_A_]  Static Member Functions
+
+The member variable stack_count is defined as private. This
+means that nothing outside the class can access it. You want to
+know how many stacks are defined, so you need a function to get
+the value of stack_count. A first cut might be:
+
+[_Code_] class stack {
+
+[_Code_]         static int stack_count; // Number of stacks currently in use
+
+[_Code_]         // ... member variables
+
+[_Code_]     public:
+
+[_Code_]         // Not quite right
+
+[_Code_]         int get_count(void) {
+
+[_Code_]             return (stack_count);
+
+[_Code_]         }
+
+[_Code_]         // ... other member functions
+
+[_Code_] };
+
+This works, but you need a stack type variable to access this
+function.
+
+[_Code_] {
+
+[_Code_]     stack temp_stack;    // Stack for getting the count
+
+[_Code_]     cout << "Current count " << temp_stack.get_count() << '\n';
+
+[_Code_] }
+
+Because get_count doesn't use any nonstatic data from stack, it
+can be made a static member function.
+
+[_Code_] class stack {
+
+[_Code_]         static int stack_count; // Number of stacks currently in use
+
+[_Code_]         // ... member variables
+
+[_Code_]     public:
+
+[_Code_]         // Right
+
+[_Code_]         static int get_count(void) {
+
+[_Code_]             return (stack_count);
+
+[_Code_]         }
+
+[_Code_]         // ... other member functions
+
+[_Code_] };
+
+You can now access the static member function get_count much
+like you access the static member variable stack_count:
+
+[_Code_] cout << "The number of active stacks is " << stack::get_count() << '\n';
+
+Static member functions are very limited. They can't access nonstatic
+member variables or functions in the class. They can access static
+member data, static member functions, and functions and data
+outside the class.
+
+[_A_]  The Meaning of static
+
+The keyword static has many different meanings in C++. [_XREF
+Table 14-1_] is a complete list of the various ways static can be
+used.
+
+Table 14-1
+
+.  The Meanings of static
+
+Usage
+
+Meaning
+
+Variable outside the body
+of any function
+
+The scope of the variable is limited to the file in which it is declared.
+
+Variable declaration inside
+a function
+
+The variable is permanent. It is initialized once and only one copy is created even if
+the function is called recursively.
+
+Function declaration
+
+The scope of the function is limited to the file in which it is declared.
+
+Member variable
+
+One copy of the variable is created per class (not one per variable).
+
+Member function
+
+Function can only access static members of the class.
+
+[_A_]  Programming Exercises
+
+Exercise 14-1: Two classes share a file. Other areas of the program need to know
+when this file is busy. Create a function that returns 1 when the file is being used
+by either of these two classes.
+
+Exercise 14-2: You are asked to write a booking program for the veterinarian: Dr.
+Able Smith, PHD (Pigs, Horses, Dogs). Define a class type for each animal. Each
+class should keep track of the number of animals that have been defined using
+that class in a private static variable. Define a function that returns the total
+number of animals (all three types combined).
+
+Exercise 14-3: Write a class where each instance of the class can access a stack-
+not one stack per instance, but one stack period. Any instance of the class can
+lock the stack for its own exclusive use and unlock it later. Define member func-
+tions to perform the lock and unlock functions.
+
+As an added attraction, make the unlock function check to see that
+the current instance of the class was the same instance that locked
+the stack in the first place.
+
+Exercise 14-4: You need to supply some I/O routines for handling lines in a file.
+The basic definition of the line-number class is:
+
+[_Code_] class line_number {
+
+[_Code_]     public:
+
+[_Code_]         void goto_line(int line);
+
+[_Code_]         int get_current_line(void);
+
+[_Code_]         long int get_char_pos(void);
+
+[_Code_] }
+
+The member functions are defined as:
+
+[_Code_] void goto_line(int line);
+
+	Positions the input file at specified line.
+
+[_Code_] int get_current_line(void);
+
+	Returns the current line number (as set by goto_line).
+
+[_Code_] long int get_char_pos(void);
+
+	Returns the character position of the current line. (This is the tricky one.)
+
+Several line_number classes may be in use at any time. The class
+maintains its own internal list so that it knows which line_number
+classes are in use. When goto_line is called, the function will scan
+the list of line_number classes to find the one nearest the given
+line number and use it to start scanning for the given line number.
+
+For example, suppose there are four active line_number variables:	
+
+Variable
+
+Position
+
+beginning
+
+Line 0
+
+chapter_start
+
+Line 87
+
+current_heading
+
+Line 112
+
+current_location
+
+Line 52
+
+You wish to move current_location to line 90. The goto_line
+function would search the list for the line nearest the new location
+(in this case chapter_start) and use it to jump to line 87. It then
+would read the file character by character until it saw three end-of-
+line characters to position itself at line 90.

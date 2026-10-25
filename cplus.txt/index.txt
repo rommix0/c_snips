@@ -1,0 +1,2682 @@
+Index
+
+
+-- (decrement) operator, 79, 80, 325
+
+- (for command-line options), 242
+
+- (negative) operator, 324
+
+- (subtraction) operator, 52, 323
+
+- (unary) operator, 322
+
+! (logical NOT) operator, 86, 326
+
+!= (not equal to) operator, 86, 323
+
+' (quotation mark), 59
+
+" (quotation mark), 59
+
+   with include files, 159
+
+   for strings, 60, 65
+
+# (preprocess) operator, 162
+
+## diagnostic tag, 106
+
+% (modulus) operator, 52, 323
+
+%= (modulus into) operator, 79, 325
+
+%c conversion, 274
+
+%d conversion, 273
+
+%e conversion, 274
+
+%f conversion, 274
+
+%ld conversion, 274
+
+%lu conversion, 274
+
+%o conversion, 274
+
+%s conversion, 274
+
+%u conversion, 274
+
+%x conversion, 274
+
+& (address of) operator, 229, 322, 324
+
+   (see also pointers)
+
+& (bitwise AND) operator, 168-170, 323
+
+& (for reference variables), 75
+
+&& (logical AND) operator, 86, 326
+
+&= (AND into) operator, 325
+
+
+
+( ) (default class function) operator, 330
+
+   overloading, 495
+
+( ) parentheses
+
+   with macro parameters, 160
+
+   and simple operators, 52
+
+* (dereference) operator, 229, 324
+
+* (multiplication) operator, 52, 323
+
+*= (multiply by) operator, 79, 325
+
++ (addition) operator, 52, 323
+
++ (positive) operator, 324
+
+++ (increment) operator, 79, 80, 325
+
++= (increase) operator, 79, 325
+
+, (comma) operator, 330, 495
+
+. (dot) operator, 362
+
+/ (division) operator, 52, 58, 323
+
+/* */ comment markers, 36
+
+/= (divide into) operator, 79, 325
+
+: construct, 495
+
+:: (scope) operator, 382, 496
+
+; (semicolon), 51
+
+   with if-else statements, 87
+
+   and preprocessor directives, 152
+
+< (less than) operator, 86, 323
+
+<< (left shift) operator, 172, 323
+
+<< (number-to-character) operator, 256
+
+<< (output) operator, 53, 273, 322, 326-329
+
+<<= (shift left) shortcut operator, 325
+
+<= (less than or equal to) operator, 86, 324
+
+= (assignment) operator, 56
+
+   for classes, 211
+
+   versus == (equal to) operator, 95
+
+   
+
+== (equal to) operator, 86, 323
+
+   versus = (assignment) operator, 95
+
+-= (decrease) operator, 79, 325
+
+-> (class member) operator, 330
+
+> (greater than) operator, 86
+
+-> (structure pointer) operator, 362
+
+->* (pointer to member) operator, 330
+
+>= (greater than or equal to) operator, 86, 324
+
+> (greater than) operator, 323
+
+>> (character-to-number) operator, 260
+
+>> (input) operator, 67, 322, 326-329
+
+>> (right shift) operator, 172, 323
+
+>>= (shift right) shortcut operator, 325
+
+? construct, 495
+
+[ ] (index) operator, 329
+
+\ (backslash)
+
+   as escape character, 59
+
+   in preprocessor directives, 152
+
+\0 character, 64, 237
+
+\b (backspace character), 59
+
+\f (form-feed character), 59
+
+\n (newline character), 59
+
+\r (return character), 59
+
+\t (tab character), 59
+
+^ (exclusive OR) operator, 171, 323
+
+^= (exclusive OR into) operator, 325
+
+{ } (curly braces), 69, 86
+
+   and structures, 187
+
+| (bitwise OR) operator, 171, 323
+
+   to merge flags, 265
+
+|= (OR into) operator, 325
+
+|| (logical OR) operator, 86, 326
+
+~ (bitwise NOT) operator, 171, 324
+
+~ (tilde) in class destructor names, 206
+
+A
+
+abstract classes, 393, 458
+
+   stat, 461
+
+accuracy of floating-point arithmetic, 347-352
+
+   float versus double datatypes, 350
+
+add function (for complex numbers), 321
+
+adding
+
+   complex numbers, 321
+
+   element to linked list, 360
+
+   floating-point numbers, 344
+
+
+
+addition (+) operator, 52, 323
+
+address of (&) operator, 229, 322, 324
+
+   (see also pointers)
+
+addresses, variable, 228
+
+alignment problems and portability, 449
+
+ampersand (&)
+
+   for reference variables, 75
+
+   (see also AND operator)
+
+AND (&&) operator, logical, 86, 326
+
+AND (&) operator, binary, 168-170, 323
+
+AND into (&=) operator, 325
+
+apostrophe (see quotation mark)
+
+argc and argv arguments, 241
+
+arguments, command-line, 241
+
+arrays, 63-64
+
+   of bits (see bitmapped graphics)
+
+   index operator [ ], 329
+
+   infinite, module for (example), 413-429
+
+   initializing, 69, 71, 195
+
+   multidimensional, 70-71, 141
+
+   as parameters, 141
+
+   and pointers, 232-237
+
+      optimizing, 315
+
+   of structures, 195
+
+   (see also structures)
+
+ASCII characters, 59
+
+ASCII files (see files, ASCII)
+
+assembly language, 10
+
+assignment (=) operator, 56
+
+   for classes, 211
+
+   versus == (equal to) operator, 95
+
+assignment statements, 5, 56-57
+
+   placement of, 92
+
+author, comments about, 39
+
+auto qualifier, 132
+
+auto variable class, 77
+
+automatic
+
+   generation of member functions, 210
+
+   variables, 132
+
+B
+
+backslash (\)
+
+   as escape character, 59
+
+   in preprocessor directives, 152
+
+backspace character (\b), 59
+
+bad member function, 253
+
+
+
+base classes, 381
+
+   initializing, 386
+
+   search order, 389
+
+binary files, 260
+
+   with multiple structures, 270
+
+binary I/O, 262, 276
+
+binary operations (see bits)
+
+binary operators, 322
+
+   - (subtraction), 323
+
+   % (modulus), 323
+
+   & (AND), 168-170, 323
+
+      versus logical AND (&&), 169
+
+   * (multiplication), 323
+
+   + (addition), 323
+
+   / (division), 323
+
+   << (left shift), 172, 323
+
+   >> (right shift), 172, 323
+
+   ^ (exclusive OR), 171, 323
+
+   | (OR), 171, 323
+
+      to merge flags, 265
+
+   ~ (NOT), 171, 324
+
+binary search, debugging, 296
+
+binary trees, 368-373
+
+   nodes, 368
+
+   recursion with, 371
+
+bit fields, 193
+
+bit flip operator ~ (see NOT operator, binary)
+
+bitmapped graphics, 176-181
+
+bits, 55
+
+   operations on, 167-182
+
+      muliplication versus shifting, 172
+
+   setting, clearing, and testing, 173-176
+
+bitwise operators (see binary operators)
+
+<blank> modifier, 415
+
+blocks, 129
+
+   stack of, 131
+
+   (see also local variables)
+
+boldface in comments, 38
+
+Boolean operators (see bits, operations on)
+
+Borland C++ compiler, 15
+
+   Makefile for, 104
+
+bottom-up programming, 147
+
+brackets { } (see curly braces)
+
+branching statements, 85
+
+   if statements, 85-88
+
+   switch statements, 120-125
+
+break command (debugger), 292
+
+   (see also gdb debugger)
+
+break statements, 91, 125
+
+   in switch statements, 121, 123
+
+browsers, class, 109
+
+byte order and portability, 448
+
+bytes, 55, 167
+
+   pad, 450
+
+C
+
+%c conversion, 274
+
+C language, 3
+
+   binary I/O, 276
+
+   and C++ language, 485-491
+
+   compiler, 151
+
+   conversion routines, 273
+
+      I/O (input/output), 270
+
+   handling exceptions in, 489
+
+   programming tools for, 109
+
+C++ compiler
+
+   Borland, 15
+
+   g++, 15
+
+   Microsoft Visual, 15
+
+   Turbo, 15
+
+   UNIX CC, 14
+
+C++ file I/O, 252-256
+
+C++ language, 4
+
+   compared with C language, 485-491
+
+   programming tools for, 109
+
+   standard functions in, 5
+
+C++ preprocessor, 151-165
+
+   #define directive, 151-157
+
+   #include directive, 159
+
+call by address, 141, 146
+
+call by value, 135, 138, 146
+
+   and copy constructors, 209
+
+callback functions, 144
+
+<carriage return> character, 261
+
+case labels (see switch statements)
+
+case sensitivity, 42, 54
+
+cast operators, 192, 331
+
+catch keyword, 404
+
+cerr (console error) class variable, 252
+
+CFront templates, 445
+
+char variable type, 73, 77
+
+character(s)
+
+   ASCII, 59
+
+   constants, 59
+
+      (see also strings)
+
+   data (see files, ASCII)
+
+   character(s) (continued)
+
+   special, 59
+
+   treated as bits, 173-176
+
+   variables, 73
+
+character-to-number (>>) operator, 260
+
+character-type modules, 458
+
+cin (console input) class variable, 67-69, 252
+
+class keyword, 203
+
+class member (->) operator, 330
+
+class, variable (see variables, classes of)
+
+classes, 4, 197-216, 355
+
+   ( ) operator for, 330
+
+   abstract, 393, 458
+
+   accessing members of, 203
+
+   assignment (=) operator for, 211
+
+   base, 381
+
+   browsers for, 109
+
+   complex, 332-341
+
+   constant members of, 220
+
+   constructors and destructors, 205-211
+
+   copy constructors, 208-210
+
+   default constructors, 210
+
+   derived, 381-387
+
+   friends of (see friend classes)
+
+   hierarchy of, 458
+
+   I/O stream, 51
+
+   member functions, 210
+
+   member variables, 202
+
+   members of
+
+      static, 222
+
+   and pointers, 355
+
+   problems reading, 489
+
+   programming style for, 212-214
+
+   pure virtual functions, 461
+
+   search order of, 389
+
+   standard, 51
+
+   stat, 461
+
+   and structures, 488
+
+   templates of, 440-442
+
+   virtual, 393-395
+
+clearing bits, 173-176
+
+clog (console log) class variable, 252
+
+close member function, 253
+
+close system call, 266
+
+COBOL, 11
+
+code (see programs; source files)
+
+comma (,) operator, 330, 495
+
+
+
+command-line
+
+   arguments, 241
+
+   debugging switch, 290
+
+comment boxes, 37
+
+comments, 36, 110
+
+   in headers, 39, 50
+
+   marking variable units, 41
+
+   styles for, 38
+
+comparing strings (see strcmp function)
+
+compiler
+
+   Borland C++, 15
+
+   construction of, 431
+
+   g++, 15, 420
+
+   Microsoft Visual C++, 15
+
+   Turbo-C++, 15
+
+   UNIX CC, 14
+
+compiling, conditional, 157-159
+
+complex class, 332-341
+
+complex numbers, 319-341
+
+   adding, 321
+
+concatenating expressions (,) operator, 330
+
+concatenating strings (see strcat function)
+
+conditional
+
+   breakpoints, 307
+
+   clauses (see branching statements)
+
+   compilation, 157-159
+
+   statements (see : construct; ? construct; switch statements)
+
+confessional method of debugging, 309
+
+const keyword, 220
+
+   versus #define directive, 156
+
+const parameters, 136
+
+   reference, 139
+
+const variable type, 74
+
+constant call by value, 146
+
+constants
+
+   character, 59
+
+   class members as, 220
+
+   declaring, 74, 151-157
+
+      #define versus const, 156
+
+   hexadecimal, 78
+
+   naming, 42
+
+   octal, 78
+
+   pointers as, 232
+
+constructors, class, 205-211
+
+   copy, 208-210
+
+   default, 210
+
+   in derived classes, 396-398
+
+   
+
+   overloading, 207
+
+   parameterized, 207
+
+cont command (debugger), 293
+
+   (see also gdb debugger)
+
+continue statements, 92, 125
+
+control statements, 5
+
+control variables, 118-120
+
+   (see also for statements)
+
+conversion
+
+   flags, 256
+
+   integer-to-floating-point, 58
+
+   routines for, 256
+
+      C-style I/O, 270, 273
+
+copy constructors, 208-210
+
+copying strings (see strcpy function)
+
+core files, 307
+
+cout (console out) class, 51, 53, 252
+
+   for debugging, 290
+
+   diagnostic use of, 106
+
+   temporary, 290
+
+   in Turbo-C++, 251
+
+cross-references, 109
+
+ctype.h include file, 373
+
+curly braces { }, 69, 86
+
+   and structures, 187
+
+D
+
+%d conversion, 273
+
+data
+
+   inputting, 67-69
+
+   protecting, 201
+
+   stacks of (see stacks)
+
+datatypes, 511
+
+   changing (see cast operators)
+
+   classes, 201-216
+
+   defining special, 190
+
+   enum (enumerated), 191-193, 221
+
+   pointers, 227-247
+
+   stacks, 197-203
+
+   structures, 185-187
+
+   unions, 188-190
+
+debugger as browser, 110
+
+debugging, 35, 99, 106-108, 281-309
+
+   binary search, 296
+
+   confessional method of, 309
+
+   divide-and-conquer method, 290
+
+   interactively (see interactive debugging)
+
+   playback file, 287
+
+   saving keystrokes, 284
+
+   with text editor, 292
+
+   using a program switch, 290
+
+   within program code, 290
+
+dec I/O manipulator, 258
+
+decimal numbers, 256
+
+decimal places for numbers, 74
+
+declaring
+
+   constants, 74, 151-157
+
+      #define versus const, 156
+
+   file variables, 270
+
+   functions, 133
+
+   pointers, 229
+
+   structures, 187
+
+   style of, 500
+
+   templates, 436
+
+   variables, 41, 54, 132
+
+decrease (-=) operator, 79, 325
+
+decrement (--) operator, 79, 80, 325
+
+default
+
+   constructors, 210
+
+   parameters, 143
+
+   statements, in switch statements (see switch statements)
+
+#define directive, 151-157, 501
+
+   versus const keyword, 156
+
+   versus enum statement, 191
+
+   versus typedef statement, 191
+
+defining variable types, 190
+
+delete function, 486
+
+delete operator, 330, 358
+
+   using brackets [ ] with, 358
+
+deleting derived classes, 397
+
+dereference (*) operator, 229, 324
+
+derived classes, 381-387
+
+   constructors and destructors, 396-398
+
+   deleting, 397
+
+   hiding members functions in, 395
+
+   search order, 389
+
+designing
+
+   file formats, 268-270
+
+   modules, 433
+
+   programs, 457-459, 500
+
+destructors, 205-207, 210
+
+   calling virtual functions from, 397
+
+   in derived classes, 396-398
+
+   names for, 206
+
+   virtual, 397
+
+diagnostic cout, 106
+
+disk files, I/O with, 252
+
+divide by 0 error, 307
+
+divide into (/=) operator, 79, 325
+
+divide-and-conquer debugging method, 290
+
+dividing floating-point numbers, 58, 346
+
+division (/) operator, 52, 58, 323
+
+do/while loops (see while loops)
+
+documentation, Oualline's law of, 39
+
+dot (.) operator, 362
+
+double keyword, 348
+
+double qualifier, 74, 77
+
+   versus float datatype, 350
+
+double quote (see quotation mark)
+
+double-linked lists, 365
+
+E
+
+%e conversion, 274
+
+elements, array, 63-64
+
+else statements, 87
+
+#endif directive, 157, 501
+
+endl I/O manipulator, 259
+
+end-of-line puzzle, 261
+
+end-of-string character, 237
+
+end-of-string marker, 64
+
+ends I/O manipulator, 259
+
+enum (enumerated) datatype, 191-193, 221
+
+equal to (==) operator, 86, 323
+
+   versus = (assignment) operator, 95
+
+errors
+
+   eliminating from code (see debugging)
+
+   handling within programs, 403-411
+
+   infinite recursion, 148
+
+   roundoff (floating-point), 347
+
+   runtime (see runtime errors)
+
+   stack overflow, 131
+
+escape character (\), 59
+
+evaluation order, 79-81
+
+exceptions, 403-411
+
+   in C, 489
+
+   runtime library, 410
+
+exclusive OR (^) operator, 171, 323
+
+exclusive OR into (^=) operator, 325
+
+executable programs, 12
+
+exponential notation, 57
+
+expressions, simple, 51
+
+extended precision (see long double qualifier)
+
+extern modifier, 414-416
+
+extern variable class, 77
+
+F
+
+%f conversion, 274
+
+"//fall through" comment, 123
+
+fast prototyping, 102
+
+fclose (file close) function, 271
+
+fgetc (get character) function, 271
+
+fgets (get string) function, 272
+
+file formats, comments on, 40
+
+filenames, portability of, 451
+
+files
+
+   ASCII, 251-261
+
+   binary, 260
+
+      with multiple structures, 270
+
+   changing modification date of, 424
+
+   core, 307
+
+   designing formats for, 268-270
+
+   directing debugging information into, 292
+
+   disk, 252
+
+   header, 159
+
+   I/O with (see I/O)
+
+   identification numbers for, 270
+
+   include (see include files)
+
+   multiple (see modules)
+
+   object (see object files)
+
+   playback, for debugging, 287
+
+   source (see source files)
+
+   standard unbuffered, 265
+
+   types of, and portability, 452
+
+   variables for, 270
+
+find function (linked lists), 361
+
+flags
+
+   conversion, 256
+
+   open, 265
+
+float datatype, 74, 77
+
+   versus double datatype, 350
+
+float keyword, 57
+
+float.h include file, 350
+
+floating-point numbers, 57-59, 
+74
+
+   arithmetic, 343-352
+
+      accuracy of, 347-352
+
+      guard digit, 344
+
+      overflow and 
+underflow, 346
+
+      floating-point numbers 
+(continued)
+
+      arithmetic (continued)
+
+      roundoff error, 347, 348
+
+      speed of, 350
+
+   converting to integers, 58
+
+   dividing, 58
+
+   versus integers, 316
+
+flush command, 308
+
+flush I/O manipulator, 259, 264
+
+fopen (file open) function, 271
+
+for statements, 117-120
+
+formatting
+
+   files, 268-270
+
+   floating-point numbers, 343
+
+   programs, 43-45
+
+form-feed character (\f), 59
+
+FORTRAN, 11
+
+fputc (put character) 
+function, 272
+
+fputs (put string) function, 272
+
+fractional numbers
+
+fread routine, 276
+
+free function (C 
+language), 486-488
+
+friend classes, 217-219
+
+friend directive, 218
+
+fscanf function, 275
+
+fstream class, 252
+
+fstream.h file, 252
+
+functions, 133-146
+
+   callback, 144
+
+   as class members, 203
+
+   inline, 144, 313
+
+      versus parameterized 
+macros, 162
+
+   K&R style, 485
+
+   length of, 45
+
+   as operators, 322-330
+
+   overloading, 142
+
+   parameters of, 133-146
+
+      arrays as, 141
+
+      const, 136
+
+      reference, 137-141
+
+   recursive, 148-149
+
+   static, 223
+
+   templates of, 436-440
+
+   virtual, 387-393
+
+      pure, 393
+
+functions, standard (see 
+standard functions)
+
+fwrite routine, 276
+
+G
+
+-g (compiler option), 14
+
+g++ compiler, 15, 420
+
+   Makefile for, 104
+
+   templates in, 444
+
+gdb debugger, 292-296
+
+   example of using, 298-307
+
+generating templates, 436
+
+getline member function, 254
+
+global variables, 129-131
+
+goto statements, 493
+
+   programming without, 43
+
+graphics, bitmapped, 176-181
+
+greater than (>) operator, 86, 
+323
+
+greater than or equal to (>=) operator, 86, 324
+
+guard digits, 344
+
+   (see also floating-point numbers)
+
+H
+
+header files, 159
+
+headers, 416-418
+
+   comments in, 39, 50
+
+help, online UNIX, 32
+
+hex I/O manipulator, 258
+
+hexadecimal numbers, 59, 78, 167, 256
+
+hiding member functions, 395
+
+hierarchy, class, 458
+
+high-level languages, 11
+
+hyphen (-) for command-line options, 242
+
+I
+
+I/O (input/output), 251-279
+
+   binary, 262
+
+      C-style, 276
+
+   C++ file package, 252-256
+
+   conversion routines, 256
+
+      C-style, 270
+
+   with disk files, 252
+
+   manipulators, 258
+
+   operators
+
+      << (output), 326-329
+
+      >> (input), 326-329
+
+   unbuffered, 264-268
+
+I/O stream classes, 51
+
+IDE (integrated development environment), 13
+
+if statements, 85-88
+
+   with else statement, 87
+
+   (see also ? construct; : construct; switch statements)
+
+#ifdef directive, 501
+
+ifstream
+
+   ::bad, 253
+
+   ::close, 253
+
+   ::open, 252
+
+implementing templates, 442-445
+
+#include directive, 159
+
+include files, 159, 416-418
+
+   ctype.h, 373
+
+   dstream.h, 252
+
+   float.h, 350
+
+   iomanip.h, 258
+
+   iostream.h, 252
+
+   local, 159
+
+   nested, 160
+
+   stdio.h, 270
+
+inclusive OR operator (see OR operator)
+
+increase (+=) operator, 79, 325
+
+increment (++) operator, 79, 80, 325
+
+#indef directive, 157
+
+indentation, 43, 86
+
+   styles of, 44
+
+   tools for, 109
+
+index [ ] operator, 329
+
+index, array, 63
+
+infinite arrays, module for (example), 413-429
+
+infinite recursion error, 148
+
+info command (debugger), 295
+
+   (see also gdb debugger)
+
+init function, 202
+
+initializing
+
+   arrays, 69, 71, 195
+
+   base classes, 386
+
+   stacks, 199, 202
+
+      automatically, 205
+
+   strings, 70
+
+   structures, 187
+
+   temporary variables, 131
+
+   variables, 69
+
+inline directive, and classes, 211
+
+inline functions, 144, 313, 315-316
+
+   versus parameterized macros, 162
+
+input (>>) operator, 67, 322, 326-329
+
+inputting data, 67-69
+
+int (integer) keyword, 54
+
+int number type, 77
+
+   long versus short, 72
+
+   (see also size qualifiers, variables)
+
+integers, 55
+
+   converting to floating-point numbers, 58
+
+   dividing, 58
+
+   signed versus unsigned, 72
+
+integrated development environment (IDE), 13
+
+interactive debugging, 292-296
+
+   conditional breakpoint trick, 307
+
+invert (~) operator (see NOT operator, binary)
+
+iomanip.h file, 258
+
+ios
+
+   ::app flag, 255
+
+   ::ate flag, 255
+
+   ::binary flag, 256, 261
+
+   ::dec flag, 257
+
+   ::fixed flag, 257
+
+   ::hex flag, 257
+
+   ::in flag, 255
+
+   ::internal flag, 257
+
+   ::left flag, 256
+
+   ::nocreate flag, 256
+
+   ::noreplace flag, 256
+
+   ::oct flag, 257
+
+   ::out flag, 255
+
+   ::right flag, 257
+
+   ::scientific flag, 257
+
+   ::showbase flag, 257
+
+   ::showpoint flag, 257
+
+   ::showpos flag, 257
+
+   ::skipws flag, 256
+
+   ::stdio flag, 257
+
+   ::trunc flag, 256
+
+   ::unitbuf flag, 257
+
+   ::uppercase flag, 257
+
+iostream
+
+   class, 252
+
+   ::fill, 258
+
+   ::precision, 258
+
+   ::setf, 256
+
+   ::unsetf, 256
+
+iostream.h include file, 51, 159, 252
+
+ipfx member function, 327
+
+isalpha macro, 373
+
+istream
+
+   class, 252
+
+   ::getline, 254
+
+   ::ipfx, 327
+
+italics in comments, 38
+
+J
+
+justification, 256
+
+K
+
+K&R-style functions, 485
+
+L
+
+L character, for long integers, 72
+
+labels for goto statements, 494
+
+languages
+
+   assembly (machine), 10
+
+   C (see C language)
+
+   C++ (see C++ language)
+
+   other high-level, 11
+
+%ld conversion, 274
+
+left shift (<<) operator, 172, 323
+
+length function, 66
+
+less than (<) operator, 86, 323
+
+less than or equal to (<=) operator, 86, 324
+
+letters (see character constants)
+
+libraries, standard, 12, 51
+
+LIFO (last-in-first-out) order, 197
+
+linear programs, 85
+
+<line-feed> character, 261
+
+linked lists, 356, 359-368
+
+   double-linked, 365
+
+   ordered, 362
+
+linkers, 12
+
+list command (debugger), 293
+
+   (see also gdb debugger)
+
+lists, linked (see linked lists)
+
+local include files, 159
+
+local variables, 129-131
+
+   static, 131
+
+logical operators, 326
+
+   ! (NOT), 86, 326
+
+   && (AND), 86, 326
+
+      versus bitwise AND, 169
+
+   || (OR), 86, 326
+
+   and relational operators, 86
+
+long double qualifier, 74
+
+long int keyword, 61
+
+long int type, 72
+
+long qualifier, 77
+
+longjmp function (C language), 489
+
+looping statements, 85, 88-92
+
+   and break statements, 91
+
+   control variables in (see control variables)
+
+   for statements, 117-120
+
+   optimizing order of, 310, 314
+
+   while loops, 88-93, 493
+
+%lu conversion, 274
+
+M
+
+machine language, 10
+
+macros
+
+   parameterized, 160-162
+
+   replacement, 152
+
+magic numbers, 270, 449
+
+main function, 133
+
+make program, 103-105, 420-424
+
+Makefile, 103-105, 501
+
+   for multiple files, 420-424
+
+malloc function (C language), 486-488
+
+man pages (UNIX), 32
+
+manipulators, I/O (see I/O manipulators)
+
+markers, end-of-string, 64
+
+member functions
+
+   automatically generated, 210
+
+   hiding, 395
+
+   inline, 211
+
+   operators as, 330-331
+
+   static, 223
+
+member variables, 202
+
+   access privileges to, 202
+
+   constant, 220
+
+   static, 222
+
+memory leak, 359
+
+memset library routine, 313, 425
+
+merging flags, 265
+
+Microsoft C++ compiler, 15
+
+   templates, 443
+
+modification date, changing, 424
+
+modules, 5, 413-434
+
+   character-type, 458
+
+   modules (continued)
+
+   design guidelines for, 433
+
+   dividing task into, 429
+
+   Makefile for, 420-424
+
+   for nonportable code, 447
+
+   private versus public parts, 414
+
+   token, 457
+
+modulus (%) operator, 52, 323
+
+modulus into (%=) operator, 79, 325
+
+more than (see greater than)
+
+Morse code, 80
+
+multidimensional arrays, 70-71
+
+   as parameters, 141
+
+multiplication (*) operator, 52, 323
+
+multiply by (*=) operator, 79, 325
+
+multiplying
+
+   floating-point numbers, 345
+
+   versus shifting, 172
+
+N
+
+naming
+
+   class destructors, 206
+
+   constants, 42
+
+   functions, 142
+
+   variables, 41, 54, 500
+
+negative (-) operator, 324
+
+negatives (see signed qualifier)
+
+nested include files, 160
+
+new function, 486
+
+new operator, 330, 355-357
+
+newline character (\n), 59
+
+next command (debugger), 293
+
+   (see also gdb debugger)
+
+nodes, tree, 368
+
+NOT (!) operator, logical, 86, 326
+
+NOT (~) operator, binary, 171, 324
+
+not equal to (!=) operator, 86, 323
+
+NUL character, 64, 237
+
+null effect warning, 52
+
+NULL pointers, 232
+
+   and portability, 450
+
+numbers
+
+   complex (see complex numbers)
+
+   conversions for, 256
+
+   determining parity of, with &, 170
+
+   floating-point (see floating-point numbers)
+
+   hexadecimal (see hexadecimal)
+
+   number of decimal places for, 74
+
+   octal (see octal numbers)
+
+   sign of, 77
+
+number-to-character (<<) operator, 256
+
+O
+
+%o conversion, 274
+
+O_APPEND open flag, 265
+
+O_BINARY open flag, 265
+
+O_CREAT open flag, 265
+
+O_EXCL open flag, 265
+
+O_RDONLY open flag, 265
+
+O_RDWR open flag, 265
+
+O_TRUNC open flags, 265
+
+O_WRONLY open flag, 265
+
+object files, 12, 14
+
+object-oriented design (OOD), 4
+
+oct I/O manipulator, 258
+
+octal character codes, 59
+
+octal numbers, 78, 256
+
+ofstream class, 252
+
+   open flags, 255
+
+ones complement operator ~ (see NOT operator, binary)
+
+open flags, 265
+
+open member function, 252
+
+open system call, 264
+
+operation cost, 315
+
+operator functions, 322-330
+
+operator member functions, 330-331
+
+operator precedence, 513
+
+operators
+
+   binary (see binary operators)
+
+   bitwise (see binary operators)
+
+   I/O (see I/O operators)
+
+   logical (see logical oeprators)
+
+   overloading, 319-342
+
+   relational (see relational operators)
+
+   unary (see unary operators)
+
+optimizing programs, 309-317
+
+   calculation speed, 350
+
+   considering operation costs, 315
+
+   considering powers of two, 311-314
+
+   inline functions, 315-316
+
+   integers versus floating-point numbers, 316
+
+   loop order, 310, 314
+
+   pointers versus arrays, 315
+
+options, command-line command, 242
+
+OR (^) operator, exclusive, 171
+
+OR (|) operator, binary, 171, 323
+
+   to merge flags, 265
+
+OR (||) operator, logical, 86, 326
+
+OR into (|=) operator, 325
+
+order of operations, 79-81
+
+ordered linked lists, 362
+
+ostream
+
+   class, 252
+
+   parameter, 327
+
+   ::read, 262
+
+   ::write, 262
+
+Oualline's law of documentation, 39
+
+output (<<) operator, 53, 273, 322, 326-329
+
+output files, 255
+
+output redirection, 292
+
+overflow error, 131
+
+overflow, floating-point, 346
+
+overloading
+
+   ( ) (default class function) operator, 495
+
+   class constructors, 207
+
+   functions, 142
+
+   operators, 319-342
+
+P
+
+packed structures, 193
+
+pad bytes, 450
+
+parameters
+
+   in class constructors, 207
+
+   default, 143
+
+   function, 133-146
+
+      arrays as, 141
+
+      reference, 137-141
+
+   in macros, 160-162
+
+      versus inline functions, 162
+
+   types of, 146
+
+   unused, 143
+
+parentheses ( )
+
+   in simple operators, 52
+
+   with macro parameters, 160
+
+parity, determining with &, 170
+
+PASCAL, 11
+
+permanent variables, 131-132
+
+playback file, 287
+
+
+
+
+
+pointers, 227-247, 355-380
+
+   ->* operator, 330
+
+   and arrays, 232-237
+
+      optimizing, 315
+
+   binary trees (see binary trees)
+
+   and classes, 355
+
+   constant, 232
+
+   NULL, 232
+
+   to other pointers, 230
+
+   printing value of, 233
+
+   and structures, 240, 355
+
+pop function, 203
+
+popping stacks (removing data), 197-201
+
+portability, 447-453
+
+   alignment problems, 449
+
+   byte order, 448
+
+   of file types, 452
+
+   filenames, 451
+
+   and modularity, 447
+
+   NULL pointers, 450
+
+   of templates, 445
+
+   word size, 448
+
+positive (+) operator, 324
+
+power series, 351
+
+   sine function computed as, 515-520
+
+powers of two, 311-314
+
+#pragma
+
+   interface (GNU g++), 444
+
+   -Jgx option (Turbo-C++), 444
+
+precedence, operator, 513
+
+precision (decimal places) of numbers, 74
+
+precision of floating-point arithmetic, 347-352
+
+prefix operator (see decrement operator; increment operator)
+
+preprocess (#) operator, 162
+
+preprocessor directives, C++, 151-165
+
+   backslash (\) in, 152
+
+   #define, 151-157
+
+   #include, 159
+
+   parentheses ( ) with, 500
+
+   semicolons (;) with, 152
+
+print command (debugger), 293
+
+   (see also gdb command)
+
+printf functions, 273
+
+printing
+
+   binary trees, 373
+
+   
+
+   
+
+   printing (continued)
+
+   debugging information, 292
+
+   pointer values, 233
+
+private
+
+   member variables, 202
+
+   module parts, 414
+
+programs, 5, 12
+
+   basic structure of, 50
+
+   changing control variables, 118
+
+   debugging, 35, 99, 106-108, 281-309
+
+      switch for, 290
+
+   decision-making in (see branching statements)
+
+   defining special datatypes, 190
+
+   designing, 457-459, 500
+
+   for different machines, 157-159
+
+   format of, 43-45
+
+   handling errors in, 403-411
+
+   minimizing roundoff error, 348
+
+   optimizing, 309-317
+
+      calculation speed, 350
+
+   placement of assignment statements, 92
+
+   portability of, 447-453
+
+   revising and updating, 99, 108, 464
+
+   specifications for, 97, 100
+
+   splitting into modules, 413-434
+
+   templates, 435-446
+
+   testing, 99, 105, 463
+
+   tools for, 109
+
+   working with UNIX operating system, 99
+
+   wrapper, 12
+
+   writing style (see style, programming)
+
+protected member variables, 202
+
+protecting data in stacks, 201
+
+pseudocode, 101
+
+_ptr extension (see pointers)
+
+public
+
+   member functions, 434
+
+   module parts, 414
+
+public member variables, 202
+
+pure virtual functions, 393, 461
+
+push function, 203
+
+pushing stacks (entering data), 197-201, 382
+
+put member function, 261
+
+Q
+
+qualifiers, 76
+
+   auto, 132
+
+quotation mark ('), 59
+
+quotation mark ("), 59
+
+   with include files, 159
+
+   for strings, 60, 65
+
+R
+
+ranges of, 511
+
+read member function, 262
+
+reading strings, 272
+
+real numbers (see floating-point numbers)
+
+recursion, 148-149
+
+   with binary trees, 371
+
+   infinite, 148
+
+redirecting output, 292
+
+redirection, I/O, 252
+
+reference parameters, 137-141
+
+   const, 139
+
+reference variables, 75
+
+references, in comments, 39
+
+register qualifier, 310
+
+register variable class, 76
+
+relational operators, 86, 323
+
+   != (not equal to), 86, 323
+
+   < (less than), 86, 323
+
+   <= (less than or equal to), 86, 324
+
+   == (equal to), 86, 323
+
+   > (greater than), 86, 323
+
+   >= (greater than or equal to), 86, 324
+
+   and logical operators, 86
+
+remainder (see modulus)
+
+replacement macros, 152
+
+reserved words, 54
+
+resetiosflags I/O manipulator, 258
+
+return character (\r), 59
+
+return statement, 134-139
+
+   (see also functions)
+
+return(0), 50
+
+revising programs, 99, 108, 464
+
+revision history in comments, 40
+
+right shift (>>) operator, 172, 323
+
+roundoff error (floating-point), 347, 348
+
+run command (debugger), 292
+
+   (see also gdb debugger)
+
+
+
+runtime errors, 307-308
+
+runtime execeptions, 410
+
+S
+
+%s conversion, 274
+
+saving keystrokes for debugging, 284
+
+scanf function, 275
+
+scientific notation, 57
+
+scope (::) operator, 382, 496
+
+scope, variable, 129-131
+
+search order, virtual functions, 389
+
+search, binary, 296
+
+searching binary trees, 369
+
+segmentation fault (core dumped), 298
+
+Segmentation Violation error, 307
+
+semicolon (;), 51
+
+   with if-else statements, 87
+
+   and preprocessor directives, 152
+
+setbase I/O manipulator, 258
+
+setf member function, 256
+
+setfill I/O manipulator, 259
+
+setiosflags I/O manipulator, 258
+
+setjmp function (C language), 489
+
+setprecision I/O manipulator, 258
+
+setting bits, 173-176
+
+setw I/O manipulator, 258
+
+shift operators
+
+   left (<<), 172
+
+   left (<<=) shortcut, 325
+
+   right (>>), 172
+
+   right (>>=) shortcut, 325
+
+short int type, 72
+
+short qualifier, 77
+
+side effects, 79
+
+signed integers, 72
+
+signed qualifier, 77
+
+simple variables, 5
+
+sine function, power series, 515-520
+
+single quote (see quotation mark)
+
+single-precision floating-point numbers (see float datatype)
+
+size qualifiers, variables, 77
+
+sizeof operator, 254
+
+source files (source code), 12
+
+special characters, 59
+
+specialized class templates, 442
+
+specialized template functions, 439
+
+specifications, program, 97, 100
+
+speed of floating-point calculations, 350
+
+splitting strings, 237-240
+
+spreadsheets, 432
+
+sscanf function, 275
+
+stack overflow error, 307
+
+stack trace, 299
+
+stacks, 131, 197-203, 381
+
+   class datatype (see classes)
+
+   exceptions for, 405-410
+
+   initializing, 199, 202
+
+   strcutures versus classes, 201
+
+stanard libraries, 51
+
+standard classes, 51
+
+   cin (console input), 67-69
+
+   cout (see cout class)
+
+standard files
+
+   C, 271
+
+   unbuffered, 265
+
+standard functions, C++, 5
+
+standard libraries, 12
+
+stat class, 461
+
+statements
+
+   assignment (see assignment statements)
+
+   branching (see branching statements)
+
+   declaration (see declaring variables)
+
+   looping (see looping statements)
+
+static
+
+   definition of, 224
+
+   member functions, 223
+
+   member variables, 222
+
+   variables, 131
+
+static keyword, 224, 416
+
+static modifier, 415
+
+static variable class, 76
+
+stderr (standard error) file, 271
+
+stdin (standard input) file, 271
+
+stdio.h include file, 270
+
+stdout (standard output) file, 271
+
+step command (debugger), 293
+
+   (see also gdb debugger)
+
+storage class, variable, 131-132
+
+strcat (string concatenate) function, 65
+
+strchr function, 237
+
+strcmp (string compare) function, 65, 66, 88
+
+strcpy (string copy) function, 65
+
+streams, 252
+
+string.h library, 65
+
+strings, 60, 64-67
+
+   comparing (see strcmp function)
+
+   concatenating (see strcat function)
+
+   copying (see strcpy function)
+
+   end-of-string character, 237
+
+   end-of-string markers, 64
+
+   functions for, 65
+
+   getting length of (see length function)
+
+   initializing, 70
+
+   reading, 272
+
+   splitting, 237-240
+
+   variable-length, 65
+
+strlen (string length) function, 65
+
+struct keyword, 186
+
+   in C versus C++, 486
+
+structure pointer (->) operator, 362
+
+structured programming techniques, 146-147
+
+structures, 5, 185-187, 355
+
+   arrays of, 195
+
+   and classes, 488
+
+   initializing, 187
+
+   packed, 193
+
+   and pointers, 240, 355
+
+   stacks (see stacks)
+
+   versus classes, 201
+
+   (see also unions)
+
+style, programming, 35-47, 97-113, 499-503
+
+   classes, 212-214
+
+   commenting, 38
+
+   structured programming techniques, 146-147
+
+subtracting
+
+   floating-point numbers, 344
+
+subtraction (-) operator, 52, 323
+
+suffix operator (see decrement operator; increment operator)
+
+switch statements, 120-125, 500
+
+switches, command-line command, 242
+
+T
+
+tab character (\t), 59
+
+templates, 435-446
+
+   CFront-style, 445
+
+   of classes, 440-442
+
+   of functions, 436-440
+
+   in g++ compiler, 444
+
+   implementing, 442-445
+
+   in Microsoft C++ compiler, 443
+
+   portable, 445
+
+   specialized, 439
+
+   in Turbo-C++ compiler, 444
+
+   in Visual C++ compiler, 443
+
+temporary variables, 131-132
+
+testing
+
+   bits, 173-176
+
+   programs, 99, 105, 463
+
+text (see character constants; strings)
+
+text editor
+
+   debugging with, 292
+
+   modules of, 430
+
+text editor as browser, 110
+
+things, 227
+
+this keyword, 331
+
+tilde (~) in class destructor names, 206
+
+token modules, 457
+
+tokens, 431
+
+top-down programming, 147
+
+touch command, 424
+
+trees, 356
+
+trees, binary, 368-373
+
+   nodes, 368
+
+   recursion with, 371
+
+try keyword, 405
+
+Turbo-C++ compiler, 15
+
+   cout, handling in, 251
+
+   Makefile for, 104
+
+   templates, 444
+
+typecast operation, 192
+
+typedef statements, 190
+
+types, variable, 53
+
+U
+
+%u conversion, 274
+
+unary operators, 322, 324
+
+   - (negative), 324
+
+   & (address of), 324
+
+   * (dereference), 324
+
+   + (positive), 324
+
+   ~ (ones complement), 324
+
+unbuffered I/O, 264-268
+
+#undef directive, 501
+
+underflow, floating-point, 346
+
+unequal to (!=) operator, 86, 323
+
+unions, 188-190
+
+units for variables, 41
+
+UNIX
+
+   online help for, 32
+
+   working with, 99
+
+UNIX CC compiler, 14
+
+   -D switch, 158
+
+   Makefile for, 103
+
+unpacked structures (see packed structures)
+
+unsetf member function, 256
+
+unsigned integers, 72
+
+unsigned qualifier, 77
+
+unused parameters, 143
+
+updating programs, 99, 108
+
+upgrading programs, 35
+
+V
+
+variable types, 53
+
+variable-length strings, 65
+
+variables, 41
+
+   addresses of, 228
+
+   automatic, 132
+
+   changing datatypes (see cast operators)
+
+   character, 73
+
+   classes of, 76
+
+   control (see control variables)
+
+   conversions for numbers, 256
+
+   declaring, 54, 132
+
+   defining special datatypes, 190
+
+   for files, 270
+
+   global, 129-131
+
+   initializing, 69
+
+   local, 129-131
+
+   member (see member variables)
+
+   naming, 54, 500
+
+   permanent versus temporary, 131-132
+
+   pointers, 227-247
+
+   reference, 75
+
+   and reserved words, 54
+
+   scope of, 129-131
+
+   signed versus unsigned, 77
+
+   simple, 5
+
+   size qualifiers, 77
+
+   static, 131
+
+   storage class of, 131-132
+
+   unchanging (see constants)
+
+   (see also datatypes)
+
+version information in data files, 269
+
+virtual
+
+   classes, 393-395
+
+   destructors, 397
+
+   functions, 387-393
+
+      called from destructor, 397
+
+      pure, 393, 461
+
+      search order, 389
+
+virtual keyword, 389, 397
+
+Visual C++ compiler
+
+   templates, 443
+
+volatile keyword, 76
+
+W
+
+walkthrough debugging, 309
+
+warning, null effect, 52
+
+where command (debugger), 293
+
+   (see also gdb debugger)
+
+while loops, 88-93, 493
+
+   and assignment statements, 93
+
+   and break statements, 91
+
+   and continue statements, 92
+
+   versus for statements, 117
+
+whitespace, 43, 67, 256, 259
+
+   (see also formatting programs)
+
+wildcards, command-line, 241
+
+word size and portability, 448
+
+wrapper programs, 12
+
+write member function, 262
+
+write system call, 266
+
+writing programs (see programs)
+
+ws I/O manipulator, 259
+
+X
+
+%x conversion, 274
+
+x++ vs. ++x, 80
+
+XOR operator (see exclusive OR) operator, 171  

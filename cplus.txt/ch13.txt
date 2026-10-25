@@ -1,0 +1,1502 @@
+[_Code_] local_stack.stack(a_stack) called
+
+(This is part of the parameter-passing mechanism)
+[_Code_] local_stack::~stack()
+called
+[_Code_] a_
+stack.stack called
+Chapter 13Part III: Advanced Types and Classes
+
+In This Chapter:
+
+*  [_XREF Stacks_]
+
+*  [_XREF Improved Stack_]
+
+*  [_XREF Using a Class_]
+
+*  [_XREF Introduction to
+Constructors and Destructors_]
+
+*  [_XREF Automatically
+Generated Member Functions_
+]
+
+*  [_XREF Shortcuts_]
+
+*  [_XREF Style_]
+
+*  [_XREF Programming
+Exercises_]
+
+13
+
+13: Simple Classes
+
+She thinks that even up in heaven
+Her class lies late and snores.
+
+---Cyril Connolly
+
+So far you've used simple variables and structures to hold data and
+functions to process the data. C++ classes allow you to combine
+data and the functions that use it.
+
+In this chapter you'll see how a class can improve your code by
+implementing a simple stack two ways: first, using a structure and
+functions, and then using a class.
+
+[_A_]  Stacks
+
+A stack is an algorithm for storing data. Data can be put in the stack
+using a push operation. The pop operation removes the data. Data is
+stored in last-in-first-out (LIFO) order.
+
+You can think of a stack as a stack of papers. When you perform a
+push operation, you put a new paper on top of the stack. You can
+push as many times as you want. Each time the new data goes on
+top of the stack. You get data out of a stack using the pop
+operation, which takes the top paper off the stack and gives it to
+the caller.
+
+Suppose you start with an empty stack and put three elements on it,
+4, 5, and 8, using three push operations. The first pop would return
+the top element: 8. The elements 4 and 5 remain in the stack.
+Popping again will give us 5. You then push another value, 9, on
+the stack. Popping twice will give us the numbers 9 and 4, in that
+order. This is illustrated by [_XREF Table 13-1_].
+
+Table 13-1
+
+. Stack Operation
+
+Operation
+
+Stack After Operation
+
+Push (4)
+
+4
+
+Push (5)
+
+5 4
+
+Push (8)
+
+8 5 4
+
+Pop (returns 8)
+
+5 4
+
+Pop (returns 5)
+
+4
+
+Push (9)
+
+9 4
+
+Pop (returns 9)
+
+4
+
+Pop (returns 4)
+
+<empty>
+
+[_B_]  Designing a Stack
+
+You start a stack design by designing the data structure. This
+structure will need a place to put the data (called data) and a count
+of the number of items currently pushed on the stack (called
+count):
+
+[_Code_] const int STACK_SIZE = 100;     // Maximum size of a stack
+
+[_Code_]
+
+[_Code_] // The stack itself
+
+[_Code_] struct stack {
+
+[_Code_]    int count;                   // Number of items in the stack
+
+[_Code_]    int data[STACK_SIZE];        // The items themselves
+
+[_Code_] };
+
+Next you need to create the routines to handle the push and pop
+operations. The push function stores the item on the stack and then
+increases the data count.
+
+[_Code_] inline void stack_push(struct stack &the_stack, const int item)
+
+[_Code_] {
+
+[_Code_]     the_stack.data[the_stack.count] = item;
+
+[_Code_]     ++the_stack.count;
+
+[_Code_] }
+
+Note: This version of the program does not check for stack overflow
+or other error conditions. Later, in Chapter 14, More on Classes,
+you'll see how you can use this simple stack to make a safer, more
+complex one.
+
+Popping simply removes the top item and decreases the number of
+items in the stack.
+
+[_Code_] inline int stack_pop(struct stack &the_stack)
+
+[_Code_] {
+
+[_Code_]     // Stack goes down by one
+
+[_Code_]     --the_stack.count;
+
+[_Code_]
+
+[_Code_]     // Then we return the top value
+
+[_Code_]     return (the_stack.data[the_stack.count]);
+
+[_Code_] }
+
+There is one item you've overlooked: initializing the stack. You see
+you must set up the stack before you can use it. Keeping with the
+spirit of putting everything in a stack_xxxx routine get the stack_
+init function.
+
+[_Code_] inline void stack_init(struct stack &the_stack)
+
+[_Code_] {
+
+[_Code_]     the_stack.count = 0;        // Zero the stack
+
+[_Code_] }
+
+Notice that you don't need to zero the data field in the stack, since
+the elements of data are overwritten by the push operation.
+
+You are now finished. To actually use the stack you declare it with
+a struct statement. Next you must make sure that you initialize it,
+and then you can push and pop to your heart's content (or at least
+within the limits of the stack).
+
+[_Code_]     struct stack a_stack;    // Declare the stack
+
+[_Code_]
+
+[_Code_]     stack_init(a_stack);     // Initialize the stack
+
+[_Code_]     // Stack is ready for use
+
+[_XREF Example 13-1_] contains a complete implementation of the
+structure version of the stack and a short test routine.
+
+Example 13-1
+
+.  stack_s/stack_s.cc
+
+[_Code_] /********************************************************
+
+[_Code_]  * Stack                                                *
+
+[_Code_]  *      A set of routines to implement a simple integer *
+
+[_Code_]  *      stack.                                          *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Procedures                                           *
+
+[_Code_]  *      stack_init -- initialize the stack              *
+
+[_Code_]  *      stack_push -- put an item on the stack          *
+
+[_Code_]  *      stack_pop -- remove an item from the stack      *
+
+[_Code_]  ********************************************************/
+
+[_Code_] #include <stdlib.h>
+
+[_Code_] #include <iostream.h>
+
+[_Code_]
+[_Code_] const int STACK_SIZE = 100;     // Maximum size of a stack
+
+[_Code_]
+[_Code_] // The stack itself
+
+[_Code_] struct stack {
+
+[_Code_]    int count;                   // Number of items in the stack
+
+[_Code_]    int data[STACK_SIZE];        // The items themselves
+
+[_Code_] };
+
+[_Code_]
+[_Code_] /********************************************************
+
+[_Code_]  * stack_init -- initialize the stack                   *
+
+[_Code_]  *                                                       *
+
+[_Code_]  * Parameters                                            *
+
+[_Code_]  *      the_stack -- stack to initialize                 *
+
+[_Code_]  ********************************************************/
+
+[_Code_] inline void stack_init(struct stack &the_stack)
+
+[_Code_] {
+
+[_Code_]     the_stack.count = 0;        // Zero the stack
+
+[_Code_] }
+
+[_Code_] /********************************************************
+
+[_Code_]  * stack_push -- push an item on the stack              *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Warning: We do not check for overflow                *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Parameters                                           *
+
+[_Code_]  *      the_stack -- stack to use for storing the item  *
+
+[_Code_]  *      item -- item to put in the stack                *
+
+[_Code_]  ********************************************************/
+
+[_Code_] inline void stack_push(struct stack &the_stack,
+
+[_Code_]                        const int item)
+
+[_Code_] {
+
+[_Code_]     the_stack.data[the_stack.count] = item;
+
+[_Code_]     ++the_stack.count;
+
+[_Code_] }
+
+[_Code_] /********************************************************
+
+[_Code_]  * stack_pop -- get an item off the stack               *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Warning: We do not check for stack underflow         *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Parameters                                           *
+
+[_Code_]  *      the_stack -- stack to get the item from         *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Returns                                              *
+
+[_Code_]  *      the top item from the stack                     *
+
+[_Code_]  ********************************************************/
+
+[_Code_] inline int stack_pop(struct stack &the_stack)
+
+[_Code_] {
+
+[_Code_]     // Stack goes down by one
+
+[_Code_]     --the_stack.count;
+
+[_Code_]
+[_Code_]     // Then we return the top value
+
+[_Code_]     return (the_stack.data[the_stack.count]);
+
+[_Code_] }
+
+[_Code_]
+[_Code_] // A short routine to test the stack
+
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     struct stack a_stack;       // Stack we want to use
+
+[_Code_]
+[_Code_]     stack_init(a_stack);
+
+[_Code_]
+[_Code_]     // Push three values on the stack
+
+[_Code_]     stack_push(a_stack, 1);
+
+[_Code_]     stack_push(a_stack, 2);
+
+[_Code_]     stack_push(a_stack, 3);
+
+[_Code_]
+[_Code_]     // Pop the items from the stack
+
+[_Code_]     cout << "Expect a 3 ->" << stack_pop(a_stack) << '\n';
+
+[_Code_]     cout << "Expect a 2 ->" << stack_pop(a_stack) << '\n';
+
+[_Code_]     cout << "Expect a 1 ->" << stack_pop(a_stack) << '\n';
+
+[_Code_]
+[_Code_]     return (0);
+
+[_Code_] }
+
+[_A_]  Improved Stack
+
+The structure version of the stack works but has a few drawbacks.
+The first is that the data and the functions are defined separately,
+forcing you to pass a struct stack variable into each procedure.
+
+There is also the problem of data protection. The fields data and
+count are accessible to anyone. The design states that only the
+stack functions should have access to these fields, but there is
+nothing to prevent rogue code from modifying them.
+
+A C++ struct is a mixed collection of data. The C++ class not
+only holds data like a structure, but also adds a set of functions for
+manipulating the data and access protection.
+
+Turning the struct stack into a class you get:
+
+[_Code_] class stack {
+
+[_Code_]     private:
+
+[_Code_]         int count;              // Number of items in the stack
+
+[_Code_]         int data[STACK_SIZE];   // The items themselves
+
+[_Code_]     public:
+
+[_Code_]         // Initialize the stack
+
+[_Code_]         void init(void);
+
+[_Code_]
+
+[_Code_]         // Push an item on the stack
+
+[_Code_]         void push(const int item);
+
+[_Code_]
+
+[_Code_]         // Pop an item from the stack
+
+[_Code_]         int pop(void);
+
+[_Code_] };
+
+Let's go into this class declaration in more detail. The beginning
+looks much like a structure definition except that you're using the
+word class instead of struct.
+
+[_Code_] class stack {
+
+[_Code_]     private:
+
+[_Code_]         int count;              // Number of items in the stack
+
+[_Code_]         int data[STACK_SIZE];   // The items themselves
+
+This declares two fields: count and data. In a class these items are
+not called fields; they are called member variables. The keyword
+private indicates the access privileges associated with these two
+member variables.
+
+There are three levels of access privileges: public, private,
+and protected. Class members, both data and functions, marked
+private cannot be used outside the class. They can be accessed
+only by functions within the class. The opposite of private is
+public, which indicates members that anyone can access.
+
+Finally, protected is similar to private except that it allows
+access by derived classes. (We discuss derived classes in
+Chapter 21, Advanced Classes.)
+
+You've finished defining the data for this class. Now you need to
+define the functions that manipulate the data.
+
+[_Code_]     public:
+
+[_Code_]         // Initialize the stack
+
+[_Code_]         void init(void);
+
+[_Code_]
+
+[_Code_]         // Push an item on the stack
+
+[_Code_]         void push(const int item);
+
+[_Code_]
+
+[_Code_]         // Pop an item from the stack
+
+[_Code_]         int pop(void);
+
+[_Code_] };
+
+This section starts with the keyword public. This tells C++ that
+you want all these member functions to be available to the outside.
+In this case, you just define the function prototypes. The code for
+the function will be defined later.
+
+Next comes the body of the init function. Since this function
+belongs to the stack class, you prefix the name of the procedure
+with stack::. (We discuss the scope operator :: in more detail in
+Chapter 14, More on Classes.)
+
+The definition of the init function looks like:
+
+[_Code_] inline void stack::init(void)
+
+[_Code_] {
+
+[_Code_]     count = 0;  // Zero the stack
+
+[_Code_] }
+
+This procedure zeroes the stack's count. In the structure version of
+the stack_init function you must pass the stack in as a
+parameter. Since this function is part of the stack class, that's
+unnecessary. This also means that you can access the member
+variables directly. In other words, instead of having to say the_
+stack.count, you just say count.
+
+The functions push and pop are implemented in a similar manner.
+
+[_Code_] inline void stack::push(const int item)
+
+[_Code_] {
+
+[_Code_]     data[count] = item;
+
+[_Code_]     ++count;
+
+[_Code_] }
+
+[_Code_]
+
+[_Code_] inline int stack::pop(void)
+
+[_Code_] {
+
+[_Code_]     // Stack goes down by one
+
+[_Code_]     --count;
+
+[_Code_]
+
+[_Code_]     // Then we return the top value
+
+[_Code_]     return (data[count]);
+
+[_Code_] }
+
+The stack class is now complete. All you have to do is use it.
+
+[_A_]  Using a Class
+
+Using a class is much like using a structure. Declaring a class
+variable is the same, except you use the word class instead of
+struct.
+
+[_Code_]     class stack a_stack;        // Stack we want to use
+
+The word class is not needed and is frequently omitted.
+
+[_Code_]     stack a_stack;        // Stack we want to use
+
+You access the fields of a structure using a dot, for example:
+
+[_Code_]     structure.field = 5;
+
+Accessing the members of a class is similar, except that the
+members of a class can be both data and functions. Also, you can
+access only the members that are public.
+
+To call the init member function of the stack class all you need to
+do is:
+
+[_Code_]     a_stack.init();
+
+The push and pop member functions can be accessed in a similar
+manner:
+
+[_Code_]     a_stack.push(1);
+
+[_Code_]     result = a_stack.pop();
+
+[_XREF Example 13-2_] contains a class version of the stack.
+
+Example 13-2
+
+.  stack_c/stack_c.cc
+
+[_Code_] /********************************************************
+
+[_Code_]  * Stack                                                *
+
+[_Code_]  *      A file implementing a simple stack class        *
+
+[_Code_]  ********************************************************/
+
+[_Code_] #include <stdlib.h>
+
+[_Code_] #include <iostream.h>
+
+[_Code_]
+[_Code_] const int STACK_SIZE = 100;     // Maximum size of a stack
+
+[_Code_]
+[_Code_] /********************************************************
+
+[_Code_]  * Stack class                                          *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Member functions                                     *
+
+[_Code_]  *      init -- initialize the stack                    *
+
+[_Code_]  *      push -- put an item on the stack                *
+
+[_Code_]  *      pop -- remove an item from the stack            *
+
+[_Code_]  ********************************************************/
+
+[_Code_] // The stack itself
+
+[_Code_] class stack {
+
+[_Code_]     private:
+
+[_Code_]         int count;              // Number of items in the stack
+
+[_Code_]         int data[STACK_SIZE];   // The items themselves
+
+[_Code_]     public:
+
+[_Code_]         // Initialize the stack
+
+[_Code_]         void init(void);
+
+[_Code_]
+[_Code_]         // Push an item on the stack
+
+[_Code_]         void push(const int item);
+
+[_Code_]
+[_Code_]         // Pop an item from the stack
+
+[_Code_]         int pop(void);
+
+[_Code_] };
+
+[_Code_]
+[_Code_] /********************************************************
+
+[_Code_]  * stack::init -- initialize the stack                  *
+
+[_Code_]  ********************************************************/
+
+[_Code_] inline void stack::init(void)
+
+[_Code_] {
+
+[_Code_]     count = 0;  // Zero the stack
+
+[_Code_] }
+
+[_Code_] /********************************************************
+
+[_Code_]  * stack::push -- push an item on the stack             *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Warning: We do not check for overflow                *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Parameters                                           *
+
+[_Code_]  *      item -- item to put in the stack                *
+
+[_Code_]  ********************************************************/
+
+[_Code_] inline void stack::push(const int item)
+
+[_Code_] {
+
+[_Code_]     data[count] = item;
+
+[_Code_]     ++count;
+
+[_Code_] }
+
+[_Code_] /********************************************************
+
+[_Code_]  * stack::pop -- get an item off the stack              *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Warning: We do not check for stack underflow         *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Returns                                              *
+
+[_Code_]  *     the top item from the stack                      *
+
+[_Code_]  ********************************************************/
+
+[_Code_] inline int stack::pop(void)
+
+[_Code_] {
+
+[_Code_]     // Stack goes down by one
+
+[_Code_]     --count;
+
+[_Code_]
+[_Code_]     // Then we return the top value
+
+[_Code_]     return (data[count]);
+
+[_Code_] }
+
+[_Code_]
+[_Code_] // A short routine to test the stack
+
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     stack a_stack;      // Stack we want to use
+
+[_Code_]
+[_Code_]     a_stack.init();
+
+[_Code_]
+[_Code_]     // Push three values on the stack
+
+[_Code_]     a_stack.push(1);
+
+[_Code_]     a_stack.push(2);
+
+[_Code_]     a_stack.push(3);
+
+[_Code_]
+[_Code_]     // Pop the items from the stack
+
+[_Code_]     cout << "Expect a 3 ->" << a_stack.pop() << '\n';
+
+[_Code_]     cout << "Expect a 2 ->" << a_stack.pop() << '\n';
+
+[_Code_]     cout << "Expect a 1 ->" << a_stack.pop() << '\n';
+
+[_Code_]
+[_Code_]     return (0);
+
+[_Code_] }
+
+[_A_]  Introduction to Constructors and Destructors
+
+This stack class has one minor inconvenience. The programmer
+must call the init member function before using the stack.
+However, programmers are terribly forgetful and sooner or later
+someone is going to forget to initialize the stack. Wouldn't it be nice
+if C++ had an automatic way of initializing the stack?
+
+It does. Actually C++ will automatically call a number of member
+functions. The first you are concerned about is called when the
+class is created. This is called the constructor function and has
+the same name as the class. For example, the constructor for the
+stack class is named stack (also known as stack::stack
+outside the class body).
+
+A variable is created when it is declared. (It can also be created by
+the new operator as you will discuss later in Chapter 20, Advanced
+Pointers.)
+
+You want to have this stack initialized automatically, so you remove
+the init function and replace it with the constructor,
+stack::stack.
+
+[_Code_] class stack {
+
+[_Code_]         // ...
+
+[_Code_]     public:
+
+[_Code_]         // Initialize the stack
+
+[_Code_]         stack(void);
+
+[_Code_]         // ...
+
+[_Code_] };
+
+[_Code_]
+
+[_Code_] inline stack::stack(void)
+
+[_Code_] {
+
+[_Code_]     count = 0;  // Zero the stack
+
+[_Code_] }
+
+You may have noticed that the return type void has been omitted
+in the constructor declaration. Constructors can never return a value
+so the void is not needed. In fact the compiler will complain if it's
+present.
+
+Since the constructor is called automatically, the program is now
+simpler. Instead of writing:
+
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     stack a_stack;      // Stack we want to use
+
+[_Code_]
+
+[_Code_]     a_stack.init();
+
+[_Code_]
+
+you can just write:
+
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     stack a_stack;      // Stack we want to use
+
+[_Code_]
+
+[_Code_]     // Use the stack
+
+Also, since you no longer have to count on the programmer putting
+in the init call, the program is more reliable.
+
+[_B_]  Destructors
+
+The constructor is automatically called when the variable is created.
+The destructor is automatically called when the variable is
+destroyed. This occurs when the variable goes out of scope or
+when a pointer variable is deleted. (The delete is defined in
+Chapter 20, Advanced Pointers.)
+
+The special name for a destructor is the class name with a tilde (~)
+in front of it. So, for the stack class the destructor would be named
+~stack.
+
+Suppose you make the rule that the stack should be empty when
+the programmer is finished with it. In other words, for every push
+you do, a pop must be done. If this doesn't happen, it's an error
+and you should warn the user.
+
+All you have to do is create a destructor for the stack that checks for
+an empty stack and issues a warning if the stack is not empty. The
+destructor looks like:
+
+[_Code_] stack::~stack(void)
+
+[_Code_]     if (count != 0)
+
+[_Code_]         cerr << "Error: Destroying a nonempty stack\n";
+
+[_Code_] }
+
+[_B_]  Parameterized Constructors
+
+The constructor for a class can take parameters. Suppose you
+want to define a class that holds a person's name and phone
+number. The data members for this class would look like:
+
+[_Code_] class person {
+
+[_Code_]     public:
+
+[_Code_]         char name[80];      // Name of the person
+
+[_Code_]         char phone[80];     // Person's phone number
+
+You want the constructor for this class to automatically initialize
+both the name and the phone number.
+
+[_Code_]     public:
+
+[_Code_]         person(const char i_name[], const char i_phone[]);
+
+[_Code_]     // ... rest of class
+
+[_Code_] };
+
+[_Code_]
+
+[_Code_] person::person(const char i_name[], const char i_phone[])
+
+[_Code_] {
+
+[_Code_]     strcpy(name, i_name);
+
+[_Code_]     strcpy(phone, i_phone);
+
+[_Code_] }
+
+Now you are ready to use the class. When you declare variables
+of this class, you must put two parameters in the declaration. For
+example:
+
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     person sam("Sam Jones", "555-1234");
+
+Like other functions, constructors can be overloaded. Using the
+person example, you can take care of the case where you have a
+person with no phone by creating a constructor that takes a name
+as its only parameter:
+
+[_Code_] class person {
+
+[_Code_]     // ... rest of the class
+
+[_Code_]     public:
+
+[_Code_]         person(const char i_name[]);
+
+[_Code_] };
+
+[_Code_]
+
+[_Code_] person::person(const char i_name[])
+
+[_Code_] {
+
+[_Code_]     strcpy(name, i_name);
+
+[_Code_]     strcpy(phone, "No Phone");
+
+[_Code_] }
+
+In this case, you have two constructors, one that takes one
+parameter and one that takes two parameters. You haven't defined
+a constructor that takes zero parameters, so you can't declare a
+variable of type person without specifying at least one parameter.
+In other words:
+
+[_Code_]     person unnamed_source;     // Illegal
+
+will generate an error message.
+
+[_B_]  Parameterized Destructors
+
+There is no such thing as a parameterized destructor. Destructors
+take no parameters and supply no return value. All they do is
+destroy the variable.
+
+[_B_]  Copy Constructor
+
+The copy constructor is a special constructor that is used to make
+an exact copy of a class. For example, a copy constructor for the
+stack class would look like:
+
+[_Code_] stack::stack(const stack &old_stack)
+
+[_Code_] {
+
+[_Code_]     int i;     // Index used to copy the data
+
+[_Code_]
+
+[_Code_]     for (i = 0; i < old_stack.count; ++i) {
+
+[_Code_]         data[i] = old_stack.data[i];
+
+[_Code_]     count = old_stack.count;
+
+[_Code_] }
+
+Let's examine this function in more detail. The declaration:
+
+[_Code_] stack::stack(const stack &old_stack)
+
+identifies this as a copy constructor. The single parameter
+(const stack &old_stack) identifies this particular constructor as
+the copy constructor. This function is expected to turn the current
+class into an exact copy of the parameter.
+
+The code:
+
+[_Code_]     for (i = 0; i < old_stack.count; ++i) {
+
+[_Code_]         data[i] = old_stack.data[i];
+
+[_Code_]     count = old_stack.count;
+
+takes all the data from the old stack and puts it into the new stack.
+
+The copy operator can be invoked explicitly as illustrated in the
+following example:
+
+[_Code_]     stack a_stack;      // A simple stack
+
+[_Code_]
+
+[_Code_]     a_stack.push(1);    // Put a couple of elements on the stack
+
+[_Code_]     a_stack.push(2);
+
+[_Code_]
+
+[_Code_]     stack b_stack(a_stack);  // Create a copy of the stack
+
+On the face of it, the copy constructor doesn't seem that important.
+But if you remember, back in Chapter 9, Variable Scope and
+Functions, you discussed the various ways C++ can pass parameters
+to a function. One of these was call by value. That's where a copy
+of the parameter is made and passed to the function.
+
+When a stack or any other class is passed as a call-by-value
+parameter, a copy is made of that class using the copy constructor.
+
+In the following code, we've added some commentary to show you
+the functions that C++ will automatically call behind your back.
+
+[_Code_] void use_stack(stack local_stack)
+
+[_Code_] {
+
+[_Code_]     local_stack.push(9);
+
+[_Code_]     local_stack.push(10);
+
+[_Code_]     .. Do something with local_stack
+
+[_Code_] }
+
+[_Code_]
+
+[_Code_]
+
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     stack a_stack;     // Generate a default stack
+
+[_Code_]
+
+[_Code_]     a_stack.push(1);
+
+[_Code_]     a_stack.push(2);
+
+[_Code_]
+
+[_Code_]     use_stack(a_stack);
+
+[_Code_]
+
+[_Code_]     // Prints "2"
+
+[_Code_]     cout << a_stack.pop() << '\n';
+
+As you can see, C++ does a lot of work behind the scenes. It starts
+when a_stack is declared. C++ calls the default constructor to
+create a_stack.
+
+The variable a_stack is used, and then passed to the function use_
+stack. Since a_stack is passed by value, a copy must be made of
+the stack using the copy constructor local_stack.stack(a_
+stack).
+
+The function then adds a few items to local_stack. Note: This is a
+copy of a_stack, so anything you do to local_stack does not
+affect a_stack. At the end of the function local_stack contains
+four items, 1, 2, 9, 10, and a_stack contains two items, 1, 2.
+
+Finally after the function call, you print out the top element of a_
+stack, which is "2".
+
+[_A_]  Automatically Generated Member Functions
+
+Every class has a constructor and a destructor. If the programmer
+does not write these member functions, C++ will automatically
+generate them. Also, there are several member functions such as the
+copy constructor that can be called automatically.
+
+[_B_]  Automatically Generated and Used Functions
+
+class::class()
+Default constructor.
+
+Automatically generated if no other constructors are defined. The generated
+code fills the data members of the class with random values.
+
+Automatically called when a variable of this class is declared with no parame-
+ters, such as:
+
+class_type var;
+
+class::class(const class &old_class)
+Copy constructor.
+
+Automatically generated unless the programmer explicitly defines a copy
+constructor. The function C++ generates copies all the data members from the
+old class to the new one.
+
+Automatically called when passing a call-by-value parameter to a function.
+This member function may also be called when creating a duplicate of a
+variable:
+
+call_type first_var;
+
+// Call copy constructor to
+
+// make duplicate of first_var
+
+class_type second_var(first_var);
+
+class::~class()
+Destructor.
+
+Automatically generated unless the programmer defines one.
+
+Automatically called when a variable is destroyed. This occurs when a vari-
+able goes out of scope. (It is also called by the delete operator discussed in
+Chapter 20, Advanced Pointers.)
+
+class class::operator = (const class &old_class)
+
+Assignment operator. (Operator overloading is discussed in Chapter 18, Oper-
+ator Overloading.)
+
+Automatically generated to handle assignment of one class to another. The
+function C++ generates copies all the data members from the old class to the
+new one.
+
+class_type var1;
+
+class_type var2;
+
+var1 = var2;   // "operator =" called
+
+[_A_]  Shortcuts
+
+So far you have used only function prototypes in the classes you've
+created. It is possible to define the body of the function inside the
+class itself. Thus:
+
+[_Code_] class stack {
+
+[_Code_]     public:
+
+[_Code_]         // .... rest of class
+
+[_Code_]
+
+[_Code_]         // Push an item on the stack
+
+[_Code_]         void push(const int item);
+
+[_Code_] };
+
+[_Code_] inline void stack::push(const int item)
+
+[_Code_] {
+
+[_Code_]     data[count] = item;
+
+[_Code_]     ++count;
+
+[_Code_] }
+
+can be written as:
+
+[_Code_] class stack {
+
+[_Code_]     public:
+
+[_Code_]         // .... rest of class
+
+[_Code_]
+
+[_Code_]         // Push an item on the stack
+
+[_Code_]         void push(const int item) {
+
+[_Code_]             data[count] = item;
+
+[_Code_]             ++count;
+
+[_Code_]         }
+
+[_Code_] };
+
+The inline directive is not required in the second case since all
+functions declared inside a class are automatically declared inline.
+
+[_A_]  Style
+
+Programming style for classes looks pretty much like the style for
+structures and functions. Every member variable should be followed
+by a comment explaining it and every member function should be
+commented like a function.
+
+However, you comment the prototypes for member functions
+differently from normal function prototypes. For normal functions
+you put a full function comment block in front for the prototype. If
+you did this for the member functions of a class, the comments
+would obscure the structure of the class. This is one of the few
+cases when too many comments can cause trouble. So you put a
+one-line comment in front of each member function prototype and
+full comments in front of the function itself.
+
+But what about inline-member functions, where the entire body of
+the function is declared inside the class? How do you comment that?
+If you put in full comments, you obscure the structure of the class.
+If you put in one-liners, you omit a lot of useful information. Proper
+commenting is a balancing act. You need to put in what's useful
+and leave out what's not.
+
+The solution is to keep the size of the inline-member function small.
+There are two reasons for this, first all inline functions should be
+small and, secondly, large functions declared inside a class make
+the class excessively complex. A good rule of thumb is that if the
+function requires more than about five lines of code, put a
+prototype in the class and put the body of the function elsewhere.
+
+The structure of very small member functions should be obvious
+and thus not require a full-blown comment block. If the function is
+not obvious and requires extensive comments, you can always put
+in a prototype and comment the body of the function later in the
+program.
+
+C++ does not require an access protection declaration (public,
+private, or protected) before the first member variable. The
+following is perfectly legal:
+
+[_Code_] class example {
+
+[_Code_]         int data;
+
+[_Code_]         // ...
+
+[_Code_] };
+
+But what is the access protection of data? Is it public,
+private, or protected? If you put in an explicit declaration,
+then you don't have to worry about questions like this. (For those
+of you who are curious, the access protection defaults to
+private.)
+
+Finally, C++ will automatically generate some member functions,
+such as the default constructor, the copy constructor, and the
+assignment operator. Suppose you have a class that does not
+specify a copy constructor, such as:
+
+[_Code_] // Comments describing the class
+
+[_Code_] // Note: The style of this class leaves something to be desired
+
+[_Code_] class queue {
+
+[_Code_]     private:
+
+[_Code_]         int data[100];    // Data stored in the queue
+
+[_Code_]         int first;        // First element in the queue
+
+[_Code_]         int last;         // Last element in the queue
+
+[_Code_]     public:
+
+[_Code_]         queue();          // Initialize the queue
+
+[_Code_]         void put(int item);// Put an item in the queue
+
+[_Code_]         int get(void);    // Get an item from the queue
+
+[_Code_] };
+
+Did the programmer who created this class forget the copy
+constructor? Will the copy constructor automatically generated by
+C++ work, or did the programmer design this class knowing that the
+copy constructor would never be called? These important questions
+are not answered by the class as written.
+
+All classes have a default constructor, copy constructor, assignment
+operator, and destructor. If you want to use the one C++ generates
+automatically, put a comment in the class indicating that the default
+is being used.
+
+[_Code_] // Comments describing the class
+
+[_Code_] class queue {
+
+[_Code_]     private:
+
+[_Code_]         int data[100];    // Data stored in the queue
+
+[_Code_]         int first;        // First element in the queue
+
+[_Code_]         int last;         // Last element in the queue
+
+[_Code_]     public:
+
+[_Code_]         queue();          // Initialize the queue
+
+[_Code_]         // queue(const queue &old_queue)
+
+[_Code_]         //     Use automatically generated copy constructor
+
+[_Code_]
+
+[_Code_]         // queue operator = (const queue &old_queue)
+
+[_Code_]         //     Use automatically generated assignment operator
+
+[_Code_]
+
+[_Code_]         // ~queue()
+
+[_Code_]         //    Use automatically generated destructor
+
+[_Code_]
+
+[_Code_]         void put(int item);// Put an item in the queue
+
+[_Code_]         int get(void);    // Get an item from the queue
+
+[_Code_] };
+
+Now it is obvious what member functions the programmer wanted
+to let C++ generate automatically, and being obvious is very
+important in any programming project.
+
+The copy constructor automatically generated by C++ is rather
+simple and limited. It doesn't work in all cases, as you'll see later
+when you start to construct more complex classes. But what
+happens when the automatic copy constructor won't work as you
+desire and you don't want to go to the trouble to create your own?
+After all, you may decide that a class will never be copied (or that if
+it is, it's an error).
+
+One solution is to create a dummy copy constructor that prints an
+error message and aborts the program:
+
+[_Code_] class no_copy {
+
+[_Code_]         // Body of the class
+
+[_Code_]     public:
+
+[_Code_]         // Copy constructor
+
+[_Code_]         no_copy(const no_copy &old_class) {
+
+[_Code_]             cerr <<
+
+[_Code_]              "Error: Copy constructor for 'no_copy' called. Exiting\n";
+
+[_Code_]             exit(8);
+
+[_Code_]         }
+
+[_Code_] };
+
+This works, sort of. The problem is that errors are detected at
+runtime instead of compile time. You want to catch errors as soon
+as possible, so this solution is at best a hack.
+
+However, you can prevent the compiler from automatically calling
+the copy constructor. The trick is to declare it private. That's your
+way of saying to the world, "Yes, there is a copy constructor, but no
+one can ever use it."
+
+[_Code_] class no_copy {
+
+[_Code_]         // Body of the class
+
+[_Code_]     private:
+
+[_Code_]         // There is no copy constructor
+
+[_Code_]         no_copy(const no_copy &old_class);
+
+[_Code_] };
+
+Now when the compiler attempts to use the copy constructor you
+will get an error message like "Error: Attempt to access private
+member function."
+
+Note: Since the copy constructor is never called, you never have to
+define the body of this function.
+
+[_A_]  Programming Exercises
+
+Exercise 13-1: Write a parity class. This class allows the program to put any
+number of items into it and returns TRUE if an even number of items is put in
+and FALSE if an odd number is used.
+
+Member functions:
+
+[_Code_] void parity::put(void);   // Count another element
+
+[_Code_] int parity::test(void);   // Return TRUE(1) if an even number of
+
+[_Code_]                              puts have been done. Return FALSE(0)
+
+[_Code_]                              for an odd number.
+
+[_Code_]
+
+Exercise 13-2: Write a "checkbook" class. You put a list of numbers into this class
+and get a total out.
+
+Member functions:
+
+[_Code_] void check::add_item(int amount);   // Add a new entry to the checkbook
+
+[_Code_] int check::total(void);             // Return the total of all items
+
+Exercise 13-3: Write a class to implement a simple queue. A queue is very similar
+to a stack except the data is removed in first-in-first-out (FIFO) order.
+
+Member functions:
+
+[_Code_] void queue::put(int item);  // Insert an item in the queue
+
+[_Code_] int queue::get(void);       // Get the next item from the queue
+
+Sample usage:
+
+[_Code_] queue a_queue;
+
+[_Code_]
+
+[_Code_] a_queue.put(1);    // Queue contains: 1
+
+[_Code_] a_queue.put(2);    // Queue contains: 1
+
+[_Code_] 2
+
+[_Code_] a_queue.put(3);    // Queue contains: 1 2 3
+
+[_Code_]
+
+[_Code_] cout << a_queue.get() << '\n';   // Prints 1, queue contains 2 3
+
+[_Code_] cout << a_queue.get() << '\n';   // Prints 2, queue contains 3
+
+Exercise 13-4: Define a class that will hold the set of integers from 0 to 31. An
+element can be set with the set member function and cleared with the clear
+member function. It is not an error to set an element that's already set or clear an
+element that's already clear. The function test is used to tell whether an element
+is set.
+
+Member functions:
+
+[_Code_] void small_set::set(int item);    // Set an element in the set
+
+[_Code_] void small_set::clear(int item);  // Clear an element in the set
+
+[_Code_] int small_set::test(void);        // See whether an element is set
+
+Sample usage:
+
+[_Code_] small_set a_set;
+
+[_Code_]
+
+[_Code_] a_set.set(3);      // Set contains [3]
+
+[_Code_] a_set.set(5);      // Set contains [3,5]
+
+[_Code_] a_set.set(5);      // Legal (set contains [3,5])
+
+[_Code_]
+
+[_Code_] cout << a_set.test(3) << '\n';    // Prints "1"
+
+[_Code_] cout << a_set.test(0) << '\n';    // Prints "0"
+
+[_Code_]
+
+[_Code_] a_set.clear(5);   // Set contains [3]
+
+Exercise 13-5: I have a simple method of learning foreign vocabulary words. I
+write the words down on a list of flash cards. I then go through the stack of flash
+cards one at a time. If I get a word right, that card is discarded. If I get it wrong,
+the card goes to the back of the stack.
+
+Write a class to implement this system.
+
+Member functions:
+
+[_Code_] struct single_card {
+
+[_Code_]     char question[40];      // English version of the word
+
+[_Code_]     char answer[40];        // Other language version of the word
+
+[_Code_] };
+
+[_Code_]
+
+[_Code_] // Constructor -- takes a list of cards to
+
+[_Code_] //              initialize the flash card stack
+
+[_Code_] void flash_card::flash_card(single_card list[]);
+
+[_Code_]
+
+[_Code_] // Get the next card
+
+[_Code_] const single_card &flash_card::get_card(void);
+
+[_Code_]
+
+[_Code_] //The student got the current card right
+
+[_Code_] void flash_card::right(void);
+
+[_Code_]
+
+[_Code_] // The student got the current card wrong
+
+[_Code_] void flash_card::wrong(void);
+
+[_Code_]
+
+[_Code_] //Returns 1 -- done / 0 -- more to do
+
+[_Code_] int done(void);

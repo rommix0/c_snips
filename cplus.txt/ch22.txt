@@ -1,0 +1,638 @@
+Chapter 22Part V: Other Language Features
+
+In This Chapter:
+
+*  [_XREF Stack Exceptions_]
+
+*  [_XREF Runtime Library
+Exceptions_]
+
+*  [_XREF Programming
+Exercises_]
+
+22	
+
+22: Exceptions
+
+How glorious it is - and also how
+painful - to be an exception.
+
+---Alfred de Musset
+
+Airplanes fly from one place to another and 99.9% of the time
+there's no trouble. But when there is trouble such as a stuck wheel
+or an engine fire, pilots are trained to handle the emergency.
+
+Let's examine in detail what happens during an airborne emergency
+such as an engine catching fire. This is an exception to normal
+flight. A fire alarm goes off in the cockpit.
+
+This catches the pilots' attention and they start going through the
+fire-emergency procedure. This is an extensive list of things to do in
+case of fire. The airline prepared this list ahead of time and the
+pilots have the list memorized. The pilots do what's necessary to
+handle the exception: activate the fire extinguisher, shut down the
+engine, land very quickly, etc.
+
+Let's break down this procedure into C++ pseudocode. When the
+pilots take off they are going to try to fly the plane from one point
+to another without problems. The C++ "code" for this is:
+
+[_Code_] try {
+
+[_Code_]      fly_from_point_a_to_point_b();
+
+[_Code_] }
+
+The try keyword indicates that we are going to attempt an
+operation that may cause an exception.
+
+But what happens when we get an exception? We need to handle
+it. The C++ code for this is:
+
+[_Code_] catch (fire_emergency &fire_info) {
+
+[_Code_]     active_extinguisher(fire_info.engine);
+
+[_Code_]     turn_off(fire_info.engine);
+
+[_Code_]     land_at_next_airport();
+
+[_Code_] }
+
+The keyword catch indicates that this section of code handles an
+exception. In this case the exception handled is a fire_
+emergency. This is the type of emergency. It could be a fire in
+engine number 1, engine number 2, or engine number 3 (assuming
+a three-engine plane). Which engine is on fire is stored in the
+variable fire_info.
+
+The fire_emergency class describes what type of fire occurred. Its
+definition is:
+
+[_Code_] class fire_emergency {
+
+[_Code_]     public:
+
+[_Code_]         int engine;    // Which engine is on fire
+
+[_Code_]         // Other information about the fire
+
+[_Code_] };
+
+We've covered everything but the actual detection of the fire.
+Buried within each engine is a fire sensor. The code for this sensor
+is:
+
+[_Code_] // Watch for fire in engine #2
+
+[_Code_] void sensor_2(void) {
+
+[_Code_]     while (engine_running()) {
+
+[_Code_]         if (engine_on_fire()) {
+
+[_Code_]             fire_emergency fire_info;
+
+[_Code_]
+
+[_Code_]             fire_info.engine = 2;
+
+[_Code_]             throw(fire_info);
+
+[_Code_]         }
+
+[_Code_]     }
+
+[_Code_] }
+
+When this code senses a fire, it puts the information in a fire_
+emergency variable named fire_info and triggers an exception
+with the throw statement.
+
+When the throw statement is executed, normal processing is
+stopped. After all, when a fire occurs, normal flying is stopped.
+Execution is transferred to the catch statement for the fire_
+emergency.
+
+To summarize, exception handling consists of:
+
+*  A description of a possible problem, in this case the fire_
+emergency class.
+
+*  A section of code in which the exception may occur, which is
+enclosed in a try statement. In this case, the statement is fly_
+from_point_a_to_point_b().
+
+*  Something that causes an exception and triggers the emergency
+procedures through a throw statement.
+
+*  Exception-handling code inside a catch block.
+
+[_A_]  Stack Exceptions
+
+In Chapter 21, Advanced Classes, we defined a stack with bounds
+checking. If the user attempted to push too much data on the stack
+or to pop too much off, the class would issue an error message and
+abort. This is not a good way to handle an exception. Think of how
+the pilots would feel if the plane displayed an error message and
+shut down every time there was a fire.
+
+The first thing we need to do is decide what type of exceptions we
+are going to handle and describe them as classes. In our stack
+example, the only exception we expect is an out-of-bounds error.
+We'll describe this error with a simple string. The class for an out-of-
+bounds error is:
+
+[_Code_] const int WHAT_MAX = 80;	         // Longest possible error message
+
+[_Code_] class bound_err {
+
+[_Code_]     public:
+
+[_Code_]         char what[WHAT_MAX];     // What caused the error
+
+[_Code_]
+
+[_Code_]         // Initialize the bound error with a message
+
+[_Code_]         bound_err(char *_what) {
+
+[_Code_]             // WARNING: This does not check for "_what" being too long
+
+[_Code_]             strcpy(what, _what);
+
+[_Code_]         }
+
+[_Code_]         // bound_err(bound_err) -- default copy constructor
+
+[_Code_]         // ~bound_err -- default destructor
+
+[_Code_] };
+
+Exception checking starts with the keyword try. This tells C++ that
+exceptions may be generated in the section of code that follows and
+that they will be handled immediately after the try block. For
+example, if we are trying to perform a big stack operation, the code
+might look like:
+
+[_Code_] try {
+
+[_Code_]     do_big_stack_operation();
+
+[_Code_] };
+
+Immediately after the try block, we need to tell C++ what
+problems we will handle, by using a catch statement. The syntax
+for this statement is:
+
+[_Code_] catch (problem_type &parameter) {
+
+[_Code_]     statements;
+
+[_Code_] }
+
+The problem_type is the class that describes what happened. For the
+out-of-bounds error, the catch statement looks like:
+
+[_Code_] catch (bound_err &what_happened) {
+
+[_Code_]     cerr << "Error: Bounds exceeded\n";
+
+[_Code_]     cerr << "Reason: " << what_happened.what << '\n';
+
+[_Code_] }
+
+Several catch statements may be used to catch different types of
+exceptions. If an exception is not caught, it is considered an
+unexpected exception and will cause a call to the unexpected-
+exception handler, which aborts the program by default. If you
+want to catch all exceptions, use "..." for the exception type. For
+example:
+
+[_Code_] catch (bound_err &what_happened) {
+
+[_Code_]     // .... Body of catch
+
+[_Code_] }
+
+[_Code_] catch (...) {
+
+[_Code_]     cerr << "Something strange happened\n";
+
+[_Code_] }
+
+Now we need to update our old stack program and replace all the
+"error-message-and-abort" code with throw statements. The new
+procedure for push now looks like:
+
+[_Code_] inline void b_stack::push(const int item)
+
+[_Code_] {
+
+[_Code_]     if (count >= STACK_SIZE) {
+
+[_Code_]         bound_err overflow("Push overflows stack");
+
+[_Code_]         throw overflow;
+
+[_Code_]     }
+
+[_Code_]     stack::push(item);
+
+[_Code_] }
+
+Actually we don't need a special variable for overflow. The code
+can be consolidated. In the previous example we used two
+statements to explicitly show what is going on. The following code
+performs the same operation:
+
+[_Code_] inline void b_stack::push(const int item)
+
+[_Code_] {
+
+[_Code_]     if (count >= STACK_SIZE) {
+
+[_Code_]         throw bound_err("Push overflows stack");
+
+[_Code_]     }
+
+[_Code_]     stack::push(item);
+
+[_Code_] }
+
+The basic function definition we've been using so far tells C++,
+"Expect any exception to be thrown at any time." The push
+function can only throw a bound_err exception. C++ allows you to
+list all the possible exceptions in a function by putting a throw
+directive at the end of the function declaration:
+
+[_Code_] inline void b_stack::push(const int item) throw(bound_err) {
+
+But what happens if we throw an exception that's not in the list of
+exceptions? C++ will turn this into a call to the function
+unexpected( ).
+
+Example 22-1 contains a new version of the bound-checking stack
+with exceptions.
+
+Example 22-1
+
+. stack_c/stack_el.cc
+
+[_Code_] /********************************************************
+
+[_Code_]  * Stack                                                *
+
+[_Code_]  *      a file implementing a simple stack class        *
+
+[_Code_]  ********************************************************/
+
+[_Code_] #include <stdlib.h>
+
+[_Code_] #include <iostream.h>
+
+[_Code_]
+[_Code_] const int STACK_SIZE = 100;     // Maximum size of a stack
+
+[_Code_]
+[_Code_] /********************************************************
+
+[_Code_]  * Stack class                                          *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Member functions                                     *
+
+[_Code_]  *      stack -- initialize the stack                   *
+
+[_Code_]  *      push -- put an item on the stack                *
+
+[_Code_]  *      pop -- remove an item from the stack            *
+
+[_Code_]  ********************************************************/
+
+[_Code_] // The stack itself
+
+[_Code_] class stack {
+
+[_Code_]     protected:
+
+[_Code_]         int count;              // Number of items in the stack
+
+[_Code_]     private:
+
+[_Code_]         int data[STACK_SIZE];   // The items themselves
+
+[_Code_]     public:
+
+[_Code_]         // Initialize the stack
+
+[_Code_]         stack(void);
+
+[_Code_]         // ~stack() -- default destructor
+
+[_Code_]         // Copy constructor defaults
+
+[_Code_]
+[_Code_]         // Push an item on the stack
+
+[_Code_]         void push(const int item);
+
+[_Code_]
+[_Code_]         // Pop an item from the stack
+
+[_Code_]         int pop(void);
+
+[_Code_] };
+
+[_Code_]
+[_Code_] /********************************************************
+
+[_Code_]  * stack::stack -- initialize the stack                 *
+
+[_Code_]  ********************************************************/
+
+[_Code_] inline stack::stack(void)
+
+[_Code_] {
+
+[_Code_]     count = 0;  // Zero the stack
+
+[_Code_] }
+
+[_Code_] /********************************************************
+
+[_Code_]  * stack::push -- push an item on the stack             *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Warning: We do not check for overflow                *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Parameters                                           *
+
+[_Code_]  *      item -- item to put in the stack                *
+
+[_Code_]  ********************************************************/
+
+[_Code_] inline void stack::push(const int item)
+
+[_Code_] {
+
+[_Code_]     data[count] = item;
+
+[_Code_]     count++;
+
+[_Code_] }
+
+[_Code_] /********************************************************
+
+[_Code_]  * stack::pop -- get an item off the stack              *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Warning: We do not check for stack underflow         *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Parameters                                           *
+
+[_Code_]  *      the_stack -- stack to initialize                *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Returns                                              *
+
+[_Code_]  *      the top item from the stack                     *
+
+[_Code_]  ********************************************************/
+
+[_Code_] inline int stack::pop(void)
+
+[_Code_] {
+
+[_Code_]     // Stack goes down by one
+
+[_Code_]     count--;
+
+[_Code_]
+[_Code_]     // Then we return the top value
+
+[_Code_]     return (data[count]);
+
+[_Code_] }
+
+[_Code_]
+[_Code_] const int WHAT_MAX = 80;        // Largest possible error message
+
+[_Code_] /********************************************************
+
+[_Code_]  * bound_err -- a class used to handle out-of-bounds    *
+
+[_Code_]  *              exceptions.                             *
+
+[_Code_]  ********************************************************/
+
+[_Code_] class bound_err {
+
+[_Code_]     public:
+
+[_Code_]         char what[WHAT_MAX];    // What caused the error
+
+[_Code_]
+[_Code_]         // Initialize the bound error with a message
+
+[_Code_]         bound_err(char *_what) {
+
+[_Code_]             if (strlen(_what) < (WHAT_MAX -1))
+
+[_Code_]                 strcpy(what, _what);
+
+[_Code_]             else
+
+[_Code_]                 strcpy(what, "Internal error: _what is too long");
+
+[_Code_]         }
+
+[_Code_]         // bound_err(bound_err) -- default copy constructor
+
+[_Code_]         // ~ bound_err -- default destructor
+
+[_Code_] };
+
+[_Code_]
+[_Code_] /********************************************************
+
+[_Code_]  * b_stack -- bound-checking stack                      *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Member function                                      *
+
+[_Code_]  *      push -- push an item on the stack               *
+
+[_Code_]  *      pop -- remove an item from the stack            *
+
+[_Code_]  ********************************************************/
+
+[_Code_] class b_stack: public stack {
+
+[_Code_]     public:
+
+[_Code_]         // b_stack -- default constructor
+
+[_Code_]         // ~b_stack -- default destructor
+
+[_Code_]         // Copy constructor defaults
+
+[_Code_]
+[_Code_]         // Push an item on the stack
+
+[_Code_]         void push(const int item) throw(bound_err);
+
+[_Code_]
+[_Code_]         // Remove an item from the stack
+
+[_Code_]         int pop(void) throw(bound_err);
+
+[_Code_] };
+
+[_Code_] /********************************************************
+
+[_Code_]  * b_stack::push -- push an item on the stack           *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Parameters                                           *
+
+[_Code_]  *      item -- item to put in the stack                *
+
+[_Code_]  ********************************************************/
+
+[_Code_] inline void b_stack::push(const int item) throw(bound_err)
+
+[_Code_] {
+
+[_Code_]     if (count >= STACK_SIZE) {
+
+[_Code_]         bound_err overflow("Push overflows stack");
+
+[_Code_]         throw overflow;
+
+[_Code_]     }
+
+[_Code_]     stack::push(item);
+
+[_Code_] }
+
+[_Code_] /********************************************************
+
+[_Code_]  * b_stack::pop -- get an item off the stack            *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Returns                                              *
+
+[_Code_]  *      the top item from the stack                     *
+
+[_Code_]  ********************************************************/
+
+[_Code_] inline int b_stack::pop(void) throw(bound_err)
+
+[_Code_] {
+
+[_Code_]     if (count <= 0) {
+
+[_Code_]         throw bound_err("Pop causes stack underflow");
+
+[_Code_]     }
+
+[_Code_]     return (stack::pop());
+
+[_Code_] }
+
+[_Code_]
+[_Code_] b_stack test_stack;     // Define a stack for the bounds checking
+
+[_Code_]
+[_Code_] void push_a_lot(void) {
+
+[_Code_]    int i;       // Push counter
+
+[_Code_]
+[_Code_]     for (i = 0; i < 5000; i++) {
+
+[_Code_]         test_stack.push(i);
+
+[_Code_]     }
+
+[_Code_] }
+
+[_Code_]
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     try {
+
+[_Code_]        push_a_lot();
+
+[_Code_]     }
+
+[_Code_]     catch (bound_err &err) {
+
+[_Code_]        cerr << "Error: Bounds exceeded\n";
+
+[_Code_]        cerr << "Reason: " << err.what << '\n';
+
+[_Code_]        exit (8);
+
+[_Code_]     }
+
+[_Code_]     catch (...) {
+
+[_Code_]        cerr << "Error: Unexpected exception occurred\n";
+
+[_Code_]        exit (8);
+
+[_Code_]     }
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+[_Code_]
+
+[_A_]  Runtime Library Exceptions
+
+The exception-handling mechanism is relatively new. The draft
+ANSI C++ standard defines the exceptions that should be thrown by
+the routines in the runtime library. However, these "standard"
+exceptions are so new they are still being refined and updated.
+There are lots of details still to be worked out.
+
+Compiler makers need time to catch up to the standard. At the time
+of this writing, the currently available C++ compilers generate few if
+any exceptions in their runtime library, and none generates
+"standard" exceptions. This situation will change as the ANSI
+standard gets better defined and compilers improve. About the best
+advice I can give you is to read your compiler's reference manual
+and watch out!
+
+[_A_]  Programming Exercises
+
+Exercise 22-1: Add code to the queue class of Exercise 13-3 that will trigger an
+exception when too many items are put in the queue.
+
+Exercise 22-2: Take the fraction class from Exercise 18-3 and add code to generate
+an exception when a divide by zero occurs. Also add code to generate an excep-
+tion when a bad number is read.
+
+Exercise 22-3: Update the checkbook class of Exercise 13-2 so it generates an
+exception when your balance goes below zero.
+
+Exercise 22-4: Write a function count_letter that takes a single character. This
+function will count the number of consonants and vowels. If a nonletter is given
+to the function, it generates an exception.

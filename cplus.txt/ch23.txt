@@ -1,0 +1,1436 @@
+Chapter 23Part V: Other Language Features
+
+In This Chapter:
+
+*  [_XREF Modules_]
+
+*  [_XREF Public and Private_]
+
+*  [_XREF The extern Modifier_]
+
+*  [_XREF Headers_]
+
+*  [_XREF The Body of the
+Module_]
+
+*  [_XREF A Program to Use
+Infinite Arrays_]
+
+*  [_XREF The Makefile for
+Multiple Files_]
+
+*  [_XREF Using the Infinite
+Array_]
+
+23	
+
+23: Modular Programming
+
+Many hands make light work.
+
+---John Heywood
+
+So far, we have been dealing with small programs. As programs
+grow larger and larger, they should be split into sections, or
+modules. C++ allows programs to be split into multiple files,
+compiled separately, and then combined (linked) to form a single
+program.
+
+In this chapter, we go through a programming example, discussing
+the C++ techniques needed to create good modules. You also are
+shown how to use make to put these modules together to form a
+program.
+
+[_A_]  Modules
+
+A module is a collection of functions or classes that perform related
+functions. For example, there could be a module to handle database
+functions such as lookup, enter, and sort. Another module could
+handle complex numbers, and so on.
+
+Also, as programming problems get big, more and more
+programmers are needed to finish them. An efficient way of splitting
+up a large project is to assign each programmer a different module.
+That way each programmer only has to worry about the internal
+details of his or her own code.
+
+In this chapter, we discuss a module to handle infinite arrays. The
+functions in this package allow the user to store data into an array
+without worrying about its size. The infinite array grows as needed
+(limited only by the amount of memory in the computer). The
+infinite array will be used to store data for a histogram but can also
+be used to store things such as line numbers from a cross reference
+program or other types of data.
+
+[_A_]  Public and Private
+
+Modules are divided into two parts, public and private. The public
+part tells the user how to call the functions in the module and
+contains the definitions of data structures and functions that are to
+be used from outside the module. The public definitions are put in
+a header file, which is included in the user' program. In the infinite
+array example, we have put the public declarations in the file ia.h
+(see listing on [_XREF page 418_]).
+
+Anything internal to the module is private. Everything that is not
+directly usable by the outside world should be kept private.
+
+[_A_]  The extern Modifier
+
+The extern modifier is used to indicate that a variable or function is
+defined outside the current file but is used in this file. Example 23-1
+illustrates a simple use of the extern modifier.
+
+Example 23-1
+
+. main.cc and count.cc
+
+[_Code_] File: main.cc
+
+[_Code_] #include <iostream.h>
+
+[_Code_] /* Number of times through the loop */
+
+[_Code_] extern int counter;
+
+[_Code_]
+[_Code_] /* Routine to increment the counter */
+
+[_Code_] extern void inc_counter(void);
+
+[_Code_]
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     int   index; /* Loop index */
+
+[_Code_]
+[_Code_]     for (index = 0; index < 10; ++index)
+
+[_Code_]         inc_counter();
+
+[_Code_]     cout << "Counter is " << counter << '\n';
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+[_Code_] File: count.cc
+
+[_Code_] /* Number of times through the loop */
+
+[_Code_] int counter = 0;
+
+[_Code_]
+[_Code_] /* Trivial example */
+
+[_Code_] void inc_counter()
+
+[_Code_] {
+
+[_Code_]     ++counter;
+
+[_Code_] }
+
+The function main uses the variable counter. Because counter is
+not defined in main, it is defined in the file counter.cc. The extern
+declaration is used by main.cc to indicate that counter is declared
+somewhere else, in this case the file counter.cc. The modifier
+extern is not used in this file, because this is the "real" declaration
+of the variable.
+
+Actually, three modifiers can be used to indicate the files in which a
+variable is defined, as shown in [_XREF Table 23-1_].
+
+Table 23-1
+
+. Modifiers
+
+Modifier
+
+Meaning
+
+extern
+
+Variable/function is defined in another file.
+
+<blank>
+
+Variable/function is defined in this file (public) and can be used in other files.
+
+static
+
+Variable/function is local to this file (private).
+
+Notice that the keyword static has two meanings. (It is the most
+overworked modifier in the C++ language. For a complete list of the
+meanings of static see Table 14-1.) For data defined globally,
+static means "private to this file." For data defined inside a
+function, it means "variable is allocated from static memory (instead
+of the temporary stack)."
+
+C++ is very liberal in its use of the rules for static, extern, and
+<blank> modifiers. It is possible to declare a variable as extern at
+the beginning of a program and later define it as <blank>.
+
+[_Code_] extern sam;
+
+[_Code_] int sam = 1;    // This is legal
+
+This ability is useful when you have all your external variables
+defined in a header file. The program includes the header file (and
+defines the variables as extern), and then defines the variable for
+real.
+
+Another problem concerns declaring a variable in two different files.
+
+[_Code_] File:  main.cc
+
+[_Code_]
+
+[_Code_] int     flag  = 0;      // Flag is off
+
+[_Code_]
+
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     cout << "Flag is " << flag << '\n';
+
+[_Code_] }
+
+File:  sub.cc
+
+[_Code_]
+
+[_Code_] int     flag = 1;       // Flag is on
+
+What happens in this case? There are several possibilities:
+
+*  flag could be initialized to 0 because main.cc is loaded first.
+
+*  flag could be initialized to 1 because the entry in sub.cc
+overwrites the one in main.cc.
+
+*  The compiler could very carefully analyze both programs, and
+then pick out the value that is most likely to be wrong.
+
+In this case, there is only one global variable called flag. It will be
+initialized to either 1 or 0 depending on the whims of the compiler.
+It is entirely possible for the program main to print out:
+
+[_Code_] flag is 1
+
+even though we initialized it to zero. To avoid the problem of
+hidden initializations, use the keyword static to limit the scope of
+variables to the file in which they are declared.
+
+If we had written:
+
+File:  main.cc
+
+[_Code_]
+
+[_Code_] static int      flag  = 0;      // Flag is off
+
+[_Code_]
+
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]         cout << "Flag is " << flag << '\n';
+
+[_Code_] }
+
+File:  sub.cc
+
+[_Code_]
+
+[_Code_] static int      flag = 1;       // Flag is on
+
+then flag in main.cc is an entirely different variable from flag in
+sub.cc. However, you should still give the variables different names
+to avoid confusion.
+
+[_A_]  Headers
+
+Information that is shared between modules should be put in a
+header file. By convention, all header filenames end with ".h". In
+the infinite array example, we use the file ia.h.
+
+The header should contain all the public information, such as:
+
+*  A comment section describing clearly what the module does and
+what is available to the user
+
+*  Public class definitions
+
+*  Common constants
+
+*  Public structures
+
+*  Prototypes of all the public functions
+
+*  extern declarations for public variables
+
+In the infinite array example, more than half the file ia.h is devoted
+to comments. This commenting is not excessive; the real guts of the
+coding is hidden in the program file ia.cc. The ia.h file serves both
+as a program file and as documentation to the outside world.
+
+Notice that there is no mention in the ia.h comments about how the
+infinite array is implemented. At this level, we don't care how
+something is done, just what functions are available.
+
+Example 23-2
+
+. ia/ia.h
+
+[_Code_] /********************************************************
+
+[_Code_]  * Definitions for the infinite array (ia) class        *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * An infinite array is an array whose size can grow    *
+
+[_Code_]  * as needed.  Adding more elements to the array        *
+
+[_Code_]  * will just cause it to grow.                          *
+
+[_Code_]  *------------------------------------------------------*
+
+[_Code_]  * class infinite_array                                 *
+
+[_Code_]  *    Member functions                                  *
+
+[_Code_]  *      infinite_array(void)  -- default constructor    *
+
+[_Code_]  *      ~infinite_array(void) -- destructor             *
+
+[_Code_]  *      int &operator [](int index)                     *
+
+[_Code_]  *              gets an element of the infinite array   *
+
+[_Code_]  ********************************************************/
+
+[_Code_]
+[_Code_] // Number of elements to store in each cell of the infinite array
+
+[_Code_] const unsigned int BLOCK_SIZE = 100;
+
+[_Code_]
+
+[_Code_] class infinite_array {
+
+[_Code_]     private:
+
+[_Code_]         // The data for this block
+
+[_Code_]         int   data[BLOCK_SIZE];
+
+[_Code_]
+[_Code_]         // Pointer to the next array
+
+[_Code_]         class infinite_array *next;
+
+[_Code_]     public:
+
+[_Code_]         // Default constructor
+
+[_Code_]         infinite_array(void)
+
+[_Code_]         {
+
+[_Code_]             next = NULL;
+
+[_Code_]             memset(data, '\0', sizeof(data));
+
+[_Code_]         }
+
+[_Code_]
+[_Code_]         // Default destructor
+
+[_Code_]         ~infinite_array(void);
+
+[_Code_]
+[_Code_]         // Return a reference to an element of the array
+
+[_Code_]         int &operator[] (const unsigned int index);
+
+[_Code_] };
+
+A few things should be noted about this file. Everything in the file is
+a constant definition, a data structure definition, or an external
+definition. Any code that is defined is inline. No actual code or
+storage is defined in the header file.
+
+[_A_]  The Body of the Module
+
+The body of the module contains all the functions and data for that
+module. Private functions that are not to be called from outside the
+module should be declared static. Variables declared outside of a
+function that are not used outside the module are declared static.
+
+[_A_]  A Program to Use Infinite Arrays
+
+The infinite array module (ia.cc) is shown in Figure 23-1. The
+program uses a simple linked list to store the elements of the array.
+A linked list can grow longer as needed (until you run out of
+memory). Each list element, or bucket, can store 100 numbers. To
+find element 308, the program starts at the beginning, skips past the
+first three buckets, and then extracts element 8 from the data in the
+current bucket.
+
+Figure 23-1
+
+. Infinite array structure
+
+[_XREF Example 23-3_] contains the code for module ia.cc.
+
+Example 23-3
+
+. ia/ia.cc
+
+[_Code_] /********************************************************
+
+[_Code_]  * infinite-array -- routines to handle infinite arrays *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * An infinite array is an array that grows as needed.  *
+
+[_Code_]  * There is no index too large for an infinite array    *
+
+[_Code_]  * (unless you run out of memory).                       *
+
+[_Code_]  ********************************************************/
+
+[_Code_] #include <iostream.h>
+
+[_Code_] #include <stdlib.h>
+
+[_Code_] #include <string.h>
+
+[_Code_]
+[_Code_] #include "ia.h"                 // Get common definitions
+
+[_Code_]
+[_Code_] /********************************************************
+
+[_Code_]  * operator [] -- find an element of an infinite array  *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Parameters                                           *
+
+[_Code_]  *      index  -- index into the array                  *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Returns                                              *
+
+[_Code_]  *      reference to the element in the array           *
+
+[_Code_]  ********************************************************/
+
+[_Code_] int &infinite_array::operator [] (const unsigned int index)
+
+[_Code_] {
+
+[_Code_]     // Pointer to the current bucket
+
+[_Code_]     class infinite_array *current_ptr;
+
+[_Code_]
+[_Code_]     int current_index;  // Index we are working with
+
+[_Code_]
+[_Code_]     current_ptr = this;
+
+[_Code_]     current_index = index;
+
+[_Code_]
+[_Code_]     while (current_index >= BLOCK_SIZE) {
+
+[_Code_]         if (current_ptr->next == NULL) {
+
+[_Code_]             current_ptr->next = new infinite_array;
+
+[_Code_]             if (current_ptr->next == NULL) {
+
+[_Code_]                 cerr << "Error: Out of memory\n";
+
+[_Code_]                 exit(8);
+
+[_Code_]             }
+
+[_Code_]         }
+
+[_Code_]         current_ptr = current_ptr->next;
+
+[_Code_]         current_index -= BLOCK_SIZE;
+
+[_Code_]     }
+
+[_Code_]     return (current_ptr->data[current_index]);
+
+[_Code_] }
+
+[_Code_]
+[_Code_] /********************************************************
+
+[_Code_]  * ~infinite_array -- destroy the infinite array        *
+
+[_Code_]  ********************************************************/
+
+[_Code_] infinite_array::~infinite_array(void)
+
+[_Code_] {
+
+[_Code_]     /*
+
+[_Code_]      * Note: We use a cute trick here.
+
+[_Code_]      *
+
+[_Code_]      * Because each bucket in the infinite array is
+
+[_Code_]      * an infinite array itself, when we destroy
+
+[_Code_]      * next, it will destroy all that bucket's "next"s
+
+[_Code_]      * and so on recursively clearing the entire array.
+
+[_Code_]      */
+
+[_Code_]     if (next != NULL) {
+
+[_Code_]        delete next;
+
+[_Code_]        next = NULL;
+
+[_Code_]     }
+
+[_Code_] }
+
+[_A_]  The Makefile for Multiple Files
+
+The utility make is designed to aid the programmer in compiling
+and linking programs. Before make, the user had to explicitly type
+compile commands each time there was a change in the program:
+
+[_Code_] g++ -Wall -g -ohello hello.cc
+
+[_NOTE_]  In this chapter we use the commands for the GNU
+g++ compiler. The C++ compiler on your system may have a
+different name and a slightly different syntax.
+
+As programs grow, the number of commands needed to create them
+grows. Typing in a series of 10 or 20 commands is tiresome and
+error-prone, so programmers started writing shell scripts (or, in MS-
+DOS,.BAT files). Then all the programmer had to type was do-it
+and the computer would compile everything. This was overkill,
+however, because all the files were recompiled regardless of need.
+
+As the number of files in a project grew, this recompiling became a
+significant problem. Changing one small file, starting the
+compilation, and then having to wait until the next day while the
+computer executed several hundred compile commands was
+frustrating-especially when only one compile was really needed.
+
+The program make was created to do intelligent compiles. Its
+purpose is to first decide what commands need to be executed and
+then execute them.
+
+The file Makefile (upper/lowercase is important in UNIX) contains
+the rules used by make to decide how to build the program. The
+Makefile contains the following sections:
+
+*  Comments
+
+*  Macros
+
+*  Explicit rules
+
+*  Default rules
+
+Any line beginning with a # is a comment.
+
+A macro has the format:
+
+[_Code_] name = data
+
+Name is any valid identifier. Data is the text that will be substituted
+whenever make sees $(name).
+
+Example:
+
+[_Code_] #
+
+[_Code_] # Very simple Makefile
+
+[_Code_] #
+
+[_Code_] MACRO = Doing All
+
+[_Code_]
+
+[_Code_] all:
+
+[_Code_]         echo $(MACRO)
+
+Explicit rules tell make what commands are needed to create the
+program. These rules can take several forms. The most common is:
+
+[_Code_] target: source [source2] [source3]
+
+[_Code_]         command
+
+[_Code_]         [command]
+
+[_Code_]         [command]
+
+[_Code_]       . . .
+
+Target is the name of a file to create. It is "made," or created, out of
+the source file source. If the target is created out of several files,
+they are all listed.
+
+The command used to create the target is listed on the next line.
+Sometimes it takes more than one command to create the target.
+Commands are listed one per line. Each is indented by a tab.
+
+For example, the rule:
+
+[_Code_] hello: hello.cc
+
+[_Code_]         g++ -Wall -g -o hello hello.cc
+
+tells make to create the file hello from the file hello.cc using the
+command:
+
+[_Code_] g++ -Wall -g -o hello hello.cc
+
+Make will create hello only if necessary. The files used in the
+creation of hello, arranged in chronological order (by modification
+times), are shown in Table 23-2.
+
+Table 23-2
+
+. File Modification Times
+
+UNIX
+
+MS-DOS/Windows
+
+Modification Time
+
+hello.cc
+
+HELLO.CPP
+
+Oldest
+
+hello.o
+
+HELLO.OBJ
+
+Old
+
+hello
+
+HELLO.EXE
+
+Newest
+
+If the programmer changes the source file hello.cc, the file's
+modification time will be out of date with respect to the other files.
+make will sense this and re-create the other files.
+
+Another form of the explicit rule is:
+
+[_Code_] source:
+
+[_Code_]         command
+
+[_Code_]         [command]
+
+In this case, the commands are executed each time make is run,
+unconditionally.
+
+If the commands are omitted from an explicit rule, make uses a set
+of built-in rules to determine what command to execute.
+
+For example, the rule:
+
+[_Code_] hist.o: ia.h hist.cc
+
+tells make to create hist.o from hist.cc and ia.h, using the standard
+rule for making <file>.o from <file>.cc. This rule is:
+
+[_Code_] g++ $(CFLAGS) -c file.cc
+
+(make predefines the macro $(CFLAGS).)
+
+We are going to create a main program hist.cc that calls the module
+ia.cc. Both files include the header ia.h, so they depend on it. The
+UNIX Makefile that creates the program hist from hist.cc and ia.cc is
+listed in [_XREF Example 23-4_].
+
+Example 23-4
+
+. ia/Makefile
+
+[_Code_] # Make file needs debugging
+
+[_Code_] CFLAGS = -g -Wall
+
+[_Code_] SRC = ia.cc hist.cc
+
+[_Code_] OBJ = ia.o  hist.o
+
+[_Code_]
+[_Code_] all: hist
+
+[_Code_]
+
+[_Code_] hist: $(OBJ)
+
+[_Code_]         g++ $(CFLAGS) -o hist $(OBJ)
+
+[_Code_]
+[_Code_] hist.o:ia.h hist.cc
+
+[_Code_]         g++ $(CFLAGS) -c hist.cc
+
+[_Code_]
+[_Code_] ia.o:ia.h ia.cc
+
+[_Code_]         g++ $(CFLAGS) -c ia.cc
+
+[_Code_]
+[_Code_] clean:
+
+[_Code_]         rm hist io.o hist.o
+
+The macro SRC is a list of all the C++ files. OBJ is a list of all the
+object (.o) files. The lines:
+
+[_Code_] hist: $(OBJ)
+
+[_Code_]         g++ $(CFLAGS) -o hist $(OBJ)
+
+tell make to create hist from the object files. If any of the object files
+are out of date, make will re-create them.
+
+The line:
+
+[_Code_] hist.o:ia.h
+
+tells make to create hist.o from ia.h and hist.cc (hist.cc is implied).
+Because no command is specified, the default is used.
+
+[_XREF Example 23-5_] shows the Makefile for MS-DOS/Windows,
+using Turbo-C++.
+
+Example 23-5
+
+. ia/Makefile.dos
+
+[_Code_] #
+
+[_Code_] # Makefile for Borland's Turbo-C++ compiler
+
+[_Code_] #
+
+[_Code_] CC =tcc
+
+[_Code_] #
+
+[_Code_] # Flags
+
+[_Code_] #       -N  -- Check for stack overflow
+
+[_Code_] #       -v  -- Enable debugging
+
+[_Code_] #       -w  -- Turn on all warnings
+
+[_Code_] #       -ml -- Large model
+
+[_Code_] #       -A  -- Force ANSI compliance
+
+[_Code_] #
+
+[_Code_] CFLAGS = -N -v -w -ml -A
+
+[_Code_] #
+
+[_Code_] SRCS = hist.c ia.c
+
+[_Code_] OBJS = hist.obj ia.obj
+
+[_Code_]
+[_Code_] ia: $(OBJS)
+
+[_Code_]         $(CC) $(CFLAGS) -oia.exe $(OBJS)
+
+[_Code_]
+
+[_Code_] hist.obj: hist.cpp ia.h
+
+[_Code_]         $(CC) $(CFLAGS) -c hist.cpp
+
+[_Code_]
+
+[_Code_] ia.obj: ia.c ia.h
+
+[_Code_]         $(CC) $(CFLAGS) -c ia.cpp
+
+This file is similar to the UNIX Makefile except that Turbo-C++ make
+does not provide any default rules.
+
+There is one big drawback with make. It only checks to see whether
+the files have changed, not the rules. If you have compiled all your
+program with CFLAGS=-g for debugging and need to produce the
+production version (CFLAGS = -O), make will not recompile.
+
+The command touch changes the modification date of a file. (It
+doesn't change the file, it just makes the operating system think it
+did.) If you touch a source file such as hello.cc and then run make,
+the program will be re-created. This is useful if you have changed
+the compile-time flags and want to force a re-compilation.
+
+Make provides a rich set of commands for creating programs. Only
+a few have been discussed here.
+
+[_A_]  Using the Infinite Array
+
+The histogram program (hist) is designed to use the infinite array
+package. It takes one file as its argument. The file contains a list of
+numbers between 0 and 99. Any number of entries may be used.
+The program prints a histogram showing how many times each
+number appears. (A histogram is a graphic representation of the
+frequency of data.)
+
+This file contains a number of interesting programming techniques.
+
+The first one is: Let the computer do the work whenever possible.
+For example, don't program like this:
+
+[_Code_] const int LENGTH_X = 300;    // Width of the box in dots
+
+[_Code_] const int LENGTH_Y = 400;    // Height of the box in dots
+
+[_Code_] const int AREA = 12000;      // Total box area in dots
+
+In this case, the programmer has decided to multiply 300 x 400 to
+compute the area. He would be better served by letting the
+computer do the multiplying:
+
+[_Code_] const int LENGTH_X = 300;    // Width of the box in dots
+
+[_Code_] const int LENGTH_Y = 400;    // Height of the box in dots
+
+[_Code_]
+
+[_Code_] const int AREA = (LENGTH_X * LENGTH_Y);  // Total box area in dots
+
+That way, if either LENGTH_X or LENGTH_Y is changed, AREA changes
+automatically. Also, the computer is more accurate in its
+computations. (If you noticed, the programmer made an error: his
+AREA is too small by a factor of 10.)
+
+In the histogram program, the number of data points in each output
+line is computed by the definition:
+
+[_Code_] const float FACTOR =
+
+[_Code_]   ((HIGH_BOUND - LOW_BOUND) / (float)(NUMBER_OF_LINES));
+
+The user should be helped whenever possible. In the hist
+program, if the user does not type the correct number of parameters
+on the command line, a message appears telling what is wrong and
+how to correct it.
+
+The program uses the library routine memset to initialize the
+counters array. This routine is highly efficient for setting all values
+of an array to zero. The line:
+
+[_Code_] memset(counters, '\0', sizeof(counters));
+
+zeros the entire array counters. sizeof(counters) makes sure
+that all the array is zeroed. [_XREF Example 23-6_] contains a
+program that uses the infinite array for storing data used to produce
+a histogram.
+
+Example 23-6
+
+. ia/hist.cc
+
+[_Code_] File: hist.cc
+
+[_Code_] /********************************************************
+
+[_Code_]  * hist -- generate a histogram of an array of numbers  *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Usage                                                *
+
+[_Code_]  *      hist <file>                                     *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Where                                                *
+
+[_Code_]  *      file is the name of the file to work on         *
+
+[_Code_]  ********************************************************/
+
+[_Code_] #include <iostream.h>
+
+[_Code_] #include <fstream.h>
+
+[_Code_] #include <iomanip.h>
+
+[_Code_]
+[_Code_] #include <stdlib.h>
+
+[_Code_] #include <string.h>
+
+[_Code_]
+[_Code_] #include "ia.h"
+
+[_Code_]
+[_Code_] /*
+
+[_Code_]  * The following definitions define the histogram
+
+[_Code_]  */
+
+[_Code_] const int NUMBER_OF_LINES = 50; // # lines in the result
+
+[_Code_] const int LOW_BOUND       = 0;  // Lowest number we record
+
+[_Code_] const int HIGH_BOUND      = 99; // Highest number we record
+
+[_Code_] /*
+
+[_Code_]  * if we have NUMBER_OF_LINES data to
+
+[_Code_]  * output then each item must use
+
+[_Code_]  * the following factor
+
+[_Code_]  */
+
+[_Code_] const float FACTOR =
+
+[_Code_]   ((HIGH_BOUND - LOW_BOUND) / (float)(NUMBER_OF_LINES);
+
+[_Code_]
+[_Code_] // Number of characters wide to make the histogram
+
+[_Code_] const int WIDTH = 60;
+
+[_Code_]
+[_Code_] // Array to store the data in
+
+[_Code_] static infinite_array data_array;
+
+[_Code_] // Number of items in the array
+
+[_Code_] static int data_items;
+
+[_Code_]
+[_Code_] main(int argc, char *argv[])
+
+[_Code_] {
+
+[_Code_]     void  read_data(char *name);// Get the data into the array
+
+[_Code_]     void  print_histogram(void);// Print the data
+
+[_Code_]
+[_Code_]     if (argc != 2) {
+
+[_Code_]         cerr << "Error: Wrong number of arguments\n";
+
+[_Code_]         cerr << "Usage is:\n";
+
+[_Code_]         cerr << "  hist <data-file>\n";
+
+[_Code_]         exit(8);
+
+[_Code_]     }
+
+[_Code_]     data_items = 0;
+
+[_Code_]
+[_Code_]     read_data(argv[1]);
+
+[_Code_]     print_histogram();
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+[_Code_] /********************************************************
+
+[_Code_]  * read_data -- read data from the input file into      *
+
+[_Code_]  *              the data array                          *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Parameters                                           *
+
+[_Code_]  *      name -- the name of the file to read            *
+
+[_Code_]  ********************************************************/
+
+[_Code_] void  read_data(char *name)
+
+[_Code_] {
+
+[_Code_]     ifstream in_file(name); // Input file
+
+[_Code_]     int data;               // Data from input
+
+[_Code_]
+[_Code_]     if (in_file.bad()) {
+
+[_Code_]         cerr << "Error: Unable to open " << name << '\n';
+
+[_Code_]         exit(8);
+
+[_Code_]     }
+
+[_Code_]     while (!in_file.eof()) {
+
+[_Code_]         in_file >> data;
+
+[_Code_]
+[_Code_]         // If we get an eof we ran out of data in last read
+
+[_Code_]         if (in_file.eof())
+
+[_Code_]            break;
+
+[_Code_]
+[_Code_]         data_array[data_items] = data;
+
+[_Code_]         ++data_items;
+
+[_Code_]     }
+
+[_Code_] }
+
+[_Code_] /********************************************************
+
+[_Code_]  * print_histogram -- print the histogram output        *
+
+[_Code_]  ********************************************************/
+
+[_Code_] void  print_histogram(void)
+
+[_Code_] {
+
+[_Code_]     // Upper bound for printout
+
+[_Code_]     int   counters[NUMBER_OF_LINES];
+
+[_Code_]     int low;            // Lower bound for printout
+
+[_Code_]     int   out_of_range = 0;// Number of items out of bounds
+
+[_Code_]     int   max_count = 0;// Biggest counter
+
+[_Code_]     float scale;        // Scale for outputting dots
+
+[_Code_]     int   index;        // Index into the data
+
+[_Code_]
+[_Code_]     memset(counters, '\0', sizeof(counters));
+
+[_Code_]
+[_Code_]     for (index = 0; index < data_items; ++index) {
+
+[_Code_]         int data; // Data for this point
+
+[_Code_]
+[_Code_]         data = data_array[index];
+
+[_Code_]
+[_Code_]         if ((data < LOW_BOUND) || (data > HIGH_BOUND))
+
+[_Code_]             ++out_of_range;
+
+[_Code_]         else {
+
+[_Code_]             // Index into counters array
+
+[_Code_]             int   count_index;
+
+[_Code_]
+[_Code_]             count_index = int (float(data - LOW_BOUND) / FACTOR);
+
+[_Code_]
+[_Code_]             ++counters[count_index];
+
+[_Code_]             if (counters[count_index] > max_count)
+
+[_Code_]                 max_count = counters[count_index];
+
+[_Code_]         }
+
+[_Code_]     }
+
+[_Code_]
+[_Code_]     scale = float(max_count) / float(WIDTH);
+
+[_Code_]
+[_Code_]     low = LOW_BOUND;
+
+[_Code_]
+[_Code_]     for (index = 0; index < NUMBER_OF_LINES; ++index) {
+
+[_Code_]         // Index for outputting the dots
+
+[_Code_]         int   char_index;
+
+[_Code_]         int   number_of_dots;   // Number of * to output
+
+[_Code_]
+[_Code_]         cout << setw(2) << index << ' ' <<
+
+[_Code_]                 setw(3) << low << "-" <<
+
+[_Code_]                 setw(3) << low + FACTOR - 1 << " (" <<
+
+[_Code_]                 setw(4) << counters[index] << "): ";
+
+[_Code_]
+[_Code_]         number_of_dots = int(float(counters[index]) / scale);
+
+[_Code_]         for (char_index = 0; char_index < number_of_dots;
+
+[_Code_]              ++char_index)
+
+[_Code_]             cout << '*';
+
+[_Code_]         cout << '\n';
+
+[_Code_]         low += FACTOR;
+
+[_Code_]     }
+
+[_Code_]     cout << out_of_range << " items out of range\n";
+
+[_Code_] }
+
+A sample run of this program produces:
+
+ %   hist   test
+
+ 0:  0-  2 ( 100): ************************
+
+ 1:  2-  4 ( 200): ************************************************
+
+ 2:  4-  6 ( 100): ************************
+
+ 3:  6-  8 ( 100): ************************
+
+ 4:  8- 10 (   0):
+
+ 5: 10- 12 ( 100): ************************
+
+ 6: 12- 14 (  50): ************
+
+ 7: 14- 16 ( 150): ************************************
+
+ 8: 16- 18 (  50): ************
+
+ 9: 18- 20 (  50): ************
+
+10: 20- 22 ( 100): ************************
+
+11: 22- 24 ( 100): ************************
+
+12: 24- 26 (  50): ************
+
+13: 26- 28 ( 100): ************************
+
+14: 28- 30 (  50): ************
+
+15: 30- 32 ( 100): ************************
+
+16: 32- 34 (  50): ************
+
+17: 34- 36 (   0):
+
+18: 36- 38 ( 100): ************************
+
+19: 38- 40 (   1):
+
+20: 40- 42 ( 150): ************************************
+
+21: 42- 44 (  50): ************
+
+22: 44- 46 ( 250): ************************************************************
+
+23: 46- 48 ( 100): ************************
+
+24: 48- 51 ( 150): ************************************
+
+25: 51- 53 ( 100): ************************
+
+26: 53- 55 (  50): ************
+
+27: 55- 57 ( 200): ************************************************
+
+28: 57- 59 (  50): ************
+
+29: 59- 61 (  50): ************
+
+30: 61- 63 (  50): ************
+
+31: 63- 65 ( 150): ************************************
+
+32: 65- 67 ( 100): ************************
+
+33: 67- 69 (   0):
+
+34: 69- 71 ( 199): ***********************************************
+
+35: 71- 73 ( 200): ************************************************
+
+36: 73- 75 ( 100): ************************
+
+37: 75- 77 (  50): ************
+
+38: 77- 79 ( 100): ************************
+
+39: 79- 81 ( 100): ************************
+
+40: 81- 83 ( 200): ************************************************
+
+41: 83- 85 ( 100): ************************
+
+42: 85- 87 (   0):
+
+43: 87- 89 (   0):
+
+44: 89- 91 (  50): ************
+
+45: 91- 93 ( 150): ************************************
+
+46: 93- 95 ( 100): ************************
+
+47: 95- 97 (  50): ************
+
+48: 97- 99 ( 100): ************************
+
+49: 99-101 (   0):
+
+500 items out of range
+
+[_A_]  Dividing a Task into Modules
+
+Unfortunately, computer programming is more of an art than a
+science. There are no hard and fast rules that tell you how to divide
+a task into modules. Knowing what makes a good module and what
+doesn't comes with experience and practice.
+
+This section describes some general rules for module division and
+how they can be applied to real-world programs. The techniques
+described here have worked well for me. You should use whatever
+works for you.
+
+Information is a vital part of any program. The key to a program is
+your decision about what information you want to use and what
+processing you want to perform on it. Be sure to analyze the
+information flow before you begin the design.
+
+Design the modules to minimize the amount of information that has
+to pass between them. If you look at the organization of the Army,
+you'll see that it is divided up into modules. There is the infantry,
+artillery, tank corps, and so on. The amount of information that
+passes between these modules is minimized. For example, if an
+infantry sergeant wants the artillery to bombard an enemy position,
+he calls up artillery command and says, "There's a pillbox at
+location Y-94. Get rid of it." The artillery command handles all the
+details of deciding which battery to use, how much firepower to
+allocate based on the requirements of other fire missions,
+maintaining supplies, and many more details.
+
+Programs should be organized the same way. Information that can
+be kept inside a module should be. Minimizing the amount of
+intermodule communication cuts down on communication errors as
+well as limiting maintenance problems that occur when a module is
+upgraded.
+
+[_A_]  Module Division Example: Text Editor
+
+You are already familiar with using a text editor. It is a program that
+allows the user to display and change text files. The main piece of
+information is the text file we are editing. Most editors are display
+oriented and continually display about 24 lines of the current file on
+the screen.
+
+Finally, one more piece of information is needed: the editing
+commands. The commands are typed in by the user. This
+information must be parsed so the computer can understand it.
+Then it can be executed. The individual commands are small and
+perform similar functions (delete line is very much like
+delete character). Imposing a standard structure on the
+command execution modules improves readability and reliability. A
+block diagram of the editor can be seen in Figure 23-2.
+
+Figure 23-2.
+
+. Module division of the text editor
+
+There is minimal communication between the modules. The display
+section needs to know only two things: 1) where the cursor is and
+2) what the file currently looks like. All the file module needs to do
+is read the file, write the file, and keep track of changes. Even the
+way the changes are made can be minimized. All editing
+commands, no matter how complex, can be broken down into a
+series of inserts and deletes. It is the responsibility of the command
+module to take the complex user commands and turn them into
+simple inserts and deletes that the file handler can process.
+Information passing between the modules is minimal. No
+information passes between the command decoder and the display
+module.
+
+A word processor is just a fancy text editor. Where a simple editor
+only has to worry about ASCII characters (one font, one size), a
+word processor must be able to handle many different sizes and
+shapes.
+
+[_A_]  Compiler Construction
+
+In a compiler, the information being processed is C++ code. The job
+of the compiler is to transform that information from C++ source to
+machine-dependent object code. There are several stages in this
+process. First the code is run through the preprocessor to expand
+macros, take care of conditional compilation, and read include files.
+Next the processed file is passed to the first stage of the compiler,
+the lexical analyzer.
+
+The lexical analyzer takes as its input a stream of characters and
+returns a series of tokens. A token is a computer-science term
+meaning word or operator. For example, let's look at the English
+command:
+
+[_Code_] Open the door.
+
+There are 14 characters in this command. Lexical analysis would
+turn this into three words and a period. These tokens are then
+passed to the parser where they are assembled into sentences. At
+this stage a symbol table is started so that the parser can have some
+idea what variables are being used by the program.
+
+Now the compiler knows what the program is supposed to do. The
+optimizer looks at the instructions and tries to figure out how to
+make them more efficient. This step is optional and is omitted
+unless the -O flag is specified on the command line.
+
+The code generator turns the high-level statements into machine-
+specific assembly code. In assembly language, each assembly-
+language statement corresponds to one machine instruction. The
+assembler turns assembly language into binary code that can be
+executed by the machine. The general information flow of a
+compiler is diagrammed in [_XREF Figure 23-3_].
+
+Figure 23-3
+
+. Compiler modules
+
+Lexical analysis and parsing are very common and used in a wide
+variety of programs. The utility lex can generate the lexical analyzer
+module for a program, given a description of the tokens used by
+the program. Another utility, yacc, can generate the parser module.
+These programs are described in the book lex & yacc (O'Reilly &
+Associates).
+
+[_A_]  Spreadsheet
+
+A simple spreadsheet takes a matrix of numbers and equations and
+displays the results on screen. The information managed by this
+program is the equations and the data.
+
+The core of a spreadsheet is the equations. To change the equations
+into numbers, we need to go through lexical analysis and parsing,
+just like a compiler. But unlike a compiler, we don't generate
+machine code. Instead, we interpret the equations and compute the
+results.
+
+Results are passed off to the display manager, which puts them on
+the screen. Add to this an input module that allows the user to edit
+and change the equations, and you have a spreadsheet, as shown in
+[_XREF Figure 23-4_].
+
+Figure 23-4
+
+. Spreadsheet layout
+
+[_A_]  Module Design Guidelines
+
+Although there are no hard and fast rules when it comes to laying
+out the modules for a program, here are some general guidelines.
+
+*  The number of public functions in a module should be small.
+
+*  The information passed between modules should be small.
+
+*  All the functions in a module should perform related jobs.
+
+*  Modules should contain no more than 1,500 lines. With more
+lines, they become difficult to edit, print, and understand.
+
+[_A_]  Programming Exercises
+
+Exercise 23-1: Write a class that handles page formatting. It should contain the
+following functions:
+
+open_file(char *name)
+Opens the print file.
+
+define_header(char *heading)
+Defines heading text.
+
+print_line(char *line)
+Sends a line to the file.
+
+page(void)
+Starts a new page.
+
+close_file(void)
+Closes the print file.
+
+Exercise 23-2: Write a module called search_open that first receives an array of
+filenames that it searches until it finds one that exists, and then it opens that file.
+
+Exercise 23-3: Write a symbol table class containing the following functions:
+
+void enter(char *name)
+Enters a name into the symbol table.
+
+int lookup(char *name)
+Returns 1 if the name is in the table;
+
+returns 0 otherwise.
+
+void remove(char *name)
+Removes a name from the symbol table.
+
+Exercise 23-4: Take the words program from Chapter 20, Advanced Pointers, and
+combine it with the infinite array module to create a cross-reference program. (As
+an added bonus, teach it about C++ comments and strings to create a C++ cross-
+referencer.)

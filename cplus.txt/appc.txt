@@ -1,0 +1,155 @@
+Chapter 3Part VI: Appendixes
+
+3	
+
+3:  Operator Precedence Rules
+
+[_A_]  Practical Subset of the Operator
+Precedence Rules
+
+Table C-1
+
+. Practical Operator Precedence Rules
+
+Precedence
+
+Operator
+
+1
+
+* (multiply)
+
+/
+
+%
+
+2
+
++
+
+-
+
+Put parentheses around everything else.
+
+[_A_]  Standard Rules
+
+Table C-2
+
+. Standard C++ Precedence Rules
+
+Precedence
+
+Operators
+
+1
+
+(  )
+
+[  ]
+
+->
+
+.
+
+::
+
+::*
+
+->*
+
+.*
+
+2
+
+!
+
+~
+
+++
+
+--
+
+(type)
+
+- (unary)
+
+* (de-reference)
+
+& (address of)
+
+sizeof
+
+3
+
+* (multiply)
+
+/
+
+%
+
+4
+
++
+
+-
+
+5
+
+<<
+
+>>
+
+6
+
+<
+
+<=
+
+>
+
+>=
+
+7
+
+==
+
+!=
+
+8
+
+& (bitwise AND)
+
+9
+
+^
+
+10
+
+|
+
+11
+
+&&
+
+12
+
+||
+
+13
+
+?:
+
+14
+
+=
+
++=
+
+-=
+
+etc.
+
+15
+
+,
+

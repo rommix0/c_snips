@@ -1,0 +1,232 @@
+Chapter 1Part I: The Basics
+
+In This Chapter:
+
+*  [_XREF A Brief History of C++_]
+
+*  [_XREF C++ Organization_]
+
+*  [_XREF How to Learn C++_]
+
+1	
+
+1: What Is C++?
+
+Profanity is the one language that all
+programmers understand.
+
+---Anonymous
+
+The ability to organize and process information is the key to success
+in the modern age. Computers are designed to handle and process
+large amounts of information quickly and efficiently. However, they
+can't do anything until someone tells them what to do. That's where
+C++ comes in. C++ is a high-level programming language that
+allows a software engineer to efficiently communicate with a
+computer.
+
+C++ is a highly flexible and adaptable language. Since its creation in
+1980, it has been used for a wide variety of programs including
+firmware for micro-controllers, operating systems, applications, and
+graphics programming. C++ is quickly becoming the programming
+language of choice. There is a tremendous demand for people who
+can tell computers what to do, and C++ lets you do so quickly and
+efficiently.
+
+[_A_]  A Brief History of C++
+
+In 1970 two programmers, Brian Kernighan and Dennis Ritchie,
+created a new language called C. (The name came about because C
+was preceded by the old programming language they were using
+called B.) C was designed with one goal in mind: writing operating
+systems. The language was extremely simple and flexible and soon
+was used for many different types of programs. It quickly became
+one of the most popular programming languages in the world.
+
+C had one major problem, however. It was a procedure-oriented
+language. This meant that in designing a typical C program, the
+programmer would start by describing the data and then write
+procedures to manipulate that data.
+
+Programmers eventually discovered that it made a program clearer
+and easier to understand if they were able to take a bunch of data
+and group it together with the operations that worked on that data.
+Such a grouping is called an object or class. Designing programs by
+designing classes is known as object-oriented design (OOD).
+
+In 1980 Bjarne Stroustrup started working on a new language,
+called "C with Classes." This language improved on C by adding a
+number of new features, the most important of which was classes.
+This language was improved, augmented, and finally became C++.
+
+C++ owes its success to the fact that it allows the programmer to
+organize and process information more effectively than most other
+languages. Also, it builds on the work already done with the C
+language. In fact, most C programs can be transformed into C++
+programs with little trouble. These programs usually don't use all
+the new features of C++, but they do work. In this way, C++ allows
+programmers to build on an existing base of C code.
+
+[_A_]  C++ Organization
+
+C++ is designed as a bridge between the programmer and the raw
+computer. The idea is to let the programmer organize a program in
+a way that he or she can easily understand. The compiler then
+translates the language into something the machine can use.
+
+Computer programs consist of two main parts: data and instructions.
+The computer imposes little or no organization on these two parts.
+After all, computers are designed to be as general as possible. The
+idea is for the programmer to impose his or her own organization
+on the computer and not the other way around.
+
+The data in a computer is stored as a series of bytes. C++ organizes
+those bytes into useful data. Data declarations are used by the
+programmer to describe the information he or she is working with.
+For example:
+
+[_Code_] 	int total;	    // Total number accounts
+
+tells C++ that you want to use a section of the computer's memory
+to store an integer named total. You can let the compiler decide
+what particular bytes of memory to use; that's a minor bookkeeping
+detail you don't need to worry about.
+
+The variable total is a simple variable. It can hold only one integer
+and describe only one total. A series of integers can be organized
+into an array. Again, C++ will handle the details, imposing that
+organization on the computer's memory.
+
+[_Code_] int balance[100];   // Balance (in cents) for all 100 accounts
+
+Finally, there are more complex data types. For example, a
+rectangle might have a width, a height, a color, and a fill pattern.
+C++ lets you organize these four attributes into one group called a
+structure.
+
+[_Code_] 	struct rectangle {
+
+[_Code_]     int width;      	  	// Width of rectangle in pixels
+
+[_Code_]     int height;     	  	// Height of rectangle in pixels 	
+
+[_Code_]     color_type color;	 // Color of the rectangle 	
+
+[_Code_]     fill_type fill;	   // Fill pattern 	
+
+[_Code_] };
+
+However, data is only one part of a program. You also need
+instructions. As far as the computer is concerned it knows nothing
+about the layout of the instructions. It knows only what it's doing
+for the current instruction and where to get the next instruction.
+
+C++ is a high-level language. It lets you write a high-level statement
+such as:
+
+[_Code_] 	area = (base * height) / 2.0;	    // Compute area of triangle
+
+The compiler translates this statement into a series of cryptic
+machine instructions. This sort of statement is called an assignment
+statement. It is used to compute and store the value of an arithmetic
+expression.
+
+You can also use control statements to control the order of
+processing. Statements such as the if and switch statements
+enable the computer to make simple decisions. Statements can be
+repeated by using looping statements such as while and for.
+
+Groups of statements can be wrapped to form functions. Thus you
+only need to write a general-purpose function to draw a rectangle
+once and then you can reuse that function whenever you want to
+draw a new rectangle. C++ provides a rich set of standard functions
+that perform common functions such as searching, sorting, input,
+and output.
+
+A set of related functions can be grouped together to form a
+module, and modules are linked to form programs.
+
+One of the major goals of the C++ language is to organize
+instructions into reusable components. After all, you can write
+programs much faster if you "borrow" most of your code from
+somewhere else. Groups of reusable modules can be combined into
+a library. For example, if you need a sort routine, you can use the
+standard function qsort from the library and link it into your
+program.
+
+A computer divides the world into data and instructions. For a long
+time, high- level languages such as C kept that dividing line in
+place. In C you can define data or write instructions, but you can't
+combine the two.
+
+One of C++'s major innovations is the idea of combining data and
+instructions together in a construct called a class or object. Object-
+oriented programming allows you to group data with the operations
+that can be performed on that data. This concept is taken one step
+further in C++ by allowing you to derive new classes from existing
+ones.
+
+This last feature is extremely powerful. It allows you to build
+complex classes on top of smaller, simpler ones. It also allows you
+to define a basic, abstract class and then derive specific classes from
+it. For example, an abstract class of shape might be used to define
+the shapes rectangle, triangle, and circle.
+
+Organization is the key to writing good programs. In this book, you
+know that the table of contents is in the front and the index is in
+the back, because that's the way books are organized. Organization
+makes this book easier to use.
+
+The C++ language lets you organize your programs using a simple
+yet powerful syntax. This book goes beyond the C++ syntax and
+teaches you style rules that enable you to create highly readable
+and reliable programs. By combining a powerful syntax with a good
+programming style you can create powerful programs that perform
+complex and wonderful operations.
+
+[_A_]  How to Learn C++
+
+The only way to learn how to program is to write programs. You'll
+learn a lot more by writing and debugging programs than you ever
+will by reading this book. This book contains many programming
+exercises, and you should try to do as many of them as possible.
+When doing the exercises keep good programming style in mind.
+Always comment your programs, even if you're doing the exercises
+only for yourself. Commenting helps you organize your thoughts,
+and commenting your own programs is good practice for when you
+go into the "real world."
+
+Don't let yourself be seduced by the idea that, "I'm only writing
+these programs for myself, so I don't need to comment them." First
+of all, code that looks obvious to you when you write it can often
+be confusing and cryptic when you revisit it a week later. Writing
+comments also helps you organize your ideas. (If you can write out
+an idea in English, you are halfway to writing it in C++.)
+
+Finally, programs tend to be around far longer than expected. I
+once wrote a program that was designed to work only on the
+computer at Caltech. The program was highly system dependent. As
+I was the only one who would ever use the program, the program
+would print the following message if I got the command line wrong:
+
+[_Code_] ?LSTUIT User is a twit
+
+A few years later I was a student at Syracuse University. The
+secretary at the School of Computer Science needed a program that
+was similar to my Caltech listing program, so I adapted my program
+for her use. Unfortunately, I had forgotten about my funny little
+error message.
+
+Imagine how horrified I was when I came into the Computer
+Science office and was accosted by the chief secretary. This lady
+had so much power she could make the dean cringe. She looked at
+me and said, "User is a twit, huh?" Luckily she had a sense of
+humor, or I might not be here today.
+
+Sprinkled throughout this book are "broken" programs. Spend the
+time to figure out why they don't work. Often the problem is very
+subtle, such as a misplaced semicolon or using = instead of ==.
+These programs let you learn how to spot mistakes in a small
+program. That way when you make similar mistakes in a big
+program, and you will make mistakes, you will be trained to spot
+them.

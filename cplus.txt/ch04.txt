@@ -1,0 +1,790 @@
+Chapter 4Part I: The Basics
+
+In This Chapter:
+
+*  The Elements of a Program
+
+*  Simple Expressions
+
+*  The cout Output Class
+
+*  Basic Program Structure
+
+*  Variables and Storage
+
+*  Variable Declarations
+
+*  Integers
+
+*  Assignment Statements
+
+*  Floating Point Numbers
+
+*  Programming Exercises
+
+*  Answers to Chapter Questions
+
+4	
+
+4: Basic Declarations and Expressions
+
+A journey of a thousand miles must
+begin
+with a single step.
+
+---Lao-zi
+
+If carpenters made buildings the way
+programmers make programs, the
+first woodpecker to come
+along would destroy all of civilization.
+
+---Anonymous
+
+[_A_]  The Elements of a Program
+
+If you are going to construct a building, you need two things: the
+bricks and a blueprint that tells you how to put them together. In
+computer programming you also need two things: data (variables)
+and instructions (code). Variables are the basic building blocks of a
+program. Instructions tell the computer what to do with the
+variables.
+
+Comments are used to describe the variables and instructions. They
+are notes by the author documenting the program so it is clear and
+easy to read. Comments are ignored by the computer.
+
+In construction, before we can start we must order our materials:
+"We need 500 large bricks, 80 half-size bricks, and 4 flagstones."
+Similarly, in C++ you must declare all variables before you can use
+them. You must name each one of your "bricks" and tell C++ what
+type of "brick" to use.
+
+After the variables are defined you can begin to use them. In
+construction the basic structure is a room. By combining many
+rooms we form a building. In C++ the basic structure is a function.
+Functions can be combined to form a program.
+
+An apprentice builder does not start out building the Empire State
+Building. He starts on a one-room house. In this chapter you will
+concentrate on constructing simple, one-function programs.
+
+[_A_]  Basic Program Structure
+
+The basic elements of a program are the data declarations,
+functions, and comments. Let's see how these can be organized into
+a simple C++ program.
+
+The basic structure of a one-function program is:
+
+[_Code_] /********************************************************
+
+[_Code_]  * Heading comments                                     *
+
+[_Code_]  ********************************************************/
+
+[_Code_] data declarations
+
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     executable statements
+
+[_Code_]     return(0);
+
+[_Code_] }
+
+The heading comments tell the programmer all about the program.
+The data declarations describe the data that the program is going to
+use.
+
+Our single function is named main. The name main is special,
+because it is the first function called. Any other functions are called
+directly or indirectly from main. The function main begins with:
+
+[_Code_] main()
+
+[_Code_] {
+
+and ends with:
+
+[_Code_]     return(0);
+
+[_Code_] }
+
+The line return(0); is used to tell the operating system (UNIX or
+MS-DOS/Windows) that the program exited normally (status=0). A
+nonzero status indicates an error-the bigger the return value, the
+more severe the error. Typically 1 is used for most simple errors,
+such as a missing file or bad command-line syntax.
+
+Now let's take a look at the "Hello World" program (Example 3-1).
+
+At the beginning of the program is a comment box enclosed in /*
+and */. Following this is the line:
+
+[_Code_] #include <iostream.h>
+
+This statement signals C++ that you are going to use a set of
+standard classes called the I/O stream classes. This is a type of data
+declaration. Later you use the class cout from this package. (We
+define a class more completely in Chapter 13, Simple Classes, but
+until we know more we'll treat cout as a "black box" that sends
+data to the console.)
+
+The main routine contains the instruction:
+
+[_Code_]     cout << "Hello World\n";
+
+which is an executable statement instructing C++ to print the
+message "Hello World" on the screen. C++ uses a semicolon to
+end a statement in much the same way we use a period to end a
+sentence. Unlike with line-oriented languages such as BASIC, the
+end of a line does not end a statement. The sentences in this book
+can span several lines-the end of a line is treated as a space
+separating words. C++ works the same way. A single statement can
+span several lines. Similarly, you can put several sentences on the
+same line, just as you can put several C++ statements on the same
+line. However, most of the time your program is more readable if
+each statement starts on a separate line.
+
+We are using the standard class cout (console out) to output the
+message. A standard class is a generally useful C++ object that has
+already been defined and put in the standard library. A library is a
+collection of classes, functions, and data that have been grouped
+together for reuse. The standard library contains classes and
+functions for input, output, sorting, advanced math, and file
+manipulation. See your C++ reference manual for a complete list of
+library functions and standard classes.
+
+"Hello World" is one of the simplest C++ programs. It contains no
+computations, merely sending a single message to the screen. It is a
+starting point. Once you have mastered this simple program, you
+have done a great deal of things right. The program is not as simple
+as it looks. But once you get it working, you can move on to create
+more complex code.
+
+[_A_]  Simple Expressions
+
+Computers can do more than just print strings. They can also
+perform calculations. Expressions are used to specify simple
+computations. C++ has the five simple operators listed in Table 4-1.
+
+Table 4-1
+
+. Simple Operators
+
+Operator
+
+Meaning
+
+*
+
+Multiply
+
+/
+
+Divide
+
++
+
+Add
+
+-
+
+Subtract
+
+%
+
+Modulus (remainder after division)
+
+Multiply (*), divide (/), and modulus (%) have precedence over
+addition (+) and subtraction (-). Parentheses may be used to group
+terms. Thus:
+
+[_Code_] (1 + 2) * 4
+
+yields 12, while:
+
+[_Code_] 1 + 2 * 4
+
+yields 9.
+
+The program in [_XREF Example 4-1_] computes the value of the
+expression (1 + 2) * 4.
+
+Example 4-1
+
+. Simple Expression
+
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     (1 + 2) * 4;
+
+[_Code_]     return(0);
+
+[_Code_] }
+
+Although we calculate the answer, we don't do anything with it.
+(This program will generate a "null effect" warning to indicate that
+there is a correctly written, but useless, statement in the program.)
+
+If we were constructing a building, think about how confused a
+worker would be if we said, "Take your wheelbarrow and go back
+and forth between the truck and the building site."
+
+"Do you want me to carry bricks in the wheelbarrow?"
+
+"No. Just go back and forth."
+
+You need to output the results of your calculations.
+
+[_A_]  The cout Output Class
+
+The standard class variable cout is used to output data to the
+console. We'll learn what a class is later in Chapter 13, Simple
+Classes. But for now all we have to know is that the operator <<
+tells C++ what to output. So the statement:
+
+[_Code_] cout << "Hello World\n";
+
+tells C++ to take the string "Hello World\n" and write it to the
+console. Multiple << operators may be used together. For example,
+both the following lines output the same message:
+
+[_Code_] cout << "Hello World\n";
+
+[_Code_] cout << "Hello " << "World\n";
+
+Expressions can also be output this way, such as:
+
+[_Code_] cout << "Half of " << 64 << " is " << (64 / 2) << "\n";
+
+When this is executed it will write:
+
+[_Code_] Half of 64 is 32
+
+on the console. Note that we had to put a space after the "of" in
+"Half of." There also is a space on either side of the "is" string.
+These spaces are needed in the output to separate the numbers
+from the text. Suppose we didn't put the spaces in and the code
+looked like:
+
+[_Code_] // Problem code
+
+[_Code_] cout << "Half of" << 64 << "is" << (64 / 2) << "\n";
+
+At first glance this code looks perfectly normal. There are spaces
+around each of the numbers. But these spaces are not inside any
+string, so they will not be output. The result of this code is:
+
+[_Code_] Half of64is32
+
+Omitting needed spaces is a common first-time programming
+mistake. Remember, only the text inside the quotation marks will be
+output.
+
+[_A_]  Variables and Storage
+
+C++ allows you to store values in variables. Each variable is
+identified by a variable name.
+
+Additionally, each variable has a variable type. The type tells C++
+how the variable is going to be used and what kind of numbers
+(real, integer) it can hold.
+
+Names start with a letter or underscore (  _  ) followed by any
+number of letters, digits, or underscores. Uppercase is different from
+lowercase, so the names "sam," "Sam," and "SAM" specify three
+different variables. To avoid confusion, it is better to use different
+names for variables and not depend on case differences.
+
+Most C++ programmers use all lowercase variable names. Some
+names, such as int, while, for, and float, have a special
+meaning to C++ and are considered reserved words. They cannot be
+used for variable names.
+
+The following is an example of some variable names:
+
+[_Code_] average     // average of all grades
+
+[_Code_] pi          // pi to 6 decimal places
+
+[_Code_] number_of_students // number of students in this class
+
+The following are not variable names:
+
+[_Code_] 3rd_entry   // Begins with a number
+
+[_Code_] all$done    // Contains a "$"
+
+[_Code_] the end     // Contains a space
+
+[_Code_] int         // Reserved word
+
+Avoid variable names that are similar. For example the following
+illustrates a poor choice of variable names:
+
+[_Code_] total       // total number of items in current entry
+
+[_Code_]
+
+[_Code_] totals      // total of all entries
+
+A much better set of names is:
+
+[_Code_] entry_total // total number of items in current entry
+
+[_Code_]
+
+[_Code_] all_total   // total of all entries
+
+[_A_]  Variable Declarations
+
+Before you can use a variable in C++, it must be defined in a
+declaration statement. A variable cannot be used unless it is
+declared.
+
+A variable declaration serves three purposes:
+
+1.  It defines the name of the variable.
+
+2.  It defines the type of the variable (integer, real, character, etc.).
+
+3.  It gives the programmer a description of the variable.
+
+The declaration of a variable answer can be:
+
+[_Code_]     int answer;     // the result of our expression
+
+The keyword int tells C++ that this variable contains an integer
+value. (Integers are defined below.) The variable name is answer.
+The semicolon is used to indicate the statement end, and the
+comment is used to define this variable for the programmer.
+
+The general form of a variable declaration is:
+
+[_Code_]     type  name;   // comment
+
+Type is one of the C++ variable types (int, float, etc.) Name is
+any valid variable name. The comment explains what the variable is
+and what it will be used for. Variable declarations come just before
+the main() line at the top of a program. (In Chapter 9, Variable
+Scope and Functions, you will see how local variables may be
+declared elsewhere.)
+
+[_A_]  Integers
+
+One variable type is integer. Integers (also known as whole
+numbers) have no fractional part or decimal point. Numbers such as
+1, 87, and -222 are integers. The number 8.3 is not an integer
+because it contains a decimal point. The general form of an integer
+declaration is:
+
+[_Code_]     int  name;   // comment
+
+A calculator with an eight-digit display can only handle numbers
+between 99,999,999 and -99,999,999. If you try to add 1 to
+99,999,999, you will get an overflow error. Computers have similar
+limits. The limits on integers are implementation dependent,
+meaning they change from computer to computer.
+
+Calculators use decimal digits (0-9). Computers use binary digits
+(0-1) called bits. Eight bits make a byte. The number of bits used to
+hold an integer varies from machine to machine. Numbers are
+converted from binary to decimal for printing.
+
+On most UNIX machines integers are 32 bits (4 bytes), providing a
+range of 2,147,483,647 (231- 1) to -2,147,483,648 (-231). On the PC
+in Turbo C++, only 16 bits (2 bytes) are used, so the range is 32,767
+(215- 1) to -32,768 (-215).
+
+Question 4-1: The following will work on a UNIX machine but will fail on a PC.
+
+[_Code_] int zip;      // zip code for current address
+
+[_Code_]
+
+[_Code_] .........
+
+[_Code_]
+
+[_Code_] zip = 92126;
+
+Why does this fail? What will be the result when run on a PC?
+
+[_A_]  Assignment Statements
+
+Variables are given a value through the use of assignment
+statements. Before a variable can be used it must be declared. For
+example:
+
+[_Code_] int answer;    // Result of a simple computation
+
+The variable may then be used in an assignment statement, such as:
+
+[_Code_] answer = (1 + 2) * 4;
+
+The variable answer on the left side of the equals sign (=) is
+assigned the value of the expression (1 + 2) * 4 on the right
+side. The semicolon ends the statement.
+
+When you declare a variable, C++ allocates storage for the variable
+and puts an unknown value inside it. You can think of the
+declaration as creating a box to hold the data. When it starts out it is
+a mystery box containing an unknown quantity. This is illustrated in
+Figure 4-1A. The assignment statement computes the value of the
+expression and drops that value into the box as shown in
+Figure 4-1B.
+
+Figure 4-1
+
+. Declaration and assignment statements
+
+The general form of the assignment statement is:
+
+[_Code_] variable = expression;
+
+The equals sign (=) is used for assignment, not equality.
+
+In Example 4-2 the variable term is used to store an integer value
+that is used in two later expressions. Variables, like expressions, can
+be output using the output operator <<, so we use this operator to
+check the results.
+
+Example 4-2
+
+. tterm/tterm.cc
+
+[_Code_] #include <iostream.h>
+
+[_Code_]
+[_Code_] int term;       // term used in two expressions
+
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]
+[_Code_]     term = 3 * 5;
+
+[_Code_]     cout << "Twice " << term << " is " << 2*term << "\n";
+
+[_Code_]     cout << "Three times " << term << " is " << 3*term << "\n";
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+[_A_]  Floating Point Numbers
+
+Real numbers are numbers that have a fractional part. Because of
+the way they are stored internally, real numbers are also known as
+floating point numbers. The numbers 5.5, 8.3, and -12.6 are all
+floating point numbers. C++ uses the decimal point to distinguish
+between floating point numbers and integers, so a number such as
+5.0 is a floating point number while 5 is an integer. Floating point
+numbers must contain a decimal point. Numbers such as 3.14159,
+0.5, 1.0, and 8.88 are floating point numbers.
+
+Although it is possible to omit digits before the decimal point and
+specify a number as .5 instead of 0.5, the extra 0 makes it clear that
+you are using a floating point number. A similar rule applies to 12.
+versus 12.0. Floating point zero should be written as 0.0.
+
+Additionally, a floating point number may include an exponent
+specification of the form eexp.
+
+For example, 1.2e34 is shorthand for 1.2*1034.
+
+The form of a floating point declaration is:
+
+[_Code_] float variable;   // comment
+
+Again, there is a limit on the range of floating-point numbers the
+computer can handle. The range varies widely from computer to
+computer. Floating point accuracy is discussed further in
+Chapter 19, Floating Point.
+
+Floating point numbers may be output using cout. For example:
+
+[_Code_] cout << "The answer is " << (1.0 / 3.0) << "\n";
+
+[_A_]  Floating Point Versus Integer Divide
+
+The division operator is special. There is a vast difference between
+an integer divide and a floating-point divide. In an integer divide,
+the result is truncated (any fractional part is discarded). For
+example, the integer divide value of 19/10 is 1.
+
+If either the divisor or the dividend is a floating-point number, a
+floating point divide is executed. In this case 19.0/10.0 is 1.9.
+(19/10.0 and 19.0/10 are also floating-point divides; however,
+19.0/10.0 is preferred for clarity.) There are several examples in
+Table 4-2.
+
+Table 4-2
+
+. Expression Examples
+
+Expression
+
+Result
+
+Result Type
+
+1 + 2
+
+3
+
+Integer
+
+1.0 + 2.0
+
+3.0
+
+Floating point
+
+19 / 10
+
+1
+
+Integer
+
+19.0 / 10.0
+
+1.9
+
+Floating point
+
+C++ allows the assignment of an integer expression to a floating-
+point variable. It will automatically perform the integer-to-floating-
+point conversion and then make the assignment. A similar
+conversion is performed when assigning a floating point number to
+an integer. Floating point numbers are truncated when assigned to
+integer variables.
+
+Example 4-3
+
+. float1/float1.c
+
+[_Code_] int   integer;  // an integer
+
+[_Code_] float floating; // a floating point number
+
+[_Code_]
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     floating = 1.0 / 2.0;         // assign floating 0.5
+
+[_Code_]     integer = 1 / 3;              // assign integer 0
+
+[_Code_]     floating = (1 / 2) + (1 / 2); // assign floating 0.0
+
+[_Code_]     floating = 3.0 / 2.0;         // assign floating 1.5
+
+[_Code_]     integer = floating;           // assign integer 1
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+Notice that the expression 1/2 is an integer expression resulting in
+an integer divide and an integer result of 0.
+
+Question 4-2: Why does Example 4-4 print "The value of 1/3 is 0"? What must be
+done to this program to fix it?
+
+Example 4-4
+
+. float2/float2.cc
+
+[_Code_] #include <iostream.h>
+
+[_Code_]
+[_Code_] float answer;  // the result of the divide
+
+[_Code_]
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     answer = 1/3;
+
+[_Code_]     cout << "The value of 1/3 is " << answer << "\n";
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+[_A_]  Characters
+
+The type char represents single characters. The form of a character
+declaration is:
+
+[_Code_] char variable;   //comment
+
+Characters are enclosed in single quotation marks ('). 'A', 'a' and
+'!' are character constants. The backslash character (\) is called
+the escape character. It is used to signal that a special character
+follows. For example, the character \t can be used to represent the
+single character "tab." \n is the new-line character. It causes the
+output device to go to the beginning of the next line, similar to a
+return key on a typewriter. The character \\ is the backslash itself.
+Finally, characters can be specified by \nnn where nnn is the octal
+code for the character. Table 4-3 summarizes these special
+characters. For a full list of ASCII character codes, see Appendix A.
+
+Table 4-3
+
+. Special Characters
+
+Character
+
+Name
+
+Meaning
+
+\b
+
+Backspace
+
+Move the cursor to the left one character
+
+\f
+
+Form feed
+
+Go to top of a new page
+
+\n
+
+New line
+
+Go to the next line
+
+\r
+
+Return
+
+Go to the beginning of the current line
+
+\t
+
+Tab
+
+Advance to the next tab stop (eight-column boundary)
+
+\'
+
+Apostrophe or single quotation mark
+
+The character '
+
+\"
+
+Double quote
+
+The character "
+
+\nnn
+
+The character nnn
+
+The character number nnn (octal)
+
+\NN
+
+The character NN
+
+The character number NN (hexadecimal)
+
+[_NOTE_]  While characters are enclosed in single quotes ('),
+a different data type, the string, is enclosed in double quotes
+("). A good way to remember the difference between these
+two types of quotes is that single characters are enclosed in
+single quotes. Strings can have any number of characters
+(including double quote characters), and they are enclosed in
+double quotes.
+
+Example 4-5 reverses three characters.
+
+Example 4-5
+
+. print3/print3.cc
+
+[_Code_] #include <iostream.h>
+
+[_Code_]
+[_Code_] char char1;     // first character
+
+[_Code_] char char2;     // second character
+
+[_Code_] char char3;     // third character
+
+[_Code_]
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     char1 = 'A';
+
+[_Code_]     char2 = 'B';
+
+[_Code_]     char3 = 'C';
+
+[_Code_]     cout << char1 << char2 << char3 << " reversed is " <<
+
+[_Code_]             char3 << char2 << char1 << "\n";
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+When executed, this program prints:
+
+[_Code_] ABC reversed is CBA
+
+[_A_]  Boolean
+
+The C++ Draft Standard defines a boolean type, bool, that can have
+the value true or false. Most compilers do not yet support this new
+type, so we will not discuss it here. Instead, it can be found in
+Chapter 28, C++'s Dustier Corners, under the section "Vampire
+Features."
+
+[_A_]  Programming Exercises
+
+Exercise 4-1: Write a program to print your name, Social Security number, and
+date of birth.
+
+Exercise 4-2: Write a program to print a block E using asterisks (*), where the E is
+7 characters high and 5 characters wide.
+
+Exercise 4-3: Write a program to compute the area and circumference of a rect-
+angle 3 inches wide by 5 inches long. What changes must be made to the
+program so it works for a rectangle 6.8 inches wide by 2.3 inches long?
+
+Exercise 4-4: Write a program to print "HELLO" in big block letters where each
+letter is 7 characters high and 5 characters wide.
+
+[_A_]  Answers to Chapter Questions
+
+Answer 4-1: The largest number that can be stored in an int on a UNIX machine is
+2,147,483,647. When using Turbo-C++ the limit is 32,767. The zip code 92126 is
+larger than 32,767, so it is mangled and the result is 26,590.
+
+This problem can be fixed by using a long int instead of just an int.
+The various types of integers are discussed in Chapter 5, Arrays,
+Qualifiers, and Reading Numbers.
+
+Answer 4-2: The problem concerns the division: 1/3. The number 1 and the
+number 3 are both integers, so this is an integer divide. Fractions are truncated in
+an integer divide. The expression should be written as:
+
+[_Code_] answer = 1.0 / 3.0

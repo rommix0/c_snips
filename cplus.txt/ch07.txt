@@ -1,0 +1,1049 @@
+Chapter 7Part I: The Basics
+
+In This Chapter:
+
+*  [_XREF Setting Up_]
+
+*  [_XREF The Specification_]
+
+*  [_XREF Code Design_]
+
+*  [_XREF The Prototype_]
+
+*  [_XREF The Makefile_]
+
+*  [_XREF Testing_]
+
+*  [_XREF Debugging_]
+
+*  [_XREF Maintenance_]
+
+*  Revisions
+
+*  Electronic Archaeology
+
+*  Mark Up the Program
+
+*  Programming Exercises
+
+7	
+
+7: The Programming Process
+
+It's just a simple matter of
+programming.
+
+---Any boss who has never written a
+program
+
+Programming is more than just writing code. Software has a life
+cycle. It is born, grows up, becomes mature, and finally dies, only
+to be replaced by a newer, younger product. Understanding this
+cycle is important because as a programmer you will spend only a
+small amount of time actually writing new code. Most programming
+time is spent modifying and debugging existing code. Software does
+not exist in a vacuum; it must be documented, maintained,
+enhanced, and sold. In this section we take a look at a small
+programming project using one programmer. Larger projects that
+involve many people are discussed in Chapter 23, Modular
+Programming. Although the final code is fewer than a hundred
+lines, the principles used in its construction can be applied to
+programs with thousands of lines of code. [_XREF Figure 7-1_]
+illustrates the software life cycle.
+
+Figure 7-1
+
+. Software life cycle
+
+The major steps in making a program are:
+
+*  Requirements. Programs start when someone gets an idea and
+assigns you to implement it. The requirement document
+describes, in very general terms, what is wanted.
+
+*  Specification. A description of what the program does. In the
+beginning, a Preliminary Specification is used to describe what
+the program is going to do. Later, as the program becomes more
+refined, so does the specification. Finally, when the program is
+finished, the specification serves as a complete description of
+what the program does.
+
+*  Code design. The programmer does an overall design of the
+program. The design should include major algorithms, class
+definitions, module specifications, file formats, and data
+structures.
+
+*	One thing cannot be over-stressed; "Think before you act." Studies have
+shown that a good design can result in a program that is 1/10 of the size of a
+poorly designed one. This is especially true when using C++, where design-
+ing good objects is critical to writing a good program. (You will find out what
+objects are in Chapter 13, Simple Classes.)
+
+Note: "Think before you act" is good advice not only for coding,
+but also for life in general.
+
+*  Coding. The next step is writing the program. This involves first
+writing a prototype and then filling it in to create the full
+program.
+
+*  Testing. The programmer should design a test plan and use it to
+test the program. It is a good idea, when possible, to have
+someone else test the program.
+
+*  Debugging. Unfortunately, very few programs work the first time.
+They must be corrected and tested again.
+
+*  Release. The program is packaged, documented, and sent out into
+the world to be used.
+
+*  Maintenance. Programs are never perfect. Bugs will be found and
+will need correction.
+
+*  Revising and updating. After a program has been working for a
+while, the users will want changes, such as more features or
+more intelligent algorithms. At this point a new specification is
+created and the process starts again.
+
+[_A_]  Setting Up
+
+The operating system allows you to group files in directories. Just as
+file folders serve as a way of keeping papers together in a filing
+cabinet, directories serve as a way of keeping files together. In this
+chapter you will be creating a simple calculator program. All the
+files for this program will be stored in a directory named calc. To
+create a directory in UNIX, execute the following commands:
+
+[_Code_] % cd ~
+
+[_Code_] % mkdir calc
+
+In MS-DOS, type:
+
+[_Code_] C:\> cd \
+
+[_Code_] C:\> mkdir calc
+
+To tell the operating system which directory you want to use, in
+UNIX type the command:
+
+[_Code_] % cd ~/calc
+
+In MS-DOS, type:
+
+[_Code_] C:\> cd \calc
+
+[_Code_] C:\CALC>
+
+More information on how to organize directories can be found in
+your operating system documentation.
+
+[_A_]  The Specification
+
+For this chapter we are going to assume that you have been given
+the assignment to "write a program that acts like a four-function
+calculator." Typically, the specification you are given is vague and
+incomplete. It is up to you to refine it into something that exactly
+defines the program you are going to produce.
+
+The first step is to write a document called The Preliminary Users'
+Specification, which describes what your program is going to do
+and how to use it. This document does not describe the internal
+structure of the program or the algorithm you plan to use. A sample
+specification for the four-function calculator is:
+
+Calc
+
+A four-function calculator
+
+Preliminary Specification
+
+Dec. 10, 1994 Steve Oualline
+
+Warning: This is a preliminary specification. Any resemblance to any
+software living or dead is purely coincidental.
+
+Calc is a program that allows the user to turn his $10,000 computer
+into a $1.98 four-function calculator. The program adds, subtracts,
+multiplies, and divides simple integers.
+
+When the program is run, it zeros the result register and displays its
+contents. The user can then type in an operator and number. The result
+is updated and displayed. The following operators are valid:
+
+Operator
+
+Meaning
+
++
+
+Addition
+
+-
+
+Subtraction
+
+*
+
+Multiplication
+
+/
+
+Division
+
+Example (user input is in boldface)
+
+[_Code_] calc
+
+[_Code_] Result: 0
+
+[_Code_] Enter operator and number: + 123
+
+[_Code_] Result: 123
+
+[_Code_] Enter operator and number: - 23
+
+[_Code_] Result: 100
+
+[_Code_] Enter operator and number: / 25
+
+[_Code_] Result: 4
+
+[_Code_] Enter operator and number: * 4
+
+[_Code_] Result: 16
+
+The preliminary specification serves two purposes. First, you should
+give it to your boss (or customer) to make sure that what he
+thought he said and what you thought he said agree. Second, you
+can circulate it among your colleagues to see whether they have
+any suggestions or corrections.
+
+This preliminary specification was circulated and received the
+comments: 1) "How are you going to get out of the program?" and
+2) "What happens when you try to divide by 0?"
+
+So a new operator is added:
+
+[_Code_] q - quit
+
+and we add another paragraph:
+
+[_Code_] Dividing by 0 results in an error message and the result register is
+
+[_Code_] left unchanged.
+
+IV + III = VII
+
+[_SIDEBAR_]  A college instructor once gave his students an
+assignment to "write a four-function calculator." One of his
+students noticed that this was a pretty loose specification and
+decided to have a little fun. The professor didn't say what sort of
+numbers had to be used, so the student created a program that
+worked only with Roman numerals (IV + III = VII). The program
+came with a complete user manual-written in Latin.
+
+[_A_]  Code Design
+
+After the preliminary specification has been approved, you can start
+designing code. In the code-design phase, you plan your work. In
+large programming projects involving many people, the code would
+be broken up into modules for each programmer. At this stage, file
+formats are planned, data structures are designed, and major
+algorithms are decided upon.
+
+This simple calculator uses no files and requires no fancy data
+structures. What's left for this phase is to design the major
+algorithm. Outlined in pseudo-code, a shorthand halfway between
+English and real code, it is:
+
+[_Code_] Loop
+
+[_Code_]   Read an operator and number
+
+[_Code_]   Do the calculation
+
+[_Code_]   Display the result
+
+[_Code_] End-Loop
+
+[_A_]  The Prototype
+
+Once the code design is completed, you can begin writing the
+program. But rather than try to write the entire program at once and
+then debug it, you will use a method called fast prototyping. This
+consists of writing the smallest portion of the specification you can
+implement that will still do something. In our case, you will cut the
+four functions down to a one-function calculator. Once you get this
+small part working, you can build the rest of the functions onto this
+stable foundation. Also, the prototype gives the boss something to
+look at and play around with so he has a good idea of the direction
+the project is taking. Good communication is the key to good
+programming, and the more you can show someone, the better.
+The code for the first version of the four-function calculator is found
+in [_XREF Example 7-1_].
+
+Example 7-1
+
+. calc/calc.cc
+
+[_Code_] #include <iostream.h>
+
+[_Code_]
+[_Code_] int   result;    // the result of the calculations
+
+[_Code_] char  oper_char; // the user-specified operator
+
+[_Code_] int   value;     // value specified after the operator
+
+[_Code_]
+[_Code_] int main()
+
+[_Code_] {
+
+[_Code_]     result = 0; // initialize the result
+
+[_Code_]
+[_Code_]     // Loop forever (or till we hit the break statement)
+
+[_Code_]     while (1) {
+
+[_Code_]         cout << "Result: " << result << '\n';
+
+[_Code_]
+[_Code_]         cout << "Enter operator and number: ";
+
+[_Code_]         cin >> oper_char >> value;
+
+[_Code_]
+[_Code_]         if (oper_char = '+') {
+
+[_Code_]             result += value;
+
+[_Code_]         } else {
+
+[_Code_]             cout << "Unknown operator " << oper_char << '\n';
+
+[_Code_]         }
+
+[_Code_]     }
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+The program begins by initializing the variable result to zero. The
+main body of the program is a loop starting with:
+
+[_Code_]     while (1) {
+
+This will loop until a break statement is reached. The code:
+
+[_Code_]     cout << "Enter operator and number: ";
+
+[_Code_]     cin >> operator >> value;
+
+asks the user for an operator and number. These are parsed and
+stored in the variables operator and value. (The full set of I/O
+operations such as << and >> are described in Chapter 16, File
+Input/Output.) Finally, you start checking the operators. If the
+operator is a plus (+), you perform an addition using the line:
+
+[_Code_]     if (operator = '+') {
+
+[_Code_]         result += value;
+
+So far you only recognize the plus operator. As soon as this works,
+you will add more operators by adding more if statements.
+
+Finally, if an illegal operator is entered, the line:
+
+[_Code_]     } else {
+
+[_Code_]          cout << "Unknown operator " << operator << '\n';
+
+[_Code_]     }
+
+writes an error message telling the user he made a mistake.
+
+[_A_]  The Makefile
+
+Once the source has been entered, it needs to be compiled and
+linked. Up to now we have been running the compiler manually.
+This is somewhat tedious and prone to error. Also, larger programs
+consist of many modules and are extremely difficult to compile by
+hand. Fortunately, both UNIX and Turbo-C++ have a utility called
+make that handles the details of compilation.
+
+For now, just use this example as a template and substitute the
+name of your program in place of calc. The make program is
+discussed in detail in Chapter 23, Modular Programming. Basically,
+make looks at the file called Makefile for a description of how to
+compile your program and runs the compiler for you.
+
+For a UNIX system using the generic CC compiler, the Makefile
+should be:
+
+[_Code_] 	[File: calc1/makefile.unx]
+
+[_Code_] #
+
+[_Code_] # Makefile for many UNIX compilers using the
+
+[_Code_] # "standard" command name CC
+
+[_Code_] #
+
+[_Code_] CC=CC
+
+[_Code_] CFLAGS=-g
+
+[_Code_] all: calc
+
+[_Code_]
+
+[_Code_] calc: calc.cc
+
+[_Code_]         $(CC) $(CFLAGS) -o calc calc.cc
+
+[_Code_]
+
+[_Code_] clean:
+
+[_Code_]         rm calc
+
+If you are using the Free Software Foundation's g++ compiler, the
+Makefile is:
+
+[_Code_] 	[File: calc1/makefile.gnu]
+
+[_Code_] #
+
+[_Code_] # Makefile for the Free Software Foundations g++ compiler
+
+[_Code_] #
+
+[_Code_] CC=g++
+
+[_Code_] CFLAGS=-g -Wall
+
+[_Code_] all: calc
+
+[_Code_]
+
+[_Code_] calc: calc.cc
+
+[_Code_]         $(CC) $(CFLAGS) -o calc calc.cc
+
+[_Code_]
+
+[_Code_] clean:
+
+[_Code_]         rm calc
+
+For Turbo-C++, the Makefile should be:
+
+[_Code_] 	[File: calc1/makefile.tcc]
+
+[_Code_] #
+
+[_Code_] # Makefile for Borland's Turbo-C++ compiler
+
+[_Code_] #
+
+[_Code_] CC=tcc
+
+[_Code_] #
+
+[_Code_] # Flags
+
+[_Code_] #       -N  -- Check for stack overflow
+
+[_Code_] #       -v  -- Enable debugging
+
+[_Code_] #       -w  -- Turn on all warnings
+
+[_Code_] #       -ml -- Large model
+
+[_Code_] #
+
+[_Code_] CFLAGS=-N -v -w -ml
+
+[_Code_] all: calc.exe
+
+[_Code_]
+
+[_Code_] calc.exe: calc.cpp
+
+[_Code_]         $(CC) $(CFLAGS) -ecalc calc.cpp
+
+[_Code_]
+
+[_Code_] clean:
+
+[_Code_]         erase calc.exe
+
+For Borland C++, the Makefile is the same except the compiler is
+named bcc.
+
+Finally, for Microsoft Visual C++, the Makefile is:
+
+[_Code_] 	[File: calc1/makefile.msc]
+
+[_Code_] #
+
+[_Code_] # Makefile for Microsoft Visual C++
+
+[_Code_] #
+
+[_Code_] CC=cl
+
+[_Code_] #
+
+[_Code_] # Flags
+
+[_Code_] #       AL -- Compile for large model
+
+[_Code_] #       Zi -- Enable debugging
+
+[_Code_] #       W1 -- Turn on warnings
+
+[_Code_] #
+
+[_Code_] CFLAGS=/AL /Zi /W1
+
+[_Code_] all: calc.exe
+
+[_Code_]
+
+[_Code_] calc.exe: calc.cpp
+
+[_Code_]         $(CC) $(CFLAGS)  calc.cpp
+
+[_Code_]
+
+[_Code_] clean:
+
+[_Code_]         erase calc.exe
+
+[_NOTE_]  Microsoft Visual C++ does supply a make
+program as part of its package; however, the make
+command has been renamed to nmake.
+
+To compile the program, just execute the command make. (Under
+Microsoft Visual C++ use the command nmake.) make determines
+what compilation commands are needed and execute them.
+
+make uses the modification dates of the files to determine whether
+or not a compilation is necessary. Compilation creates an object file.
+The modification date of the object file is later than the modification
+date of its source. If the source is edited, its modification date is
+updated, making the object file out of date. make checks these
+dates and, if the source was modified after the object, make
+recompiles the object.
+
+[_A_]  Testing
+
+Once the program is compiled without errors, you can move on to
+the testing phase. Now is the time to start writing a test plan. This
+document is simply a list of the steps you perform to make sure the
+program works. It is written for two reasons.
+
+*  If a bug is found, you want to be able to reproduce it.
+
+*  If you ever change the program, you will want to retest it to make
+sure new code did not break any of the sections of the program
+that were previously working.
+
+The test plan starts out as:
+
+[_Code_] Try the following operations
+
+[_Code_]
+
+[_Code_] + 123    Result should be 123
+
+[_Code_] + 52     Result should be 175
+
+[_Code_] x 37     Error message should be output
+
+Running the program you get:
+
+[_Code_] Result: 0
+
+[_Code_] Enter operator and number: + 123
+
+[_Code_] Result: 123
+
+[_Code_] Enter operator and number: + 52
+
+[_Code_] Result: 175
+
+[_Code_] Enter operator and number: x 37
+
+[_Code_] Result: 212
+
+Something is clearly wrong. The entry "x 37" should have
+generated an error message but didn't. There is a bug in the
+program, so you begin the debugging phase. One advantage to
+making a small working prototype is that you can isolate errors
+early.
+
+[_A_]  Debugging
+
+First you inspect the program to see if you can detect the error. In
+such a small program it is not difficult to spot the mistake.
+However, let's assume that instead of a 21-line program, you have a
+much larger one containing 5,000 lines. Such a program would
+make inspection more difficult, so you need to proceed to the next
+step.
+
+Most systems have C++ debugging programs, but each debugger is
+different. Some systems have no debugger. In that case you must
+resort to a diagnostic print statement. (More advanced debugging
+techniques are discussed in Chapter 17, Debugging and
+Optimization.) The technique is simple: Put a cout where you're
+sure the data is good (just to make sure it really is good). Then put
+a cout where the data is bad. Run the program and keep putting in
+cout's until you isolate the area in the program that contains the
+mistake. The program, with diagnostic cout lines added, looks like:
+
+[_Code_] cout << "Enter operator and number: ";
+
+[_Code_] cin >> value >> operator;
+
+[_Code_]
+
+[_Code_] cout << "## after cin " << operator << '\n';
+
+[_Code_]
+
+[_Code_] if (operator = '+') {
+
+[_Code_]     cout << "## after if " << operator << '\n';
+
+[_Code_]     result += value;
+
+[_NOTE_]  The ## at the beginning of each cout line flags
+the line as a debug line. This makes it easy to tell the
+temporary debug output from the real program output. Also,
+when you finally find the bug the ## makes it easy to find
+and remove the debug lines with your editor.
+
+Running the program again results in:
+
+[_Code_] Result: 0
+
+[_Code_] Enter operator and number: + 123
+
+[_Code_] Result: 123
+
+[_Code_] Enter operator and number: + 52
+
+[_Code_] ## after cin +
+
+[_Code_] ## after if +
+
+[_Code_] Result: 175
+
+[_Code_] Enter operator and number: x 37
+
+[_Code_] ## after cin x
+
+[_Code_] ## after if +
+
+[_Code_] Result: 212
+
+From this you see that something is going wrong with the if
+statement. Somehow the variable operator is an x going in and a +
+coming out. Closer inspection reveals that you have the old mistake
+of using = instead of ==. After you fix this bug, the program runs
+correctly. Building on this working foundation, you add in the code
+for the other operators, -, *, and /, to create [_XREF Example 7-2_].
+
+Example 7-2
+
+. calc3/calc3.c
+
+[_Code_] #include <iostream.h>
+
+[_Code_] int   result;    // the result of the calculations
+
+[_Code_] char  oper_char; // the user-specified operator
+
+[_Code_] int   value;     // value specified after the operator
+
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     result = 0; // initialize the result
+
+[_Code_]
+[_Code_]     // loop forever (or until break reached)
+
+[_Code_]     while (1) {
+
+[_Code_]         cout << "Result: " << result << '\n';
+
+[_Code_]         cout << "Enter operator and number: ";
+
+[_Code_]
+[_Code_]         cin >> oper_char >> value;
+
+[_Code_]
+[_Code_]         if ((oper_char == 'q') || (oper_char == 'Q'))
+
+[_Code_]             break;
+
+[_Code_]
+[_Code_]         if (oper_char == '+') {
+
+[_Code_]             result += value;
+
+[_Code_]         } else if (oper_char == '-') {
+
+[_Code_]             result -= value;
+
+[_Code_]         } else if (oper_char == '*') {
+
+[_Code_]             result *= value;
+
+[_Code_]         } else if (oper_char == '/') {
+
+[_Code_]             if (value == 0) {
+
+[_Code_]                 cout << "Error: Divide by zero\n";
+
+[_Code_]                 cout << "   operation ignored\n";
+
+[_Code_]             } else
+
+[_Code_]                 result /= value;
+
+[_Code_]         } else {
+
+[_Code_]             cout << "Unknown operator " << oper_char << '\n';
+
+[_Code_]         }
+
+[_Code_]     }
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+You expand the test plan to include the new operators and try it
+again.
+
+[_Code_] + 123    Result should be 123
+
+[_Code_] + 52     Result should be 175
+
+[_Code_] x 37     Error message should be output
+
+[_Code_] - 175    Result should be zero
+
+[_Code_] + 10     Result should be 10
+
+[_Code_] / 5      Result should be 2
+
+[_Code_] / 0      Divide by zero error
+
+[_Code_] * 8      Result should be 16
+
+[_Code_] q        Program should exit
+
+Testing the program, you find much to your surprise that it works.
+The word "Preliminary" is removed from the specification and the
+program, test plan, and specification are released.
+
+[_A_]  Maintenance
+
+Good programmers put their programs through a long and rigorous
+testing process before releasing it to the outside world. Then the
+first user tries the program and almost immediately finds a bug. This
+starts the maintenance phase. Bugs are fixed, the program is tested
+(to make sure the fixes didn't break anything), and the program is
+released again.
+
+[_A_]  Revisions
+
+Although the program is officially finished, you are not finished
+with it. After it is in use for a few months, someone will come to us
+and ask, "Can you add a modulus operator?" So you revise the
+specifications, add the change to the program, update the test plan,
+test the program, and release it again.
+
+As time passes, more people will come to you with additional
+requests for changes. Soon the program has trig functions, linear
+regressions, statistics, binary arithmetic, and financial calculations.
+The design is based on the idea of one-character operators. Soon
+you find yourself running out of characters to use. At this point the
+program is doing work far beyond what it was initially designed to
+do. Sooner or later you reach the point where the program needs to
+be scrapped and a new one written from scratch. At this point you
+write a new Preliminary Specification and start the process over
+again.
+
+[_A_]  Electronic Archaeology
+
+Unfortunately, most programmers don't start a project at the design
+step. Instead they are immediately thrust into the maintenance or
+revision stage. This means the programmer is faced with the worst
+possible job: understanding and modifying someone else's code.
+
+Contrary to popular belief, most C++ programs are not written by
+disorganized orangutans using Zen programming techniques and
+poorly commented in Esperanto. They just look that way. Electronic
+archeology is the art of digging through old code to discover
+amazing things (like how and why the code works).
+
+Your computer can aid greatly in your search to discover the true
+meaning of someone else's code. Many tools are available for
+examining and formatting code. (Be careful with your selection of
+tools, however. Many C tools have yet to be upgraded for C++. See
+earlier sections on revisions.) Some of these tools include:
+
+*  Cross-references. These programs have names like xref, cxref,
+and cross. System V UNIX has the utility cscope. They print out
+a list of variables and where the variables are used.
+
+*  Program indenters. Programs such as cb and indent indent a
+program "correctly" (correct indentation is something defined by
+the tool maker).
+
+*  Pretty printers. A pretty printer such as vgrind or cprint
+typesets source code for printing on a laser printer.
+
+*  Call graphs. On System V UNIX the program cflow analyzes the
+structure of the program. On other systems there is a public
+domain utility, calls, that produces call graphs, showing who
+calls whom and who is called by whom.
+
+*  Class browsers. A class browser allows you to display the class
+hierarchy so you can tell what components went into building
+the class as well as its structure. You'll learn what a class is in
+Chapter 13, Simple Classes.
+
+Which tools should you use? Whichever ones work for you.
+Different programmers work in different ways. Some techniques for
+examining code are listed below. Choose the ones that work for
+you and use them.
+
+[_A_]  Mark Up the Program
+
+Take a printout of the program and make notes all over it. Use red
+or blue ink so you can tell the difference between the printout and
+the notes. Use a highlighter to emphasize important sections. These
+notes are useful; put them in the program as comments, and then
+make a new printout and start the process over again.
+
+[_A_]  Use the Debugger
+
+The debugger is a great tool for understanding how something
+works. Most debuggers allow you to step through the program one
+line at a time, examining variables and discovering how things
+really work. Once you find out what the code does, make notes
+and put them in as comments.
+
+[_A_]  Use the Text Editor as a Browser
+
+One of the best tools for going through someone else's code is your
+text editor. Suppose you want to find out what the variable sc is
+used for. Use the search command to find the first place sc is used.
+Search again and find the second. Continue searching until you
+know what the variable does.
+
+Suppose you find out that sc is used as a sequence counter. Since
+you're already in the editor, you can easily do a global search-and-
+replace to change the variable sc to sequence_counter. (Disaster
+warning: Make sure sequence_counter is not already defined as a
+variable before you make the change. Also make sure you do a
+word replacement or you'll find you replaced sc in places you
+didn't intend.) Comment the declaration and you're on your way to
+creating an understandable program.
+
+[_A_]  Add Comments
+
+Don't be afraid to put any information you have, no matter how
+little, into the comments. Some of the comments I've used include:
+
+[_Code_] int state;  // Controls some sort of state machine
+
+[_Code_] int rmxy;   // Something to do with color correction?
+
+Finally, there is a catch-all comment:
+
+[_Code_] int idn;    // ???
+
+which means, "I have no idea what this variable does." Even though
+the purpose is unknown, it is now marked as something that needs
+more work.
+
+As you go through someone else's code adding comments and
+improving style, the structure will become clearer to you. By
+inserting notes (comments), you make the code better and easier to
+understand for future programmers.
+
+Suppose you are confronted with the following program written by
+someone from the "The Terser the Better" school of programming.
+Your assignment is to figure out what this program does. First you
+pencil in some comments as shown in [_XREF Figure 7-2_].
+
+Figure 7-2
+
+. A terse program
+
+This mystery program requires some work. After going through it
+and applying the principles described in this section, you get the
+well-commented, easy-to- understand version shown in [_XREF
+Example 7-3_].
+
+Example 7-3
+
+. guess/good.cc
+
+[_Code_] /********************************************************
+
+[_Code_]  * guess -- a simple guessing game                      *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Usage:                                               *
+
+[_Code_]  *      guess                                           *
+
+[_Code_]  *                                                      *
+
+[_Code_]  *      A random number is chosen between 1 and 100.    *
+
+[_Code_]  *      The player is given a set of bounds and         *
+
+[_Code_]  *      must choose a number between them.              *
+
+[_Code_]  *      If the player chooses the correct number, he wins*
+
+[_Code_]  *      Otherwise, the bounds are adjusted to reflect    *
+
+[_Code_]  *      the players guess and the game continues        *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Restrictions:                                        *
+
+[_Code_]  *      The random number is generated by the statment  *
+
+[_Code_]  *      rand() % 100.  Because rand() returns a number  *
+
+[_Code_]  *      0 <= rand() <= maxint  this slightly favors     *
+
+[_Code_]  *      the lower numbers.                              *
+
+[_Code_]  ********************************************************/
+
+[_Code_] #include <iostream.h>
+
+[_Code_] #include <stdlib.h>
+
+[_Code_] int   number_to_guess;  // Random number to be guessed
+
+[_Code_] int   low_limit;        // Current lower limit of player's range
+
+[_Code_] int   high_limit;       // Current upper limit of player's range
+
+[_Code_] int   guess_count;      // Number of times player guessed
+
+[_Code_] int   player_number;    // Number gotten from the player
+
+[_Code_] char  line[80];         // Input buffer for a single line
+
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     while (1) {
+
+[_Code_]         /*
+
+[_Code_]          * Not a pure random number; see restrictions
+
+[_Code_]          */
+
+[_Code_]         number_to_guess = rand() % 100 + 1;
+
+[_Code_]
+[_Code_]         // Initialize variables for loop
+
+[_Code_]         low_limit = 0;
+
+[_Code_]         high_limit = 100;
+
+[_Code_]         guess_count = 0;
+
+[_Code_]
+[_Code_]         while (1) {
+
+[_Code_]             // Tell user what the bounds are and get his guess
+
+[_Code_]             cout << "Bounds " << low_limit << " - " << high_limit << '\n';
+
+[_Code_]             cout << "Value[" << guess_count << "]? ";
+
+[_Code_]
+[_Code_]             ++guess_count;
+
+[_Code_]
+[_Code_]             cin >> player_number;
+
+[_Code_]
+[_Code_]             // Did he guess right?
+
+[_Code_]             if (player_number == number_to_guess)
+
+[_Code_]                 break;
+
+[_Code_]
+[_Code_]             // Adjust bounds for next guess
+
+[_Code_]             if (player_number < number_to_guess)
+
+[_Code_]                 low_limit = player_number;
+
+[_Code_]             else
+
+[_Code_]                 high_limit = player_number;
+
+[_Code_]
+[_Code_]         }
+
+[_Code_]         cout << "Bingo\n";
+
+[_Code_]     }
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+[_A_]  Programming Exercises
+
+For each assignment, follow the software life cycle from
+specification through release.
+
+Exercise 7-1: Write a program to convert English units to metric (e.g., miles to kilo-
+meters, gallons to liters, etc.). Include a specification and a code design.
+
+Exercise 7-2: Write a program to perform date arithmetic, such as how many days
+there are between 6/1/90 and 8/3/92. Include a specification and a code design.
+
+Exercise 7-3: A serial transmission line can transmit 960 characters a second. Write
+a program that will calculate how long it will take to send a file, given the file's
+size. Try it on a 400MB (419,430,400 byte) file. Use appropriate units. (A 400MB
+file takes days.)
+
+Exercise 7-4: Write a program to add an 8% sales tax to a given amount and
+round the result to the nearest penny.
+
+Exercise 7-5: Write a program to tell whether a number is prime.
+
+Exercise 7-6: Write a program that takes a series of numbers and counts the
+number of positive and negative values.

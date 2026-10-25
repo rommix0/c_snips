@@ -1,0 +1,2030 @@
+Chapter 16Part IV: Advanced Programming Concepts
+
+In This Chapter:
+
+*  [_XREF C++ File I/O_]
+
+*  [_XREF Conversion Routines_]
+
+*  [_XREF Binary and ASCII Files_
+]
+
+*  [_XREF The End-of-Line Puzzle_
+]
+
+*  [_XREF Binary I/O_]
+
+*  [_XREF Buffering Problems_]
+
+*  [_XREF Unbuffered I/O_]
+
+*  [_XREF Designing File
+Formats_]
+
+*  [_XREF C-Style I/O Routines_]
+
+*  [_XREF C-Style Conversion
+Routines_]
+
+16	
+
+16: File Input/Output
+
+I am the heir of all the ages, in the
+foremost files of time.
+
+---Tennyson
+
+A file is a collection of related data. C++ treats a file as a series of
+bytes. Many files reside on disk; however, devices such as terminals,
+printers, and magnetic tapes are also considered files.
+
+The Annotated C++ Reference Manual (Ellis and Stroustrup) is the
+current widely used standard for C++. This book does not contain a
+specification of the I/O system. A de facto standard has evolved
+based on the library supplied with the cfront compiler from AT&T.
+The problem is that some of the details may differ from compiler to
+compiler. For example, Turbo-C++ flushes cout at the end of each
+line while the SunPro UNIX C++ compiler does not.
+
+The current version of the ANSI C++ Draft Standard (September
+1994) does contain a detailed description of I/O calls. However,
+currently no compilers support this, and the standard also is still
+undergoing revision.
+
+This chapter discusses three different I/O packages. The first is the
+C++ I/O stream classes. This is the most commonly used I/O system
+and the one we've been using up to now. Next, we examine the
+raw I/O routines that give us direct access to the low-level I/O.
+Finally we look at the C I/O system. Although it is somewhat
+outdated, C I/O calls still appear in old code. Also, in some cases,
+the C-style I/O routines are superior to the ones provided with C++.
+
+[_A_]  C++ File I/O
+
+C++ file I/O is based on three classes: the istream class for input,
+the ostream class for output, and the iostream class for
+input/output. C++ refers to files as streams since it considers them a
+stream of bytes. Four class variables are automatically created when
+you start a program. These are listed in [_XREF Table 16-1_].
+
+Table 16-1
+
+. Predefined I/O Class Variables
+
+Variable
+
+Use
+
+cin
+
+Console input (standard input)
+
+cout
+
+Console output (standard output)
+
+cerr
+
+Console error (standard error)
+
+clog
+
+Console log
+
+These variables are defined in the standard include file
+<iostream.h>. Normally cin is assigned to the keyboard and
+cout, cerr, and clog are assigned to the screen. Most operating
+systems allow you to change these assignments through I/O
+redirection (see your operating system manual for details).
+
+For example, the command
+
+[_Code_] my_prog <file.in
+
+runs the program my_prog and assigns cin to the file file.in.
+
+When doing I/O to disk files (except through redirection) you must
+use the file version of the stream classes. These are ifstream,
+ofstream, and fstream and are defined in the include file
+<fstream.h>.
+
+[_NOTE_]  The ifstream class is actually derived from the
+istream class. Similarly, ofstream is derived from ostream
+and fstream is derived from iostream. You'll learn about
+derived classes in Chapter 21, Advanced Classes.
+
+Suppose you want to read a series of 100 numbers from the file
+numbers.dat. You start by declaring the input file variable:
+
+[_Code_] ifstream data_file;    // File we are reading the data from
+
+Next you need to tell C++ what disk file to use. This is done
+through the open member function:
+
+[_Code_] data_file.open("numbers.dat");
+
+Now you can read the file using the same statements you've been
+using to read cin:
+
+[_Code_] for (i = 0; i < 100; ++i)
+
+[_Code_]     data_file >> data_array[i];
+
+Finally you need to tell the I/O system that you are done with the
+file:
+
+[_Code_] data_file.close();
+
+Closing the file frees resources that can then be used again by the
+program.
+
+C++ allows the open call to be combined with the constructor. For
+example, instead of writing:
+
+[_Code_] ifstream data_file;    // File we are reading the data from
+
+[_Code_] data_file.open("numbers.dat");
+
+you can write:
+
+[_Code_] ifstream data_file("numbers.dat");  // File we are reading the data from
+
+Additionally, the destructor automatically calls close.
+
+But what if the file numbers.dat is missing? How can you tell if
+there is a problem? The member function bad returns "true" if there
+is a problem, and "false" otherwise. So to test for problems all you
+need is:
+
+[_Code_] if (data_file.bad()) {
+
+[_Code_]     cerr << "Unable to open numbers.dat\n";
+
+[_Code_]     exit (8);
+
+[_Code_] }
+
+A better version of the program for reading numbers is [_XREF
+Example 16-1_].
+
+Example 16-1
+
+.  read/read.cc
+
+[_Code_] /********************************************************
+
+[_Code_]  * Read -- read in 100 numbers and sum them             *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Usage:                                               *
+
+[_Code_]  *      read                                            *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Numbers are in the file "numbers.dat"                *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Warning: No check is made for a file with fewer than *
+
+[_Code_]  * 100 numbers in it                                    *
+
+[_Code_]  ********************************************************/
+
+[_Code_] #include <iostream.h>
+
+[_Code_] #include <fstream.h>
+
+[_Code_] #include <stdlib.h>
+
+[_Code_]
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     const int DATA_SIZE = 100;  // Number of items in the data
+
+[_Code_]     int data_array[DATA_SIZE];  // The data
+
+[_Code_]     ifstream data_file("numbers.dat"); // The input file
+
+[_Code_]     int i;                      // Loop counter
+
+[_Code_]
+[_Code_]     if (data_file.bad()) {
+
+[_Code_]         cerr << "Error: Could not open numbers.dat\n";
+
+[_Code_]         exit (8);
+
+[_Code_]     }
+
+[_Code_]
+[_Code_]     for (i = 0; i < DATA_SIZE; ++i)
+
+[_Code_]         data_file >> data_array[i];
+
+[_Code_]
+[_Code_]     int total;  // Total of the numbers
+
+[_Code_]
+[_Code_]     total = 0;
+
+[_Code_]     for (i = 0; i < DATA_SIZE; ++i)
+
+[_Code_]         total += data_array[i];
+
+[_Code_]
+[_Code_]     cout << "Total of all the numbers is " << total << '\n';
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+Finally, you have the getline member function. It is used to read a
+full line of data from the input file. This function is defined as:
+
+[_Code_] istream &getline(char *buffer, int len, char delim = '\n')
+
+The parameters to this function are:
+
+buffer
+A buffer to store the data that has been read.
+
+len
+Length of the buffer in bytes. The function reads up to len -1 bytes of data
+into the buffer. (One byte is reserved for the terminating null character \0.)
+This parameter is usually sizeof(buffer).
+
+delim
+The character used to signal end-of-line.
+
+This function returns a reference to the input file. The function
+reads up to and including the end-of-line character. The end-of-line
+character is not stored in the buffer.
+
+Problems can occur if the size specified is too big. C++ provides a
+convenient way to make sure the size parameter is just right
+through the use of the sizeof operator.
+
+The sizeof operator returns the size in bytes of its argument. For
+example:
+
+[_Code_] long int array[10];     // Each element contains 4 bytes
+
+[_Code_] char string[30];
+
+The sizeof(string) is 30 and sizeof(array) is 40 (4 bytes per
+long * 10 longs in the array).
+
+[_NOTE_]  sizeof is not the same as length. The sizeof
+operator returns the number of bytes in string (used or
+not).
+
+[_B_]  Output Files
+
+The functions for output files are similar to input files. For example,
+the declaration:
+
+[_Code_] ofstream out_file("out.dat");
+
+creates a file named out.dat and lets you write to the file using the
+file variable out_file.
+
+Actually, the constructor can take two additional parameters. The
+full definition of the output file constructor is:
+
+[_Code_] ofstream::ofstream(const char *name, int mode=ios::out,
+
+[_Code_]                    int prot = filebuf::openprot);
+
+The parameters for this function are:
+
+name
+The name of the file.
+
+mode
+A set of flags ORed together that determine the open mode. The flag
+ios::out is required for output files. Other flags are listed in [_XREF
+Table 16-2_]. (The ios:: prefix is used to indicate the scope of the constant.
+This operator is discussed in more detail in Chapter 21, Advanced Classes.)
+
+prot
+File protection. This is an operating-system-dependent value that determines
+the protection mode for the file. In UNIX the protection defaults to 0644
+(read/write owner, group read, others read). For MS-DOS/Windows this
+defaults to 0 (normal file).
+
+Table 16-2
+
+. Open Flags
+
+Flag
+
+Meaning
+
+ios::app
+
+Append data to the end of the output file.
+
+ios::ate
+
+Go to the end of the file when opened.
+
+ios::in
+
+Open for input (must be supplied to opens for ifstream variables).
+
+ios::out
+
+Open file for output (must be supplied to ofstream opens).
+
+ios::binary
+
+Binary file (if not present, the file is opened as an ASCII file). See the section [_XREF
+"Binary I/O" on page 264_] for a definition of a binary file.
+
+ios::trunc
+
+Discard contents of existing file when opening for write.
+
+ios::nocreate
+
+Fail if the file does not exist. (Output files only. Input files always fail if there is no file.)
+
+ios::noreplace
+
+Do not overwrite existing file. If a file exists, cause the open to fail.
+
+For example, the statement:
+
+[_Code_] ofstream out_file("data.new",
+ios::out|ios::binary|ios::nocreate|ios::app);
+
+appends (ios::app) binary data (ios::binary) to an existing file
+(ios::nocreate) named data.new.
+
+[_A_]  Conversion Routines
+
+So far we have just considered writing characters and strings. In this
+section, we consider some of the more sophisticated I/O operations:
+conversions.
+
+To write a number to a printer or terminal you must convert the
+number to characters. The printer understands only characters, not
+numbers. For example, the number 567 must be converted to the
+three characters "5", "6", and "7" to be printed.
+
+The << operator is used to convert data to characters and put them
+in a file. This function is extremely flexible. It can convert a simple
+integer into a fixed- or variable-size string as a hex, octal, or
+decimal number with left or right justification. So far you've been
+using the default conversion for your output. It serves pretty well,
+but if you want to control your output exactly, you need to learn
+about conversion flags.
+
+The member functions setf and unsetf are used to set and clear
+the flags that control the conversion process. The general form of
+the functions is:
+
+[_Code_] file_var.setf(flags);   // Set flags
+
+[_Code_] file_var.unsetf(flags); // Clear flags
+
+[_XREF Table 16-3_] lists the various flags and their meanings.
+
+Table 16-3
+
+. I/O Conversion Flags
+
+Flag
+
+Meaning
+
+ios::skipws
+
+Skip leading white-space characters on input.
+
+ios::left
+
+Output is left justified.
+
+ios::right
+
+Output is right justified.
+
+ios::internal
+
+Numeric output is padded by inserting a fill character between the sign or base
+character and the number itself.
+
+ios::dec
+
+Output numbers in base 10, decimal format.
+
+ios::oct
+
+Output numbers in base 8, octal format.
+
+ios::hex
+
+Output numbers in base 16, hexadecimal format.
+
+ios::showbase
+
+Print out a base indicator at the beginning of each number. For example:
+hexadecimal numbers are preceded with "0x".
+
+ios::showpoint
+
+Show a decimal point for all floating point numbers whether or not it's needed.
+
+ios::uppercase
+
+When converting hexadecimal numbers show the digits A-F as uppercase.
+
+ios::showpos
+
+Put a plus sign before all positive numbers.
+
+ios::scientific
+
+Convert all floating point numbers to scientific notation on output.
+
+ios::fixed
+
+Convert all floating point numbers to fixed point on output.
+
+ios::unitbuf
+
+Buffer output. (More on this later).
+
+ios::stdio
+
+Flush stream after each output.
+
+If you want to output a number in hexadecimal format, all you have
+to do is:
+
+[_Code_] number = 0x3FF;
+
+[_Code_] cout << "Dec: " << number << '\n';
+
+[_Code_]
+
+[_Code_] cout.setf(ios::hex);
+
+[_Code_] cout << "Hex: " << number << '\n';
+
+[_Code_]
+
+[_Code_] cout.setf(ios::dec);
+
+When run, this program produces the output:
+
+[_Code_] Dec: 1023
+
+[_Code_] Hex: 3ff
+
+[_NOTE_]  People normally expect the output mode to be
+decimal, so it is a good idea to reset the mode after each
+output to avoid later confusion.
+
+When converting numbers to characters the member function:
+
+[_Code_] int file_var.width(int size);
+
+determines the minimum characters to use. For example, the
+number 3 would normally convert to the character string "3" (note
+the lack of spaces). If the width is set to four, then the result would
+be "3" where  represents a single space.
+
+The member function:
+
+[_Code_] int file_var.precision(int digits);
+
+controls how many digits are printed after the decimal point.
+
+Finally, the function:
+
+[_Code_] char file_var.fill(char pad);
+
+determines the fill character. This character is used for padding
+when a number is smaller than the specified width.
+
+[_NOTE_]  Some of these flags and parameters are reset after
+each output call and some are not. Which flags are
+permanent and which are temporary seems to change from
+compiler to compiler. In general, don't assume anything is
+going to remain set and you'll be okay. (Just because you're
+paranoid doesn't mean the compiler isn't out to get you.)
+
+These functions can be called directly or you can use an I/O
+manipulator. An I/O manipulator is a special function that can be
+used in an I/O statement to change the formatting. You can think of
+a manipulator as a magic bullet that when sent through an input or
+output file changes the state of the file. A manipulator doesn't cause
+any output; it just changes the state. For example, the manipulator
+hex changes the output conversion to hexadecimal.
+
+[_Code_] #include <iostream.h>
+
+[_Code_] #include <iomanip.h>
+
+[_Code_]
+
+[_Code_] number = 0x3FF;
+
+[_Code_] cout << "Number is " << hex << number << dec << '\n';
+
+The I/O manipulators are defined in the include file <iomanip.h>.
+[_XREF Table 16-4_] contains the full list of I/O manipulators.
+
+Table 16-4
+
+. I/O Manipulators
+
+Manipulator
+
+Description
+
+setiosflags(long flags)
+
+Set selected conversion flags.
+
+resetiosflags(long flags)
+
+Reset selected flags.
+
+dec
+
+Output numbers in decimal format.
+
+hex
+
+Output numbers in hexadecimal format.
+
+oct
+
+Output numbers in octal format.
+
+setbase(int base)
+
+Set conversion base to 8, 10, or 16. Sort of a generalized dec, hex,
+oct.
+
+setw(int width)
+
+Set the width of the output.
+
+setprecision(int precision)
+
+Set the precision of floating point output.
+
+setfill(char ch)
+
+Set the fill character.
+
+ws
+
+Skip white space on input.
+
+endl
+
+Output end-of-line
+
+ends
+
+Output end-of-string (`\0').
+
+flush
+
+Force any buffered output out. (See Chapter 17, Debugging and
+Optimization, for an explanation of how to use this function).
+
+[_XREF Example 16-2_] shows how some of the I/O manipulators
+may be used.
+
+Example 16-2
+
+.  io/io.cc
+
+[_Code_] #include <iostream.h>
+
+[_Code_] #include <iomanip.h>
+
+[_Code_] main()
+
+[_Code_] #
+
+[_Code_] {
+
+[_Code_]     int number = 12;    // A number to output
+
+[_Code_]     float real = 12.34; // A real number
+
+[_Code_]
+[_Code_]     cout << "123456789012345678901234567890\n"; // Output ruler
+
+[_Code_]     cout << number << "<-\n";
+
+[_Code_]     cout << setw(5) << number << "<-\n";
+
+[_Code_]     cout << setw(5) << setfill('*') << number << "<-\n";
+
+[_Code_]     cout << setiosflags(ios::showpos|ios::left) << setw(5) <<
+
+[_Code_]             number << "<-\n";
+
+[_Code_]
+[_Code_]     cout << real << "<-\n";
+
+[_Code_]     cout << setprecision(1) << setiosflags(ios::fixed) << real << "<-\n";
+
+[_Code_]     cout << setiosflags(ios::scientific) << real << "<-\n";
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+[_Code_]
+The output of this program is:
+
+[_Code_] 123456789012345678901234567890
+
+[_Code_] 12<-
+
+[_Code_]    12<-
+
+[_Code_] ***12<-
+
+[_Code_] +12**<-
+
+[_Code_] 12.34<-
+
+[_Code_] 12.3<-
+
+[_Code_] 1e+01<-
+
+[_A_]  Binary and ASCII Files
+
+So far we have limited ourselves to ASCII files. "ASCII" stands for
+American Standard Code for Information Interchange. It is a set of
+95 printable characters and 33 control codes. (A complete list of
+ASCII codes can be found in Appendix A, ASCII Table.) ASCII files
+are human readable. When you write a program, the prog.cc file is
+ASCII.
+
+Terminals, keyboards, and printers deal with character data. When
+you want to write a number like 1234 to the screen, it must be
+converted to four characters (1, 2, 3, 4) and written.
+
+Similarly, when you read a number from the keyboard, the data
+must be converted from characters to integers. This is done by the
+>> operator.
+
+The ASCII character "0" has the value 48, "1" the value 49, and so
+on. When you want to convert a single digit from ASCII to integer,
+you must subtract this value number:
+
+[_Code_] int integer;
+
+[_Code_] char ch;
+
+[_Code_]
+
+[_Code_] ch = '5';
+
+[_Code_] integer = ch - 48;
+
+[_Code_] cout << "Integer " << integer << '\n';
+
+Rather than remember that "0" is 48, you can just subtract "0":
+
+[_Code_] integer = ch - '0';
+
+Computers work on binary data. When reading numbers from an
+ASCII file, the program must process the character data through a
+conversion routine like the integer conversion routine just defined.
+This is expensive. Binary files require no conversion. They also
+generally take up less space than ASCII files. The drawback is they
+cannot be directly printed on a terminal or printer. (If you've ever
+seen a long printout coming out of the printer displaying pages with
+a few characters at the top that look like
+"!E#(@$%@^Aa^AA^^JHC%^X" then you know what happens when
+you try to print a binary file.)
+
+ASCII files are portable (for the most part). They can be moved
+from machine to machine with very little trouble. Binary files are
+almost certainly nonportable. Unless you are an expert programmer,
+it is almost impossible to make a portable binary file. (See
+Chapter 25, Portability Problems.)
+
+Which file type should you use? In most cases, ASCII is best. If you
+have small to medium amounts of data, the conversion time does
+not seriously affect the performance of your program. (Who cares if
+it takes 0.5 second to start up instead of 0.3?) ASCII files also make
+it easy to verify the data.
+
+Only when you are using large amounts of data will the space and
+performance problems force you to use the binary format.
+
+[_A_]  The End-of-Line Puzzle
+
+Back in the dark ages BC (Before Computers), there existed a
+magical device called a Teletype Model 33. This amazing machine
+contained a shift register made out of a motor and a rotor as well as
+a keyboard ROM consisting solely of levers and springs.
+
+The teletype contained a keyboard, a printer, and a paper tape
+reader/punch. It could transmit messages over telephones using a
+modem at the blazing rate of 10 characters a second.
+
+But teletype had a problem. It took 2/10 second to move the
+printhead from the right side to the left. 2/10 second is two
+character times. If a second character came while the printhead was
+in the middle of a return, that character was lost.
+
+The teletype people solved this problem by making end-of-line two
+characters: <carriage return> to position the printhead at the left
+margin, and <line feed> to move the paper up one line. That way
+the <line feed> "printed" while the printhead was racing back to the
+left margin.
+
+When the early computers came out, some designers realized that
+using two characters for end-of-line wasted storage (at this time
+storage was very expensive). Some picked <line feed> for their end-
+of-line, and some chose <carriage return>. Some of the die-hards
+stayed with the two-character sequence.
+
+UNIX uses <line feed> for end-of-line. The new-line character \n
+is code 0xA (LF or <line feed>).
+
+MS-DOS/Windows uses the two characters <line feed><carriage
+return>. Compiler designers had problems in dealing with the old C
+programs that thought new-line was just <line feed>? The solution
+was to add code to the I/O library that stripped out the <carriage
+return> characters from ASCII input files and changed <line feed> to
+<line feed><carriage return> on output.
+
+In MS-DOS/Windows, whether or not a file is opened as ASCII or
+binary is important to note. The flag ios::binary is used to
+indicate a binary file:
+
+[_Code_] // Open ASCII file for reading
+
+[_Code_] ascii_file.open("name", ios::in);
+
+[_Code_]
+
+[_Code_] // Open binary file for reading
+
+[_Code_] binary_file.open("name", ios::in|ios::binary);
+
+Question 16-1: The member function put can be used to write out a single byte of a
+binary file. The following program writes numbers 0 to 127 to a file called test.out.
+It works just fine in UNIX, creating a 128-byte long file; however, in MS-
+DOS/Windows, the file contains 129 bytes. Why?
+
+Example 16-3
+
+.  wbin/wbin.cc
+
+[_Code_] #include <iostream.h>
+
+[_Code_] #include <fstream.h>
+
+[_Code_] #include <stdlib.h>
+
+[_Code_]
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     int cur_char;   // Current character to write
+
+[_Code_]     ofstream out_file; // Output file
+
+[_Code_]
+[_Code_]     out_file.open("test.out", ios::out);
+
+[_Code_]     if (out_file.bad()) {
+
+[_Code_]         (cerr << "Cannot open output file\n");
+
+[_Code_]         exit (8);
+
+[_Code_]     }
+
+[_Code_]
+[_Code_]     for (cur_char = 0; cur_char < 128; ++cur_char) {
+
+[_Code_]         out_file << cur_char;
+
+[_Code_]     }
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+Hint: Here is a hex dump of the MS-DOS/Windows file:
+
+[_Code_] 000:0001 0203 0405 0607 0809 0d0a 0b0c 0d0e
+
+[_Code_] 010:0f10 1112 1314 1516 1718 191a 1b1c 1d1e
+
+[_Code_] 020:1f20 2122 2324 2526 2728 292a 2b2c 2d2e
+
+[_Code_] 030:2f30 3132 3334 3536 3738 393a 3b3c 3d3e
+
+[_Code_] 040:3f40 4142 4344 4546 4748 494a 4b4c 4d4e
+
+[_Code_] 050:4f50 5152 5354 5556 5758 595a 5b5c 5d5e
+
+[_Code_] 060:5f60 6162 6364 6566 6768 696a 6b6c 6d6e
+
+[_Code_] 070:6f70 7172 7374 7576 7778 797a 7b7c 7d7e
+
+[_Code_] 080:7f
+
+UNIX programmers don't have to worry about the C++ library automatically fixing
+their ASCII files. In UNIX, a file is a file and ASCII is no different from binary. In
+fact, you can write a half-ASCII/half-binary file if you want to.
+
+[_A_]  Binary I/O
+
+Binary I/O is accomplished through two member functions: read
+and write. The syntax for read is:
+
+[_Code_] in_file.read(data_ptr, size);
+
+data_ptr
+Pointer to a place to put the data.
+
+size
+Number of bytes to be read.
+
+The member function gcount returns the number of bytes gotten
+by the last read. This may be less than the number of bytes
+requested. For example, the read might encounter an end-of-file or
+error:
+
+[_Code_] struct {
+
+[_Code_]     int     width;
+
+[_Code_]     int     height;
+
+[_Code_] } rectangle;
+
+[_Code_]
+
+[_Code_] in_file.read((char *)(&rectangle), sizeof(rectangle));
+
+[_Code_] if (in_file.bad()) {
+
+[_Code_]     cerr << "Unable to read rectangle\n";
+
+[_Code_]     exit (8);
+
+[_Code_] }
+
+[_Code_] if (in_file.gcount() != sizeof(rectangle)) {
+
+[_Code_]     cerr << "Error: Unable to read full rectangle\n";
+
+[_Code_]     cerr << "I/O error of EOF encountered\n";
+
+[_Code_] }
+
+In this example you are reading in the structure rectangle. The &
+operator makes rectangle into a pointer. The cast "(char *)"
+is needed since read wants a character array. The sizeof operator
+is used to determine how many bytes to read in as well as to check
+that read was successful.
+
+The member function write has a calling sequence similar to read.
+
+[_Code_] out_file.write(data_ptr, size);
+
+[_A_]  Buffering Problems
+
+Buffered I/O does not write immediately to the file. Instead, the
+data is kept in a buffer until there is enough for a big write, or until
+it is flushed. The following program is designed to print a progress
+message as each section is finished.
+
+[_Code_] cout << "Starting";
+
+[_Code_] do_step_1();
+
+[_Code_] cout << "Step 1 complete";
+
+[_Code_] do_step_2();
+
+[_Code_] cout << "Step 2 complete";
+
+[_Code_] do_step_3();
+
+[_Code_] cout << "Step 3 complete\n";
+
+Instead of writing the messages as each step completes, cout puts
+them in a buffer. Only after the program is finished does the buffer
+get flushed, and all the messages come spilling out at once.
+
+The I/O manipulator flush forces the flushing of the buffers.
+Properly written, the above example should be:
+
+[_Code_] cout << "Starting" << flush;
+
+[_Code_] do_step_1();
+
+[_Code_] cout << "Step 1 complete" << flush;
+
+[_Code_] do_step_2();
+
+[_Code_] cout << "Step 2 complete" << flush;
+
+[_Code_] do_step_3();
+
+[_Code_] cout << "Step 3 complete\n" << flush;
+
+[_A_]  Unbuffered I/O
+
+In buffered I/O, data is buffered and then sent to the file. In
+unbuffered I/O, the data is immediately sent to the file.
+
+If you drop a number of paperclips on the floor, you can pick them
+up in buffered or unbuffered mode. In buffered mode, you use your
+right hand to pick up a paper clip and transfer it to your left hand.
+The process is repeated until your left hand is full, and then you
+dump a handful of paperclips into the box on your desk.
+
+In unbuffered mode, you pick up a paperclip and dump it into the
+box. There is no left-hand buffer.
+
+In most cases buffered I/O should be used instead of unbuffered. In
+unbuffered I/O, each read or write requires a system call. Any call
+to the operating system is expensive. Buffered I/O minimizes these
+calls.
+
+Unbuffered I/O should be used only when reading or writing large
+amounts of binary data or when direct control of a device or file is
+required.
+
+Back to the paperclip example - if you were picking up small
+items like paperclips you would probably use a left-hand buffer.
+But if you were picking up cannon balls (which are much larger),
+no buffer would be used.
+
+The open system call is used for opening an unbuffered file. The
+macro definitions used by this call differ from system to system. You
+are using both UNIX and MS-DOS/Windows, so you have used
+conditional compilation (#ifdef / #endif) to bring in the correct
+files.
+
+[_Code_] #include <sys/types.h>
+
+[_Code_] #include <sys/stat.h>
+
+[_Code_] #include <fcntl.h>
+
+[_Code_]
+
+[_Code_] #ifdef __MSDOS__        // If we are MS-DOS
+
+[_Code_] #include <io.h>         // Get the MS-DOS include file for raw I/O
+
+[_Code_] #else /* __MSDOS__ */
+
+[_Code_] #include <unistd.h>     // Get the UNIX include file for raw I/O
+
+[_Code_] #endif /* __MSDOS__ */
+
+[_Code_]
+
+[_Code_] int     file_descriptor;
+
+[_Code_]
+
+[_Code_] file_descriptor = open(name, flags);    // Existing file
+
+[_Code_] file_descriptor = open(name, flags, mode);//New file
+
+file_descriptor
+An integer that is used to identify the file for the read, write and close calls. If
+file_descriptor is less than 0 an error occurred.
+
+name
+Name of the file.
+
+flags
+Defined in the fcntl.h header file. Open flags are described in [_XREF
+Table 16-5_].
+
+Table 16-5
+
+. Open Flags
+
+Flag
+
+Meaning
+
+O_RDONLY
+
+Open for reading only
+
+O_WRONLY
+
+Open for writing only
+
+O_RDWR
+
+Open for reading and writing
+
+O_APPEND
+
+Append new data at the end of the file
+
+O_CREAT
+
+Create file (mode file required when this flag is present)
+
+O_TRUNC
+
+If the file exists, truncate it to 0 length
+
+O_EXCL
+
+Fail if file exists
+
+O_BINARY
+
+Open in binary mode (older UNIX systems may not have this flag)
+
+mode
+Protection mode for the file. Normally this is 0666 for most files.
+
+For example, to open the existing file data.txt in text mode for
+reading, you use the following:
+
+[_Code_]     data_fd = open("data.txt", O_RDONLY);
+
+The next example shows how to create a file called output.dat for
+writing only:
+
+[_Code_]      out_fd = open("output.dat", O_CREAT|O_WRONLY, 0666);
+
+Notice that you combined flags using the OR (|) operator. This is a
+quick and easy way of merging multiple flags.
+
+When any program is initially run, three files are already opened.
+These are described in [_XREF Table 16-6_].
+
+Table 16-6
+
+. Standard Unbuffered Files
+
+File Number
+
+Description
+
+0
+
+Standard in
+
+1
+
+Standard out
+
+2
+
+Standard error
+
+The format of the read call is:
+
+[_Code_] read_size = read(file_descriptor, buffer, size);
+
+read_size
+The actual number of bytes read. A 0 indicates end-of-file and a negative
+number indicates an error.
+
+file_descriptor
+File descriptor of an open file.
+
+buffer
+Pointer to the place to read the data.
+
+size
+Size of the data to be read. This is the size of the request. The actual number
+of bytes read may be less than this. (For example, you may run out of data.)
+
+The format of a write call is:
+
+write_size = write(file_descriptor, buffer, size);
+
+write_size
+Actual number of bytes written. A negative number indicates an error.
+
+file_descriptor
+File descriptor of an open file.
+
+buffer
+Pointer to the data to be written.
+
+size
+Size of the data to be written. The system will try to write this many bytes,
+but if the device is full or there is some other problem, a smaller number of
+bytes may be written.
+
+Finally, the close call closes the file:
+
+flag = close(file_descriptor)
+
+flag
+0 for success, negative for error.
+
+file_descriptor
+File descriptor of an open file.
+
+[_XREF Example 16-4_][_XREF _] copies a file. Unbuffered I/O is
+used because of the large buffer size. It makes no sense to use
+buffered I/O to read 1K of data into a buffer (using an ifstream)
+and then transfer it into a 16K buffer.
+
+Example 16-4
+
+.  copy2/copy2.cc
+
+[_Code_] /****************************************
+
+[_Code_]  * Copy -- copy one file to another     *
+
+[_Code_]  *                                      *
+
+[_Code_]  * Usage                                *
+
+[_Code_]  *      copy <from> <to>                *
+
+[_Code_]  *                                      *
+
+[_Code_]  * <from> -- the file to copy from      *
+
+[_Code_]  * <to>   -- the file to copy into      *
+
+[_Code_]  ****************************************/
+
+[_Code_] #include <iostream.h>
+
+[_Code_] #include <stdlib.h>
+
+[_Code_] #include <sys/types.h>
+
+[_Code_] #include <sys/stat.h>
+
+[_Code_] #include <fcntl.h>
+
+[_Code_]
+[_Code_] #ifdef __MSDOS__        // If we are MS-DOS
+
+[_Code_] #include <io.h>         // Get the MS-DOS include file for raw I/O
+
+[_Code_] #else /* __MSDOS__ */
+
+[_Code_] #include <unistd.h>     // Get the UNIX include file for raw I/O
+
+[_Code_] #endif /* __MSDOS__ */
+
+[_Code_]
+[_Code_] const int BUFFER_SIZE = (16 * 1024); // Use 16K buffers
+
+[_Code_]
+[_Code_] main(int argc, char *argv[])
+
+[_Code_] {
+
+[_Code_]     char  buffer[BUFFER_SIZE];  // Buffer for data
+
+[_Code_]     int   in_file;              // Input file descriptor
+
+[_Code_]     int   out_file;             // Output file descriptor
+
+[_Code_]     int   read_size;            // Number of bytes on last read
+
+[_Code_]
+[_Code_]     if (argc != 3) {
+
+[_Code_]         cerr << "Error: Wrong number of arguments\n";
+
+[_Code_]         cerr << "Usage is: copy <from> <to>\n";
+
+[_Code_]         exit(8);
+
+[_Code_]     }
+
+[_Code_]     in_file = open(argv[1], O_RDONLY);
+
+[_Code_]     if (in_file < 0) {
+
+[_Code_]         cerr << "Error: Unable to open " << argv[1] << '\n';
+
+[_Code_]         exit(8);
+
+[_Code_]     }
+
+[_Code_]     out_file = open(argv[2], O_WRONLY | O_TRUNC | O_CREAT, 0666);
+
+[_Code_]     if (out_file < 0) {
+
+[_Code_]         cerr << "Error: Unable to open " << argv[2] << '\n';
+
+[_Code_]         exit(8);
+
+[_Code_]     }
+
+[_Code_]     while (1) {
+
+[_Code_]         read_size = read(in_file, buffer, sizeof(buffer));
+
+[_Code_]
+[_Code_]         if (read_size == 0)
+
+[_Code_]             break;              // End of file
+
+[_Code_]
+[_Code_]         if (read_size < 0) {
+
+[_Code_]             cerr << "Error: Read error\n";
+
+[_Code_]             exit(8);
+
+[_Code_]         }
+
+[_Code_]         write(out_file, buffer, (unsigned int) read_size);
+
+[_Code_]     }
+
+[_Code_]     close(in_file);
+
+[_Code_]     close(out_file);
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+Several things should be noted about this program. First of all, the
+buffer size is defined as a constant, so it is easily modified. Rather
+than have to remember that 16K is 16,384, the programmer used the
+expression (16 * 1024). This form of the constant is obviously 16K.
+
+If the user improperly uses the program, an error message results.
+To help the user get it right, the message tells how to use the
+program.
+
+You may not read a full buffer for the last read. That is why read_
+size is used to determine the number of bytes to write.
+
+[_A_]  Designing File Formats
+
+Suppose you are designing a program to produce a graph. The
+height, width, limits, and scales are to be defined in a graph
+configuration file. You are also assigned to write a user-friendly
+program that asks the operator questions and writes a configuration
+file so he or she does not have to learn the text editor. How should
+you design a configuration file?
+
+One way would be as follows:
+
+height (in inches)
+
+width (in inches)
+
+x lower limit
+
+x upper limit
+
+y lower limit
+
+y upper limit
+
+x-scale
+
+y-scale
+
+A typical plotter configuration file might look like:
+
+[_Code_] 10.0
+
+[_Code_] 7.0
+
+[_Code_] 0
+
+[_Code_] 100
+
+[_Code_] 30
+
+[_Code_] 300
+
+[_Code_] 0.5
+
+[_Code_] 2.0
+
+This file does contain all the data, but in looking at it, you have
+trouble identifying what, for example, is the value of the Y lower
+limit. A solution is to comment the file so the configuration program
+writes out not only the data, but also a string describing the data.
+
+[_Code_] 10.0			height (in inches)
+
+[_Code_] 7.0			width (in inches)
+
+[_Code_] 0			x lower limit
+
+[_Code_] 100			x upper limit
+
+[_Code_] 30			y lower limit
+
+[_Code_] 300			y upper limit
+
+[_Code_] 0.5			x-scale
+
+[_Code_] 2.0			y-scale
+
+Now the file is human readable. But suppose a user runs the plot
+program and types in the wrong filename, and the program gets the
+lunch menu for today instead of a plot configuration file. The
+program is probably going to get very upset when it tries to
+construct a plot whose dimensions are "BLT on white" versus
+"Meatloaf and gravy."
+
+The result is that you wind up with egg on your face. There should
+be some way of identifying this file as a plot configuration file. One
+method of doing this is to put the words "Plot Configuration File"
+on the first line of the file. Then, when someone tries to give your
+program the wrong file, the program will print an error message.
+
+This takes care of the wrong file problem, but what happens when
+you are asked to enhance the program and add optional logarithmic
+plotting? You could simply add another line to the configuration
+file, but what about all those old files? It's not reasonable to ask
+everyone to throw them away. The best thing to do (from a user's
+point of view) is to accept old format files. You can make this easier
+by putting a version number in the file.
+
+A typical file now looks like:
+
+[_Code_] Plot Configuration File V1.0
+
+[_Code_] log			Logarithmic or normal plot
+
+[_Code_] 10.0			height (in inches)
+
+[_Code_] 7.0			width (in inches)
+
+[_Code_] 0			x lower limit
+
+[_Code_] 100			x upper limit
+
+[_Code_] 30			y lower limit
+
+[_Code_] 300			y upper limit
+
+[_Code_] 0.5			x-scale
+
+[_Code_] 2.0			y-scale
+
+In binary files, it is common practice to put an identification number
+in the first four bytes of the file. This is called the magic number.
+The magic number should be different for each type of file.
+
+One method for choosing a magic number is to start with the first
+four letters of the program name (e.g., list) and convert them to
+hex: 0x6c607374. Then add 0x80808080 to the number: 0xECE0F3F4.
+
+This generates a magic number that is probably unique. The high
+bit is set on each byte to make the byte non-ASCII and avoid
+confusion between ASCII and binary files.
+
+When reading and writing a binary file containing many different
+types of structures, it is easy to get lost. For example, you might
+read a name structure when you expected a size structure. This is
+usually not detected until later in the program. To locate this
+problem early, the programmer can put magic numbers at the
+beginning of each structure. Then if the program reads the name
+structure and the magic number is not correct, it knows something
+is wrong.
+
+Magic numbers for structures do not need to have the high bit set
+on each byte. Making the magic number just four ASCII characters
+makes it easy to pick out the beginning of structures in a file dump.
+
+[_A_]  C-Style I/O Routines
+
+C++ allows you to use the C I/O library in C++ programs. Many
+times this occurs because someone took a C program and translated
+it to C++ and didn't want to bother translating the I/O calls. In some
+cases, the old C library is better and easier to use than the new C++
+library. For example, C string-conversion routines such as sscanf
+and sprintf are far easier to use than their C++ counterparts.
+
+The declarations for the structures and functions used by the C I/O
+functions are stored in the standard include file <stdio.h>.
+
+The declaration for a file variable is:
+
+[_Code_] FILE *file_variable;      /* Comment */
+
+Example:
+
+[_Code_] #include <stdio.h>
+
+[_Code_]
+
+[_Code_] FILE *in_file;  /* File containing the input data */
+
+Before a file can be used, it must be opened using the function
+fopen. fopen returns a pointer to the file structure for the file. The
+format for fopen is:
+
+[_Code_] file_variable = fopen(name, mode);
+
+file_variable
+A file variable.
+
+name
+Actual name of the file (data.txt, temp.dat, etc.).
+
+mode
+Indicates whether the file is to be read or written. Mode is "w" for writing and
+"r" for reading.
+
+The function fclose closes the file. The format of fclose is:
+
+[_Code_] status = fclose(file_variable);
+
+The variable status will be zero if the fclose was successful or
+non-zero for an error.
+
+C provides three preopened files. These are listed in Table 16-7.
+
+Table 16-7
+
+. Standard Files
+
+File
+
+Description
+
+stdin
+
+Standard input (open for reading). Equivalent to C++'s cin.
+
+stdout
+
+Standard output (open for writing). Equivalent to C++'s cout.
+
+stderr
+
+Standard error (open for writing).
+
+Equivalent to C++'s cerr.
+
+There is no C file equivalent to C++'s clog.
+
+The function fgetc reads a single character from a file. If there is
+no more data in the file the function returns the constant EOF (EOF
+is defined in stdio.h). Note that fgetc returns an integer, not a
+character. This is necessary because the EOF flag must be a
+noncharacter value.
+
+Example 16-5 counts the number of characters in the file input.txt.
+
+Example 16-5
+
+.  copy/copy.cc
+
+[_Code_] #include <stdio.h>
+
+[_Code_] #include <stdlib.h>     /* ANSI Standard C file */
+
+[_Code_] #include <iostream.h>
+
+[_Code_]
+[_Code_] const char FILE_NAME[] = "input.txt";   // Name of the input file
+
+[_Code_]
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     int  count = 0;  // Number of characters seen
+
+[_Code_]     FILE *in_file;   // Input file
+
+[_Code_]
+[_Code_]     int ch;          // Character or EOF flag from input
+
+[_Code_]
+[_Code_]     in_file = fopen(FILE_NAME, "rb");
+
+[_Code_]     if (in_file == NULL) {
+
+[_Code_]         cerr << "Cannot open " << FILE_NAME << '\n';
+
+[_Code_]         exit(8);
+
+[_Code_]     }
+
+[_Code_]
+[_Code_]     while (1) {
+
+[_Code_]         ch = fgetc(in_file);
+
+[_Code_]         if (ch == EOF)
+
+[_Code_]             break;
+
+[_Code_]         ++count;
+
+[_Code_]     }
+
+[_Code_]     cout << "Number of characters in " << FILE_NAME << " is " << count << '\
+n';
+
+[_Code_]
+[_Code_]     fclose(in_file);
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+A similar function, fputc, exists for writing a single character. Its
+format is:
+
+[_Code_] fputc(character,  file);
+
+The functions fgets and fputs work on one line at a time. The
+format of the fgets call is:
+
+[_Code_] string_ptr = fgets(string, size, file);
+
+string_ptr
+Equal to string if the read was successful, or NULL if EOF or an error is
+detected.
+
+string
+A character array where the function places the string.
+
+size
+The size of the character array. fgets reads until it gets a line (complete with
+ending \n) or it reads size - 1 characters. It then ends the string with a
+null (\0).
+
+Example:
+
+[_Code_]         char    string[100];
+
+[_Code_]
+
+[_Code_]         . . .
+
+[_Code_]
+
+[_Code_]         fgets(string, sizeof(string), in_file);
+
+fputs is similar to fgets except it writes a string instead of reading
+it. The format of the fputs function is:
+
+[_Code_] string_ptr = fputs(string, file);
+
+The parameters to fputs are similar to the ones for fgets. fputs
+needs no size because it gets the size of the line to write from the
+length of the string. (It keeps writing until it hits a null character, \
+0).
+
+[_A_]  C-Style Conversion Routines
+
+C++ uses the << operator for output. C uses the printf family of
+functions. A printf call consists of two parts: a format that
+describes how to print the data and a list of data to print.
+
+The general form of the printf call is:
+
+[_Code_] printf(format, parameter-1, parameter-2, ...);
+
+The format string is printed exactly. For example:
+
+[_Code_] printf("Hello World\n");
+
+prints:
+
+[_Code_] Hello World
+
+To print a number, you must put a % conversion in the format
+string. For example, when C sees %d in the format string, it takes the
+next parameter from the parameter list (which must be an integer)
+and prints it.
+
+Figure 16-1 shows how the elements of the printf statement work
+to generate the final result:
+
+Figure 16-1
+
+. printf structure
+
+The conversion %d is used for integers. Other types of parameters
+use different conversions. For example, if you want to print a
+floating point number, you need a %f conversion. [_XREF
+Table 16-8_] lists the conversions.
+
+Table 16-8
+
+. C-style Conversions
+
+Conversion
+
+Variable Type
+
+%d
+
+int
+
+%ld
+
+long int
+
+%d
+
+short int
+
+%f
+
+float
+
+%lf
+
+double
+
+%u
+
+unsigned int
+
+%lu
+
+unsigned long int
+
+%u
+
+unsigned short int
+
+%s
+
+char * (string)
+
+%c
+
+char
+
+%o
+
+int (prints octal)
+
+%x
+
+int (prints hexadecimal)
+
+%e
+
+float (in the form d.dddE+dd)
+
+Many additional conversions also can be used in the printf
+statement. See your reference manual for details.
+
+The printf function does not check for the correct number of
+parameters on each line. If you add too many, the extra parameters
+are ignored. If you add too few, C will make up values for the
+missing parameters. Also C does not type check parameters, so if
+you use a %d on a floating point number, you will get strange
+results.
+
+Question 16-2: Why does 2 + 2 = 5986? (Your results may vary.)
+
+[_Code_] [File: two/two.c]
+
+[_Code_] #include <stdio.h>
+
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     int answer;
+
+[_Code_]
+
+[_Code_]     answer = 2 + 2;
+
+[_Code_]
+
+[_Code_]     printf("The answer is %d\n");
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+Question 16-3:  Why does 21 / 7 = 0? (Your results may vary.)
+
+[_Code_] [File: float3/float3.c]
+
+[_Code_] #include <stdio.h>
+
+[_Code_]
+
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     float result;
+
+[_Code_]
+
+[_Code_]     result = 21.0 / 7.0;
+
+[_Code_]     printf("The result is %d\n", result);
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+The function fprintf is similar to printf except that it takes one
+additional parameter, the file to print to.
+
+[_Code_] fprintf(file, format, parameter-1, parameter-2, ...);
+
+Another flavor of the printf family is the sprintf call. The first
+parameter of sprintf is a string. The function formats the output
+and stores the result in the given string.
+
+[_Code_] sprintf(string, format, parameter-1, parameter-2, ...);
+
+For example:
+
+[_Code_] char string[40];        /* The filename */
+
+[_Code_]
+
+[_Code_] /* Current file number for this segment */
+
+[_Code_] int file_number = 0;
+
+[_Code_]
+
+[_Code_] sprintf(string, "file.%d", file_number);
+
+[_Code_] ++file_number;
+
+[_Code_] out_file = fopen(string, "w");
+
+Warning: The return value of sprintf differs from system to
+system. The ANSI standard defines it as the number of characters
+stored in the string; however, some implementations of UNIX C
+define it to be a pointer to the string.
+
+Reading is accomplished through the scanf family of calls. The
+scanf function has similar sister functions: fscanf and sscanf.
+The format for fscanf is:
+
+[_Code_] number = fscanf(file, format, &parameter-1, . . .);
+
+number
+Number of parameters successfully converted
+
+file
+A file opened for reading
+
+format
+Describes the data to be read
+
+parameter-1
+First parameter to be read
+
+[_WARNING_]  If you forget to put & in front of each variable
+for scanf, the result can be a "Segmentation violation core
+dumped" or "Illegal memory access" error. In some cases a
+random variable or instruction will be modified. This is not
+common on UNIX machines, but MS-DOS/Windows, with its
+lack of memory protection, cannot easily detect this problem.
+In MS-DOS/Windows, omitting & can cause a system crash.
+
+There is one problem with this scanf: It's next to impossible to get
+the end-of- line handling right. However, there's a simple way to
+get around the limitations of scanf-don't use it. Instead use
+fgets followed by the string version of scanf, the function
+sscanf:
+
+[_Code_] char line[100];    // Line for data
+
+[_Code_]
+
+[_Code_] fgets(line, sizeof(line), stdin);    // Read numbers
+
+[_Code_] sscanf(line, "%d %d", &number1, &number2);
+
+Finally, there is a file version of scanf, the function fscanf. Again
+this function is extremely difficult and should not be used. Use
+fgets and sscanf instead.
+
+[_A_]  C-Style Binary I/O
+
+Binary I/O is accomplished through two routines: fread and
+fwrite. The syntax for fread is:
+
+[_Code_] read_size = fread(data_ptr, 1, size, file);
+
+read_size
+Size of the data that was read. If this is less than size, then an end-of-file or
+error occurred.
+
+data_ptr
+Pointer to the data to be read.
+
+size
+Number of bytes to be read.
+
+file
+Input file.
+
+Example:
+
+[_Code_] struct {
+
+[_Code_]         int     width;
+
+[_Code_]         int     height;
+
+[_Code_] } rectangle;
+
+[_Code_]
+
+[_Code_] if (fread((char *)&rectangle, 1, sizeof(rectangle), in_file) !=
+
+[_Code_]               sizeof(rectangle)) {
+
+[_Code_]         fprintf(stderr, "Unable to read rectangle\n");
+
+[_Code_]         exit (8);
+
+[_Code_] }
+
+In this example you are reading in the structure rectangle. The &
+operator makes the structure into a pointer. The cast "(char *)"
+turns &rectangle into the proper parameter type, and the sizeof
+operator is used to determine how many bytes to fread in as well
+as to check that read was successful.
+
+fwrite has a calling sequence similar to fread:
+
+[_Code_] write_size = fwrite(data_ptr, 1, size, file);
+
+[_NOTE_]  To make programming simpler and easier, I
+always use 1 as the second parameter to fread and fwrite.
+For a full description of these functions see your C reference
+manual.
+
+Question 16-4: No matter what filename you give the following program, our
+program can't find it. Why?
+
+[_Code_] [File: fun-file/fun-file.c]
+
+[_Code_] #include <stdio.h>
+
+[_Code_] #include <stdlib.h>
+
+[_Code_]
+
+[_Code_] int main()
+
+[_Code_] {
+
+[_Code_]     char            name[100];  /* Name of the file to use  */
+
+[_Code_]     FILE           *in_file;    /* File for input */
+
+[_Code_]
+
+[_Code_]     printf("Name? ");
+
+[_Code_]     fgets(name, sizeof(name), stdin);
+
+[_Code_]
+
+[_Code_]     in_file = fopen(name, "r");
+
+[_Code_]     if (in_file == NULL) {
+
+[_Code_]         (void) fprintf(stderr, "Could not open file\n");
+
+[_Code_]         exit(8);
+
+[_Code_]     }
+
+[_Code_]     printf("File found\n");
+
+[_Code_]     fclose(in_file);
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+[_Code_]
+
+[_A_]  Programming Exercises
+
+Exercise 16-1: Write a program that reads a file and counts the number of lines in
+it.
+
+Exercise 16-2: Write a program to copy a file, expanding all tabs to multiple
+spaces.
+
+Exercise 16-3: Write a program that reads a file containing a list of numbers and
+writes two files, one with all the numbers divisible by 3 and another containing
+all the other numbers.
+
+Exercise 16-4: Write a program that reads an ASCII file containing a list of
+numbers and writes a binary file containing the same list. Write a program that
+goes the other way so you can check your work.
+
+Exercise 16-5: Write a program that copies a file and removes all characters with
+the high bit set (((ch & 0x80) != 0).)
+
+Exercise 16-6: Design a file format to store a person's name, address, and other
+information. Write a program to read this file and produce a set of mailing labels.
+
+[_A_]  Answers to Chapter Questions
+
+Answer 16-1: The problem is that you are writing an ASCII file, but you wanted a
+binary file. In UNIX, ASCII is the same as binary, so the program runs fine. In MS-
+DOS/Windows, the end-of-line issue causes problems. When you write a new-line
+character (0x0a) to the file, a carriage return (0x0D) is added to the file.
+(Remember that end-of-line in MS-DOS/Windows is <carriage return><line feed>,
+or 0x0d, 0x0a.) Because of this editing, you get an extra carriage return (0x0d) in
+the output file.
+
+To write binary data (without output editing) you need to open the
+file with the binary option:
+
+[_Code_]     out_file.open("test.out", ios::out | ios::binary);
+
+Answer 16-2: The printf call does not check for the correct number of parame-
+ters. The statement:
+
+[_Code_] printf("The answer is %d\n");
+
+tells the printf to print the string "The answer is" followed by the
+answer. The problem is that the parameter containing the answer
+was omitted. When this happens printf gets the answer from a
+random location and prints garbage.
+
+Properly written, the printf statement is:
+
+[_Code_] printf("The answer is %d\n", answer);
+
+Answer 16-3: The printf call does not check the type of its parameters. You tell
+the printf call to print an integer number (%d) and supply it with a floating
+point parameter (result). This mismatch causes unexpected results such as
+printing the wrong answer.
+
+When printing a floating point number you need a %f conversion.
+Properly written, our printf statement is:
+
+[_Code_] printf("The answer is %f\n", result);
+
+Answer 16-4: The problem is that fgets gets the entire line including the new-
+line character (\n). If you have a file named sam, the program reads sam\n and
+tries to look for a file by that name. Because there is no such file, the program
+reports an error.
+
+The fix is to strip the new-line character from the name:
+
+[_Code_] name[strlen(name) - 1] = '\0';    /* Get rid of last character */
+
+The error message in this case is poorly designed. True, you did not
+open the file, but the programmer could supply the user with more
+information. Are you trying to open the file for input or output?
+What is the name of the file you are trying to open? You don't even
+know whether the message you are getting is an error, a warning,
+or just part of the normal operation. A better error message is:
+
+[_Code_] fprintf(stderr, "Error: Unable to open %s for input\n", name);
+
+Notice that this message would also help us detect the programming
+error. When you typed in "sam" the error would be:
+
+[_Code_] Error: Unable to open sam
+
+[_Code_] for input
+
+This clearly shows us that you are trying to open a file with a new-
+line in its name.

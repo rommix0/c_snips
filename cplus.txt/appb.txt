@@ -1,0 +1,233 @@
+Chapter 2Part VI: Appendixes
+
+2	
+
+2: Ranges
+
+Tables B-1 and B-2 list the ranges of various variable types.
+
+Table B-1
+
+. 32-bit UNIX Machine
+
+Name
+
+Bits
+
+Low Value
+
+High Value
+
+Accuracy
+
+int
+
+32
+
+-2,147,483,648
+
+2,147,483,64
+7
+
+short int
+
+16
+
+-32,768
+
+32,767
+
+long int
+
+32
+
+-2,147,483,648
+
+2,147,483,64
+7
+
+unsigned int
+
+32
+
+0
+
+4,294,967,29
+5
+
+unsigned short
+int
+
+16
+
+0
+
+65,535
+
+unsigned long
+int
+
+32
+
+0
+
+4,294,967,29
+5
+
+char
+
+8
+
+System
+Dependent
+
+unsigned char
+
+8
+
+0
+
+255
+
+float
+
+32
+
+-3.4E+38
+
+3.4E+38
+
+6 digits
+
+double
+
+64
+
+-1.7E+308
+
+1.7E+308
+
+15 digits
+
+long double
+
+64
+
+-1.7E+308
+
+1.7E+308
+
+15 digits
+
+Table B-2
+
+. Turbo-C++, Borland C++, and Most Other 16-bit Systems
+
+Name
+
+Bits
+
+Low Value
+
+High Value
+
+Accuracy
+
+int
+
+16
+
+-32,768
+
+32,767
+
+short int
+
+16
+
+-32,768
+
+32,767
+
+long int
+
+32
+
+-2,147,483,648
+
+2,147,483,64
+7
+
+unsigned int
+
+16
+
+0
+
+65,535
+
+unsigned short
+int
+
+16
+
+0
+
+65,535
+
+unsigned long
+int
+
+32
+
+0
+
+4,294,967,29
+5
+
+char
+
+8
+
+-128
+
+127
+
+unsigned char
+
+8
+
+0
+
+255
+
+float
+
+32
+
+-3.4E+38
+
+3.4E+38
+
+6 digits
+
+double
+
+64
+
+-1.7E+308
+
+1.7E+308
+
+15 digits
+
+long double
+
+80
+
+-3.4E+4932
+
+3.4E+4932
+
+17 digits
+

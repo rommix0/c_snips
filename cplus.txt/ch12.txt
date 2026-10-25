@@ -1,0 +1,779 @@
+Chapter 12Part III: Advanced Types and Classes
+
+In This Chapter:
+
+*  [_XREF Structures_]
+
+*  [_XREF Unions_]
+
+*  [_XREF typedef_]
+
+*  [_XREF enum Type_]
+
+*  [_XREF Bit Fields or Packed
+Structures_]
+
+*  [_XREF Arrays of Structures_]
+
+*  [_XREF Programming
+Exercises_]
+
+12	
+
+12: Advanced Types
+
+Total grandeur of a total edifice,
+Chosen by an inquisitor of structures.
+
+---Wallace Stevens
+
+C++ provides a rich set of data types. Through the use of structures,
+unions, enum, and class types, the programmer can extend the
+language with new types.
+
+[_A_]  Structures
+
+Suppose you are writing an inventory program for a warehouse.
+The warehouse is filled with bins each containing a bunch of parts.
+All the parts in a bin are identical, so you don't have to worry about
+mixed bins or partials.
+
+For each bin you need to know:
+
+*  The name of the part it holds (character string 30 long).
+
+*  The quantity on hand (integer).
+
+*  The price (integer cents).
+
+In previous chapters you have used arrays for storing a group of
+similar data types, but in this example you have a mixed bag: two
+integers and a string.
+
+Instead of an array, you will use a new data type called a structure.
+In an array, all the elements are of the same type and are
+numbered. In a structure, each element, or field, is named and has
+its own data type.
+
+The general form of a structure definition is:
+
+[_Code_] struct structure-name {
+
+[_Code_]     field-type field-name  // Comment
+
+[_Code_]     field-type field-name  // Comment
+
+[_Code_]     . . . .
+
+[_Code_] } variable-name;
+
+For example, you want to define a bin to hold printer cables. The
+structure definition is:
+
+[_Code_] struct bin {
+
+[_Code_]     char    name[30];   // Name of the part
+
+[_Code_]     int     quantity;   // How many are in the bin
+
+[_Code_]     int     cost;       // The cost of a single part (in cents)
+
+[_Code_] } printer_cable_box;    // Where we put the print cables
+
+This definition actually tells C++ two things. The first is what a
+struct bin looks like. This statement defines a new data type that
+can be used in declaring other variables. This statement also
+declares the variable printer_cable_box. Since the structure of a
+bin has been defined, you can use it to declare additional variables:
+
+[_Code_] struct bin terminal_cable_box;  // Place to put terminal cables
+
+The structure-name part of the definition may be omitted.
+
+[_Code_] struct {
+
+[_Code_]     char    name[30];   // Name of the part
+
+[_Code_]     int     quantity;   // How many are in the bin
+
+[_Code_]     int     cost;       // The cost of a single part (in cents)
+
+[_Code_] } printer_cable_box;    // Where we put the print cables
+
+The variable printer_cable_box is still to be defined, but no data
+type is created. The data type for this variable is an anonymous
+structure.
+
+The variable-name part also may be omitted. This would define a
+structure type but no variables.
+
+[_Code_] struct bin {
+
+[_Code_]     char    name[30];   // Name of the part
+
+[_Code_]     int     quantity;   // How many are in the bin
+
+[_Code_]     int     cost;       // The cost of a single part (in cents)
+
+[_Code_] };
+
+In an extreme case, both the variable-name and the structure-name
+parts may be omitted. This creates a section of correct but totally
+useless code.
+
+Once the structure type has been defined you can use it to define
+variables:
+
+[_Code_] struct bin printer_cable_box; // Define the box holding printer cables
+
+C++ allows the struct to be omitted, so you can use the following
+declaration:
+
+[_Code_] bin printer_cable_box; // Define the box holding printer cables
+
+You have defined the variable printer_cable_box containing
+three named fields: name, quantity, and cost. To access them
+you use the syntax:
+
+[_Code_]     variable.field
+
+For example, if you just found out that the price of the cables went
+up to $12.95, you would do the following:
+
+[_Code_] printer_cable_box.cost = 1295;   // $12.95 is the new price
+
+To compute the value of everything in the bin, you can simply
+multiply the cost by the number of items using the following:
+
+[_Code_] total_cost = printer_cable_box.cost * printer_cable_box.quantity;
+
+Structures may be initialized at declaration time by putting the list of
+elements in curly braces ({ }).
+
+[_Code_] /*
+
+[_Code_]  * Printer cables
+
+[_Code_]  */
+
+[_Code_] struct bin {
+
+[_Code_]     char    name[30];   // Name of the part
+
+[_Code_]     int     quantity;   // How many are in the bin
+
+[_Code_]     int     cost;       // The cost of a single part (in cents)
+
+[_Code_] };
+
+[_Code_] struct bin printer_cable_box = {
+
+[_Code_]     "Printer Cables",   // Name of the item in the bin
+
+[_Code_]     0,                  // Start with empty box
+
+[_Code_]     1295                // Cost -- $12.95
+
+[_Code_] };
+
+The definition of the structure bin and the variable printer_
+cable_box can be combined in one step:
+
+[_Code_] struct bin {
+
+[_Code_]     char    name[30];   // Name of the part
+
+[_Code_]     int     quantity;   // How many are in the bin
+
+[_Code_]     int     cost;       // The cost of a single part (in cents)
+
+[_Code_] } printer_cable_box = {
+
+[_Code_]     "Printer Cables",   // Name of the item in the bin
+
+[_Code_]     0,                  // Start with empty box
+
+[_Code_]     1295                // Cost -- $12.95
+
+[_Code_] };
+
+[_A_]  Unions
+
+A structure is used to define a data type with several fields. Each
+field takes up a separate storage location. For example, the structure
+
+[_Code_] struct rectangle {
+
+[_Code_]     int width;
+
+[_Code_]     int height;
+
+[_Code_] };
+
+appears in memory as shown in [_XREF Figure 12-1_].
+
+A union is similar to a structure; however, it defines a single location
+that can be given many different field names.
+
+[_Code_] union value {
+
+[_Code_]     long int i_value;   // Long integer version of value
+
+[_Code_]     float f_value;      // Floating version of value
+
+[_Code_] }
+
+Figure 12-1
+
+. Structure and union layout
+
+The fields i_value and f_value share the same space. You might
+think of a structure as a large box divided up into several different
+compartments, each with its own name. A union is a box, not
+divided at all, with several different labels placed on the single
+compartment inside.
+
+In a structure, the fields do not interact. Changing one field does
+not change any others. In a union, all fields occupy the same space,
+so only one may be active at a time. In other words, if you put
+something in i_value, assigning something to f_value wipes out
+the old value of i_value.
+
+The following shows how a union may be used:
+
+[_Code_] /*
+
+[_Code_]  * Define a variable to hold an integer or
+
+[_Code_]  * a real number (but not both)
+
+[_Code_]  */
+
+[_Code_] union value {
+
+[_Code_]     long int i_value;   // The real number
+
+[_Code_]     float f_value;      // The floating point number
+
+[_Code_] } data;
+
+[_Code_]
+
+[_Code_] int i;                  // Random integer
+
+[_Code_] float f;                // Random floating point number
+
+[_Code_]
+
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     data.f_value = 5.0;
+
+[_Code_]     data.i_value = 3;   // Data.f_value overwritten
+
+[_Code_]
+
+[_Code_]     i = data.i_value;   // Legal
+
+[_Code_]
+
+[_Code_]     f = data.f_value;   // Not legal; will generate unexpected results
+
+[_Code_]
+
+[_Code_]     data.f_value = 5.5; // Put something in f_value/clobber i_value
+
+[_Code_]     i = data.i_value;   // Not legal; will generate unexpected results
+
+Suppose you want to store the information about a shape. The
+shape can be any standard shape such as a circle, rectangle, or
+triangle. The information needed to draw a circle is different from
+the data needed to draw a rectangle, so you need to define different
+structures for each shape:
+
+[_Code_] struct circle {
+
+[_Code_]     int radius;           // Radius of the circle in pixels
+
+[_Code_] };
+
+[_Code_] struct rectangle {
+
+[_Code_]     int height, width;   // Size of the rectangle in pixels
+
+[_Code_] };
+
+[_Code_] struct triangle {
+
+[_Code_]     int base;            // Length of the triangle's base in pixels
+
+[_Code_]     int height;          // Height of the triangle in pixels
+
+[_Code_] };
+
+Now you define a structure to hold the generic shape. The first field
+is a code that tells you what type of shape you have. The second is
+a union that holds the shape information:
+
+[_Code_] const int SHAPE_CIRCLE    = 0;    // Shape is a circle
+
+[_Code_] const int SHAPE_RECTANGLE = 1;    // Shape is a rectangle
+
+[_Code_] const int SHAPE_TRIANGLE  = 2;    // Shape is a triangle
+
+[_Code_]
+
+[_Code_] struct shape {
+
+[_Code_]     int kind;               // What kind of shape is stored
+
+[_Code_]     union shape_union {     // Union to hold shape information
+
+[_Code_]         struct circle    circle_data;     // Data for a circle
+
+[_Code_]         struct rectangle rectangle_data;  // Data for a rectangle
+
+[_Code_]         struct triangle  triangle_data;   // Data for a triangle
+
+[_Code_]     } data;
+
+[_Code_] };
+
+Graphically you can represent shape as a large box. Inside the box
+is the single integer kind and our union shape_union. The union
+is a box with three labels on it. The question is which one is the
+"real" label. You can't tell from looking at the union, but that's why
+you defined kind. It tells us which label to read. The layout of the
+shape structure is illustrated by [_XREF Figure 12-2_].
+
+Figure 12-2
+
+. "shape" layout
+
+Now you can store a circle in the generic shape:
+
+[_Code_] struct shape a_shape;
+
+[_Code_] //...
+
+[_Code_] a_shape.kind = SHAPE_CIRCLE;
+
+[_Code_] a_shape.data.circle_data.radius = 5.0;  // Define the radius of the
+circle
+
+[_A_]  typedef
+
+C++ allows you to define your own variable types through the
+typedef statement. This provides a way for you to extend C++'s
+basic types. The general form of the typedef statement is:
+
+[_Code_] typedef type-declaration
+
+The type-declaration is the same as a variable declaration except a
+type name is used instead of a variable name. For example:
+
+[_Code_] typedef int width; // Define a type that is the width of an object
+
+defines a new type, width, that is the same as an integer. So the
+declaration:
+
+[_Code_] width box_width;
+
+is the same as:
+
+[_Code_] int box_width;
+
+At first glance, this is not much different from:
+
+[_Code_] #define width int
+
+[_Code_]
+
+[_Code_] width flag;
+
+However, typedefs can be used to define more complex objects
+which are beyond the scope of a simple #define statement, such as:
+
+[_Code_] typedef int group[10];
+
+Group is now a new type denoting an array of 10 integers. For
+example:
+
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     typedef int group[10];     // Create a new type "group"
+
+[_Code_]
+
+[_Code_]     group totals;              // Use the new type for a variable
+
+[_Code_]
+
+[_Code_]     // Initialize each element of total
+
+[_Code_]     for (i = 0; i < 10; ++i)
+
+[_Code_]         totals[i] = 0;
+
+[_A_]  enum Type
+
+The enumerated (enum) data type is designed for variables that
+can contain only a limited set of values. These values are referenced
+by name (tag). The compiler assigns each tag an integer value
+internally, such as the days of the week. You could use the directive
+const to create values for the days of the week          (day_of_the_
+week) as follows:
+
+[_Code_] typedef int day_of_the_week;   // Define the type for days of the week
+
+[_Code_]
+
+[_Code_] const int SUNDAY    = 0;
+
+[_Code_] const int MONDAY    = 1;
+
+[_Code_] const int TUESDAY   = 2;
+
+[_Code_] const int WEDNESDAY = 3;
+
+[_Code_] const int THURSDAY  = 4;
+
+[_Code_] const int FRIDAY    = 5;
+
+[_Code_] const int SATURDAY  = 6;
+
+[_Code_]
+
+[_Code_] /* Now to use it */
+
+[_Code_] day_of_the_week today = TUESDAY;
+
+This method is cumbersome. A better method is to use the enum
+type:
+
+[_Code_] enum day_of_the_week {SUNDAY, MONDAY, TUESDAY, WEDNESDAY, THURSDAY,
+
+[_Code_]     FRIDAY, SATURDAY};
+
+[_Code_]
+
+[_Code_] /* Now use it */
+
+[_Code_] enum day_of_the_week today = TUESDAY;
+
+The general form of an enum statement is:
+
+[_Code_] enum enum-name {tag-1, tag-2, . . .} variable-name
+
+As with structures, the enum-name or the variable-name may be
+omitted. The tags may be any valid C++ identifier; however, tags are
+usually all uppercase.
+
+An additional advantage of using an enum type is that C++ will
+restrict the values that can be used to the ones listed in the enum
+declaration. The following will result in a compiler error:
+
+[_Code_] today = 5;  // 5 is not a day_of_the_week
+
+One disadvantage of using enum is that enum variables cannot be
+used to index an array. The following will result in an error:
+
+[_Code_] enum day of the week today = TUESDAY;
+
+[_Code_]
+
+[_Code_] // Define string versions of our days of the week
+
+[_Code_] char day_names[7][] = {
+
+[_Code_]     "Sunday",
+
+[_Code_]     "Monday",
+
+[_Code_]     "Tuesday",
+
+[_Code_]     "Wednesday",
+
+[_Code_]     "Thursday",
+
+[_Code_]     "Friday",
+
+[_Code_]     "Saturday"
+
+[_Code_] };
+
+[_Code_]
+
+[_Code_] . . .
+
+[_Code_]
+
+[_Code_]     /*
+
+[_Code_]      * The following line generates a warning
+
+[_Code_]      * because today is not an integer
+
+[_Code_]      */
+
+[_Code_]     cout << "Today is " << day_names[today] << '\n';
+
+To get around this problem, you need to tell C++ to treat today as
+an integer. This is accomplished through the cast or typecast
+operation. The expression int(today) tells C++, "I know today is
+not an integer, but treat it like one." To fix the above problem, use
+the statement:
+
+[_Code_]     cout << "Today is " << day_names[int(today)] << '\n';
+
+Casts are also useful in expressions to make sure the variables have
+the correct type. In general, you can change the type of almost any
+expression with the expression:
+
+[_Code_] type(expression)
+
+This is particularly useful when working with integers and floating
+point numbers.
+
+[_Code_]     int won, lost;      // # games won/lost so far
+
+[_Code_]     float   ratio;      // Win/loss ratio
+
+[_Code_]
+
+[_Code_]     won = 5;
+
+[_Code_]     lost = 3;
+
+[_Code_]
+
+[_Code_]     ratio = won / lost; // Ratio will get 1.0 (a wrong value)
+
+[_Code_]
+
+[_Code_]     /* The following will compute the correct ratio */
+
+[_Code_]     ratio = float(won) / float(lost);
+
+C++ also supports the older C-style casting. The syntax for C-style
+casting is:
+
+[_Code_] (type)value
+
+For example:
+
+[_Code_] (float)i       // Turn "i" into a floating point number
+
+C-style casts are frowned upon because they can easily be
+ambiguous. For example, in the expression:
+
+[_Code_] (float)3 + 5
+
+does the (float) apply to 3 or 3 + 5? It's not clear. To make this
+expression clearer you need to add parentheses:
+
+[_Code_] ((float)3) + 5
+
+As you can see, this form is more complex than C++ casts. Simpler
+is better, so use C++ casting.
+
+[_A_]  Bit Fields or Packed Structures
+
+So far all the structures you've been using have been unpacked.
+Packed structures allow you to declare structures in a way that takes
+up a minimum of storage. For example, the following structure
+takes up 6 bytes (on a 16-bit machine):
+
+[_Code_] struct item {
+
+[_Code_]     unsigned int list;      // True if item is in the list
+
+[_Code_]     unsigned int seen;      // True if this item has been seen
+
+[_Code_]     unsigned int number;    // Item number
+
+[_Code_] };
+
+The storage layout for this structure can be seen in [_XREF
+Figure 12-3_]. Each structure uses 6 bytes of storage (2 bytes for
+each integer).
+
+Figure 12-3
+
+. Unpacked structure
+
+However, the fields list and seen can have only two values, 0
+and 1, so only 1 bit is needed to represent them. You never plan on
+having more than 16383 items (0x3fff or 14 bits). You can redefine
+this structure using bit fields, so, it takes only 2 bytes, by following
+each field with a colon and the number of bits to be used for that
+field.
+
+[_Code_] struct item {
+
+[_Code_]     unsigned int list:1;    // True if item is in the list
+
+[_Code_]     unsigned int seen:1;    // True if this item has been seen
+
+[_Code_]     unsigned int number:14; // Item number
+
+[_Code_] };
+
+In this example, you tell the compiler to use 1 bit for list, 1 bit for
+seen and 14 bits for number. Using this method you can pack data
+into only 2 bytes as seen in [_XREF Figure 12-4_].
+
+Figure 12-4
+
+. Packed structure
+
+Packed structures should be used with care. The machine code to
+extract data from bit fields is relatively large and slow. Unless
+storage is a problem, packed structures should not be used.
+
+In Chapter 10, The C++ Preprocessor, you needed to store character
+data and five status flags for 8,000 characters. In this case, using a
+different byte for each flag would eat up a lot of storage (five bytes
+for each incoming character). You used bitwise operations to pack
+the five flags into a single byte. Alternatively, a packed structure
+could have accomplished the same thing:
+
+[_Code_] struct char_and_status {
+
+[_Code_]     char character;     // Character from device
+
+[_Code_]     int error:1;        // True if any error is set
+
+[_Code_]     int framing_error:1;// A framing error occurred
+
+[_Code_]     int parity_error:1; // Character had the wrong parity
+
+[_Code_]     int carrier_lost:1; // The carrier signal went down
+
+[_Code_]     int channel_down:1; // Power was lost on the channel
+
+[_Code_] };
+
+Using packed structures for flags is clearer and less error-prone than
+using bitwise operators. However, bitwise operators allow
+additional flexibility. You should use the one that is clearest and
+easiest for you to use.
+
+[_A_]  Arrays of Structures
+
+Structures and arrays can be combined. Suppose you want to record
+the time a runner completes each lap of a four-lap race. You define
+a structure to store the time:
+
+[_Code_] struct time {
+
+[_Code_]     int hour;   // Hour (24-hour clock)
+
+[_Code_]     int minute; // 0-59
+
+[_Code_]     int second; // 0-59
+
+[_Code_] };
+
+[_Code_]
+
+[_Code_] #define MAX_LAPS 4 /* We will have only 4 laps*/
+
+[_Code_]
+
+[_Code_] /* The time of day for each lap*/
+
+[_Code_] struct time lap[MAX_LAPS];
+
+The statement:
+
+[_Code_] struct time lap[MAX_LAPS];
+
+defines lap as an array of four elements. Each element consists of a
+single time structure.
+
+You can use this as follows:
+
+[_Code_] /*
+
+[_Code_]  * Runner just past the timing point
+
+[_Code_]  */
+
+[_Code_]
+
+[_Code_] lap[count].hour = hour;
+
+[_Code_] lap[count].minute = minute;
+
+[_Code_] lap[count].second = second;
+
+[_Code_] ++count;
+
+This array can also be initialized at run time.
+
+Initialization of an array of structures is similar to the initialization of
+multidimensional arrays.
+
+[_Code_] struct time start_stop[2] = {
+
+[_Code_]     {10, 0, 0},
+
+[_Code_]     {12, 0, 0}
+
+[_Code_] };
+
+Suppose you want to write a program to handle a mailing list.
+Mailing labels are 5 lines high and 60 characters wide. You need a
+structure to store names and addresses. The mailing list will be
+sorted by name for most printouts, and sorted in zip-code order for
+actual mailings. The mailing list structure looks like:
+
+[_Code_] struct mailing {
+
+[_Code_]     char name[60];    // Last name, first name
+
+[_Code_]     char address1[60];// Two lines of street address
+
+[_Code_]     char address2[60];
+
+[_Code_]     char city[40];    // Name of the city
+
+[_Code_]     char state[2];    // Two-character abbreviation
+
+[_Code_]     long int zip;     // Numeric zip code
+
+[_Code_] };
+
+You can now declare an array to hold the mailing list:
+
+[_Code_] /* Our mailing list */
+
+[_Code_] struct mailing list[MAX_ENTRIES];
+
+[_A_]  Programming Exercises
+
+Exercise 12-1: Design a data structure to handle the data for a mailing list.
+
+Exercise 12-2: Design a structure to store time and date. Write a function to find
+the difference between two times in minutes.
+
+Exercise 12-3: Design an airline reservation data structure that contains the
+following data:
+
+Flight number
+
+Originating airport code (3 characters)
+
+Destination airport code (3 characters)
+
+Departure time
+
+Arrival time
+
+Write a program that lists all the planes that leave from two airports
+specified by the user.

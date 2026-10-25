@@ -1,0 +1,756 @@
+Chapter 3Part I: The Basics
+
+In This Chapter:
+
+*  [_XREF Comments_]
+
+*  [_XREF C++ Code_]
+
+*  [_XREF Naming Style_]
+
+*  [_XREF Coding Religion_]
+
+*  [_XREF Indentation and Code
+Format_]
+
+*  [_XREF Clarity_]
+
+*  [_XREF Simplicity_]
+
+*  [_XREF Consistency and
+Organization_]
+
+*  [_XREF Further Reading_]
+
+*  [_XREF Summary_]
+
+3	
+
+3: Style
+
+There is no programming language,
+no matter how structured, that will
+prevent programmers from writing
+bad programs.
+
+---L. Flon
+
+It is the nobility of their style which
+will make our writers of 1840
+unreadable forty years from now.
+
+---Stendhal
+
+This chapter discusses how to use good programming style to create
+a simple, easy-to-read program. It may seem backward to discuss
+style before you know how to program, but style is the most
+important part of programming. Style is what separates the gems
+from the junk. It is what separates the programming artist from the
+butcher. You must learn good programming style first, before typing
+in your first line of code, so everything you write will be of the
+highest quality.
+
+Contrary to popular belief, programmers do not spend most of their
+time writing programs. Far more time is spent maintaining,
+upgrading, and debugging existing code than is ever spent on
+creating new work. The amount of time spent on maintenance is
+skyrocketing. From 1980 to 1990 the average number of lines in a
+typical application went from 23,000 to 1.2 million. The average
+system age has gone from 4.75 to 9.4 years.
+
+To make matters worse, 74% of the managers surveyed at the 1990
+Annual Meeting and Conference of the Software Maintenance
+Association reported that they "have systems in their department
+that have to be maintained by specific individuals because no one
+else understands them."
+
+Most software is built on existing software. I recently completed
+coding for 12 new programs. Only one of these was created from
+scratch; the other 11 are adaptations of existing programs.
+
+Programmers believe that the purpose of a program is only to
+present the computer with a compact set of instructions. This is not
+true. Programs written only for the machine have two problems:
+
+*  They are difficult to correct because sometimes even the author
+does not understand them.
+
+*  Modifications and upgrades are difficult to make because the
+maintenance programmer must spend a considerable amount of
+time figuring out what the program does from its code.
+
+[_A_]  Comments
+
+Ideally, a program serves two purposes: First, it presents the
+computer with a set of instructions and, second, it provides the
+programmer with a clear, easy-to-read description of what the
+program does.
+
+Example 2-1 contains a glaring error. It is an error that many
+programmers still make and one that causes more trouble than any
+other problem. The program contains no comments.
+
+A working but uncommented program is a time bomb waiting to
+explode. Sooner or later someone will have to modify or upgrade
+the program, and the lack of comments will make the job ten times
+more difficult. A well-commented, simple program is a work of art.
+Learning how to comment is as important as learning how to code
+properly.
+
+C++ has two flavors of comments. The first type starts with /* and
+ends with */. This type of comment can span multiple lines as
+shown:
+
+[_Code_] /* This is a single-line comment. */
+
+[_Code_] /*
+
+[_Code_]  * This is a multiline comment.
+
+[_Code_]  */
+
+The other form of comment begins with // and goes to the end of
+the line:
+
+[_Code_] // This is another form of comment.
+
+[_Code_] // The // must begin each line that is to be a comment.
+
+The advantage of the /* */ comment style is that you can easily
+span multiple lines, whereas with the // style you have to keep
+putting the // on each line. The disadvantage of /* */ is that
+forgetting a */ can really screw up your code.
+
+Which flavor should you use? Whichever one makes your program
+as clear and as easy to read as possible. Mostly, it's a matter of taste.
+In this book we use the /* */ style comments for big, multiline
+comments while the // style is reserved for comments that take up
+only a single line.
+
+Whatever comment style you decide to use, you must comment
+your programs. [_XREF Example 3-1_] shows how the "hello world"
+program looks after comments are added.
+
+Example 3-1
+
+. hello2/hello2.cc
+
+[_Code_] /********************************************************
+
+[_Code_]  * hello -- program to print out "Hello World".         *
+
+[_Code_]  *      Not an especially earth-shattering program.     *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Author: Steve Oualline                               *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Purpose: Demonstration of a simple program           *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Usage:                                               *
+
+[_Code_]  *      Run the program and the message appears         *
+
+[_Code_]  ********************************************************/
+
+[_Code_] #include <iostream.h>
+
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     // Tell the world hello
+
+[_Code_]     cout << "Hello World\n";
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+In this program, the beginning comments are in a box of asterisks
+(*) called a comment box. This is done to emphasize the more
+important comments, much like bold characters are used for the
+headings in this book. Less important comments are not boxed. For
+example:
+
+[_Code_]     // Tell the world hello
+
+[_Code_]     cout << "Hello World\n";
+
+Poor Person's Typesetting
+
+In typesetting you can use font style and size, bold, and italic
+to make different parts of your text stand out. In programming,
+you are limited to a single, monospaced font. However, people
+have come up with ingenious ways to get around the
+limitations of the typeface.
+
+Some of the various commenting tricks are:
+
+[_Code_] /********************************************************
+
+[_Code_]  ********************************************************
+
+[_Code_]  ******** WARNING: This is an example of a        *******
+
+[_Code_]  ********   warning message that grabs the        *******
+
+[_Code_]  ********   attention of the programmer.          *******
+
+[_Code_]  ********************************************************
+
+[_Code_]  ********************************************************/
+
+[_Code_]
+
+[_Code_] //------------> Another, less important warning<--------
+
+[_Code_]
+
+[_Code_] //>>>>>>>>>>>>  Major section header  <<<<<<<<<<<<<<<<
+
+[_Code_]
+
+[_Code_] /********************************************************
+
+[_Code_]  * We use boxed comments in this book to denote the     *
+
+[_Code_]  * beginning of a section or program                    *
+
+[_Code_]  ********************************************************/
+
+[_Code_]
+
+[_Code_] /*------------------------------------------------------*\
+
+[_Code_]  * This is another way of drawing boxes                 *
+
+[_Code_] \*------------------------------------------------------*/
+
+[_Code_]
+
+[_Code_] /*
+
+[_Code_]  * This is the beginning of a section
+
+[_Code_]  * ^^^^ ^^ ^^^ ^^^^^^^^^ ^^ ^ ^^^^^^^
+
+[_Code_]  *
+
+[_Code_]  * In the paragraph that follows we explain what
+
+[_Code_]  * the section does and how it works.
+
+[_Code_]  */
+
+[_Code_]
+
+[_Code_] /*
+
+[_Code_]  * A medium-level comment explaining the next
+
+[_Code_]  * dozen or so lines of code.  Even though we don't have
+
+[_Code_]  * the bold typeface we can **emphasize** words.
+
+[_Code_]  */
+
+[_Code_]
+
+[_Code_] // A simple comment explaining the next line
+
+To write a program, you must have a clear idea of what you are
+going to do. One of the best ways to organize your thoughts is to
+write them down in a language that is clear and easy to understand.
+Once the process has been clearly stated, it can be translated into a
+computer program.
+
+Understanding what you are doing is the most important part of
+programming. I once wrote two pages of comments describing a
+complex graphics algorithm. The comments were revised twice
+before I even started coding. The actual instructions took only half a
+page. Because I had organized my thoughts well (and was lucky),
+the program worked the first time.
+
+Your program should read like an essay. It should be as clear and
+easy to understand as possible. Good programming style comes
+from experience and practice. The style described in the following
+pages is the result of many years of programming experience. It can
+be used as a starting point for developing your own style. These are
+not rules, but only suggestions. The only rules are: Make your
+program as clear, concise, and simple as possible.
+
+At the beginning of the program is a comment block that contains
+information about the program. Boxing the comments makes them
+stand out. The list that follows contains some of the sections that
+should be included at the beginning of your program. Not all
+programs will need all sections, so use only those that apply.
+
+Heading
+The first comment should contain the name of the program. Also include a
+short description of what it does. You may have the most amazing program,
+one that slices, dices, and solves all the world's problems, but it is useless if
+no one knows what it does.
+
+Author
+You've gone to a lot of trouble to create this program. Take credit for it. Also,
+if someone else must later modify the program, he or she can come to you
+for information and help.
+
+Purpose
+Why did you write this program? What does it do?
+
+Usage
+In this section give a short explanation of how to run the program. In an
+ideal world, every program comes with a set of documents describing how to
+use it. The world is not ideal. Oualline's law of documentation states: 90% of
+the time the documentation is lost. Out of the remaining 10%, 9% of the time
+the revision of the documentation is different from the revision of the
+program and therefore completely useless. The 1% of the time you actually
+have documentation and the correct revision of the documentation, the docu-
+mentation will be written in Japanese.
+
+To avoid falling prey to Oualline's law of documentation, put the documenta-
+tion in the program.
+
+References
+Creative copying is a legitimate form of programming (if you don't break the
+copyright laws in the process). In the real world, it doesn't matter how you
+get a working program, as long as you get it; but, give credit where credit is
+due. In this section you should reference the original author of any work you
+copied.
+
+File formats
+List the files that your program reads or writes and a short description of their
+format.
+
+Restrictions
+List any limits or restrictions that apply to the program, such as: The data file
+must be correctly formatted; the program does not check for input errors.
+
+Revision history
+This section contains a list indicating who modified the program and when
+and what changes have been made. Many computers have a source control
+system (UNIX: RCS and SCCS; MS-DOS/Windows: MKS-RCS, PVCS) that will keep
+track of this information for you.
+
+Error handling
+If the program detects an error, what does it do with the error?
+
+Notes
+Include special comments or other information that has not already been
+covered.
+
+The format of your beginning comments will depend on what is
+needed for the environment in which you are programming. For
+example, if you are a student, the instructor may ask you to include
+in the program heading the assignment number, your name, student
+identification number, and other information. In industry, a project
+number or part number might be included.
+
+Comments should explain everything the programmer needs to
+know about the program, but no more. It is possible to
+overcomment a program. (This is rare, but it does happen.) When
+deciding on the format for your heading comments, make sure
+there is a reason for everything you include.
+
+[_SIDEBAR_]  Inserting Comments-The Easy Way
+
+[_SIDEBAR_]  If you are using the UNIX editor vi, put the
+following in your .exrc file to make it easier to construct boxes.
+
+[_Code_] :abbr #b /************************************************
+
+[_Code_] :abbr #e ************************************************/
+
+[_SIDEBAR_]  These two lines define vi abbreviations #b and #e,
+so that typing #b<return> at the beginning of a block will cause
+the string:
+
+[_Code_] /************************************************
+
+[_SIDEBAR_]  to appear (for beginning a comment box). Typing
+#e<return> will end a box. The number of stars was carefully
+selected so the end of the box is aligned on a tab stop.
+
+[_A_]  C++ Code
+
+The actual code for your program consists of two parts: variables
+and executable instructions. Variables are used to hold the data
+used by your program. Executable instructions tell the computer
+what to do with the data. C++ classes are a combination of data and
+the instructions that work on the data. They provide a convenient
+way of packaging both instructions and data.
+
+A variable is a place in the computer's memory for storing a value.
+C++ identifies that place by the variable name. Names can be any
+length and should be chosen so their meaning is clear. (Actually, a
+limit does exist, but it is so large that you probably will never
+encounter it.) Every variable in C++ must be declared. (Variable
+declarations are discussed in Chapter 9, Variable Scope and
+Functions.) The following declaration tells C++ that you are going
+to use three integer (int) variables named p, q, and r:
+
+[_Code_] int p,q,r;
+
+But what are these variables for? The reader has no idea. They
+could represent the number of angels on the head of a pin, or the
+location and acceleration of a plasma bolt in a game of Space
+Invaders. Avoid abbreviations. Exs. abb. are diff. to rd. and hd. to
+ustnd. (Excess abbreviations are difficult to read and hard to
+understand.)
+
+Now consider another declaration:
+
+[_Code_] int account_number;
+
+[_Code_] int balance_owed;
+
+Now we know that we are dealing with an accounting program, but
+we could still use some more information. For example, is the
+balance_owed in dollars or cents? It would be much better if we
+added a comment after each declaration explaining what we are
+doing.
+
+[_Code_] int account_number;      // Index for account table
+
+[_Code_] int balance_owed;        // Total owed us (in pennies)
+
+By putting a comment after each declaration we, in effect, create a
+mini-dictionary where we define the meaning of each variable
+name. Since the definition of each variable is in a known place, it's
+easy to look up the meaning of a name. (Programming tools, such
+as editors, cross-referencers, and grep, can also help you quickly
+find a variable's definition.)
+
+Units are very important. I was once asked to modify a program
+that converted plot data files from one format to another. Many
+different units of length were used throughout the program and
+none of the variable declarations was commented. I tried very hard
+to figure out what was going on, but it was impossible to determine
+what units were being used in the program. Finally, I gave up and
+put the following comment in the program:
+
+[_Code_] /********************************************************
+
+[_Code_]  * Note: I have no idea what the input units are, nor   *
+
+[_Code_]  *      do I have any idea what the output units are,   *
+
+[_Code_]  *      but I have discovered that if I divide  by 3    *
+
+[_Code_]  *      the plots look about the right size.            *
+
+[_Code_]  ********************************************************/
+
+One problem many beginning programmers have is that they
+describe the code, not the variable. For example:
+
+[_Code_] int top_limit;     // Top limit is an integer [bad comment]
+
+It's obvious from the code that top_limit is an integer. What I
+want to know is what is top_limit. Tell me.
+
+[_Code_] int top_limit;    // Number of items we can load before losing data
+
+You should take every opportunity to make sure your program is
+clear and easy to understand. Do not be clever. Cleverness makes
+for unreadable and unmaintainable programs. Programs, by their
+nature, are extremely complex. Anything you can to do to cut down
+on this complexity will make your programs better. Consider the
+following code, written by a very clever programmer.
+
+[_Code_] while ('\n' != *p++ = *q++);
+
+It is almost impossible for the reader to tell at a glance what this
+mess does. Properly written this would be:
+
+[_Code_] while (1) {
+
+[_Code_]     *destination_ptr = *source_ptr;
+
+[_Code_]     ++destination_ptr;
+
+[_Code_]     ++source_ptr;
+
+[_Code_]     if (*(destination_ptr-1) == '\n')
+
+[_Code_]         break;  // exit the loop if done
+
+[_Code_] }
+
+Although the second version is longer, it is much clearer and easier
+to understand. Even a novice programmer who does not know C++
+well can tell that this program has something to do with moving
+data from a source to a destination.
+
+The computer doesn't care which version is used. A good compiler
+will generate the same machine code for both versions. It is the
+programmer who benefits from the verbose code.
+
+[_A_]  Naming Style
+
+Names can contain both uppercase and lowercase letters. In this
+book we use all lowercase names for variables (e.g., source_ptr,
+current_index). All uppercase is reserved for constants (e.g., MAX_
+ITEMS, SCREEN_WIDTH). This convention is the classic convention
+followed by most C and C++ programs.
+
+Many newer programs use mixed-case names (e.g.,
+RecordsInFile). Sometimes they use the capitalization of the first
+letter to indicate information about the variable. For example,
+recordsInFile might be used to denote a local variable while
+RecordsInFile would denote a global variable. (See Chapter 9,
+Variable Scope and Functions, for information about local and
+global variables.)
+
+Which naming convention you use is up to you. It is more a matter
+of religion than of style. However, using a consistent naming style is
+extremely important. In this book we have chosen the first style,
+lowercase variable names and uppercase constants, and we use it
+throughout the book.
+
+[_A_]  Coding Religion
+
+Computer scientists have devised many programming styles. These
+include structured programming, top-down programming, and goto-
+less programming. Each of these styles has its own following or
+cult. I use the term "religion" because people are taught to follow
+the rules blindly without knowing the reasons behind them. For
+example, followers of the goto-less cult will never use a goto
+statement, even when it is natural to do so.
+
+The rules presented in this book are the result of years of
+programming experience. I have discovered that by following these
+rules, I can create better programs. You do not have to follow them
+blindly. If you find a better system, by all means use it. (If it really
+works, drop me a line. I'd like to use it, too.)
+
+[_A_]  Indentation and Code Format
+
+To make programs easier to understand, most programmers indent
+their programs. The general rule for a C++ program is to indent one
+level for each new block or conditional. In Example 3-5 there are
+three levels of logic, each with its own indentation level. The
+while statement is outermost. The statements inside the while are
+at the next level. The statement inside the if (break) is at the
+innermost level.
+
+There are two styles of indentation, and a vast religious war is being
+waged in the programming community as to which is better. The
+first is the short form:
+
+[_Code_] while (! done) {
+
+[_Code_]     cout << "Processing\n";
+
+[_Code_]     next_entry();
+
+[_Code_] }
+
+[_Code_]
+
+[_Code_] if (total <= 0) {
+
+[_Code_]     cout << "You owe nothing\n";
+
+[_Code_]     total = 0;
+
+[_Code_] } else {
+
+[_Code_]     cout << "You owe " << total << " dollars\n";
+
+[_Code_]     all_totals = all_totals + total;
+
+[_Code_] }
+
+In this case, most of the curly braces are put on the same line as the
+statements. The other style puts the curly braces on lines by
+themselves:
+
+[_Code_] while (! done)
+
+[_Code_] {
+
+[_Code_]     cout << "Processing\n";
+
+[_Code_]     next_entry();
+
+[_Code_] }
+
+[_Code_]
+
+[_Code_] if (total <= 0)
+
+[_Code_] {
+
+[_Code_]    cout << "You owe nothing\n";
+
+[_Code_]    total = 0;
+
+[_Code_] }
+
+[_Code_] else
+
+[_Code_] {
+
+[_Code_]    cout << "You owe " << total << " dollars\n";
+
+[_Code_]    all_totals = all_totals + total;
+
+[_Code_] }
+
+Both formats are commonly used. You should use the format you
+feel most comfortable with. This book uses the short form.
+
+The amount of indentation is left to the programmer. Two, four, and
+eight spaces are common. Studies have shown that a four-space
+indent makes the most readable code. You can choose any indent
+size as long as you are consistent.
+
+[_A_]  Clarity
+
+A program should read like a technical paper. It should be
+organized into sections and paragraphs. Procedures form a natural
+section boundary. You should organize your code into paragraphs.
+It is a good idea to begin a paragraph with a topic sentence
+comment and separate it from other paragraphs by a blank line. For
+example:
+
+[_Code_] // poor programming practice
+
+[_Code_] temp = box_x1;
+
+[_Code_] box_x1 = box_x2;
+
+[_Code_] box_x2 = temp;
+
+[_Code_] temp = box_y1;
+
+[_Code_] box_y1 = box_y2;
+
+[_Code_] box_y2 = temp;
+
+A better version would be:
+
+[_Code_] /*
+
+[_Code_]  * Swap the two corners
+
+[_Code_]  */
+
+[_Code_]
+
+[_Code_] /* Swap X coordinate */
+
+[_Code_] temp = box_x1;
+
+[_Code_] box_x1 = box_x2;
+
+[_Code_] box_x2 = temp;
+
+[_Code_]
+
+[_Code_] /* Swap Y coordinate */
+
+[_Code_] temp = box_y1;
+
+[_Code_] box_y1 = box_y2;
+
+[_Code_] box_y2 = temp;
+
+[_A_]  Simplicity
+
+Your program should be simple. Some general rules of thumb are:
+
+*  A single function should not be longer than one or two pages.
+(See Chapter 9, Variable Scope and Functions.) If it gets longer,
+it can probably be split into two simpler functions. This rule
+comes about because the human mind can hold only so much in
+short-term memory. Three pages is about the most the human
+mind can wrap itself around in one sitting.
+
+*  Avoid complex logic such as multiple nested ifs. The more
+complex your code, the more indentation levels you will need.
+About the time you start running into the right margin, you
+should think about splitting your code into multiple procedures
+and thus decreasing the level of complexity.
+
+*  Did you ever read a sentence, like this one, where the author
+went on and on, stringing together sentence after sentence with
+the word "and," and didn't seem to understand the fact that
+several shorter sentences would do the job much better, and
+didn't it bother you?
+
+C++ statements should not go on forever. Long statements
+should be avoided. If an equation or formula looks like it is
+going to be longer than one or two lines, you probably should
+split it into two shorter equations.
+
+*  Split large single code files into multiple smaller ones. (See
+Chapter 23, Modular Programming, for more information about
+programming with multiple files.) In general I like to keep my
+files smaller than 1,500 lines. That way they aren't too difficult to
+edit and print.
+
+*  When using classes (see Chapter 13, Simple Classes), put one
+class per module.
+
+*  Finally, the most important rule: Make your program as simple
+and easy to understand as possible, even if it means breaking
+some of the rules. The goal is clarity, and the rules given in this
+chapter are designed to help you accomplish that goal. If the
+rules get in the way, get rid of them. I have seen one program
+with a single statement that spanned more than 20 pages.
+However, because of the specialized nature of the program, this
+statement was simple and easy to understand.
+
+[_A_]  Consistency and Organization
+
+Good style is only one element in creating a high-quality program.
+Consistency is also a factor. This book is organized with the table of
+contents at the front and the index at the back. Almost every book
+printed has a similar organization. This consistency makes it easy to
+look up a word in the index or find a chapter title in the table of
+contents.
+
+Unfortunately the programming community has developed a variety
+of coding styles. Each has its own advantages and disadvantages.
+The trick to efficient programming in a group is to pick one style
+and then use it consistently. That way you can avoid the problems
+and confusion that arise when programs written in different styles
+are combined.
+
+Good style is nice, but consistency is better.
+
+[_A_]  Further Reading
+
+In this chapter we have touched only the basics of style. Later
+chapters expand on this base, adding new stylistic elements as you
+learn new elements of the language.
+
+[_A_]  Summary
+
+A program should be concise and easy to read. It must serve as a
+set of computer instructions, but also as a reference work describing
+the algorithms and data used inside it. Everything should be
+documented with comments. Comments serve two purposes. First,
+they describe your program to any maintenance programmer who
+has to fix it and, second, comments help you remember what you
+did.
+
+Class discussion 1: Create a style sheet for class assignments. Discuss
+what comments should go into the programs and why.
+
+Class discussion 2: Analyze the style of an existing program. Is the
+program written in a manner that is clear and easy to understand?
+What can be done to improve the style of the program?
+
+Exercise 3-1: Go through all the other programming exercises in this book and
+write comment blocks for them. This will serve several purposes. First, it will give
+you practice commenting. Second, it will short-circuit the old programmer's
+excuse, "But I didn't have time to put in the comments."

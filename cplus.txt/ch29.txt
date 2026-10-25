@@ -1,0 +1,267 @@
+Chapter 29Part V: Other Language Features
+
+In This Chapter:
+
+*  [_XREF General_]
+
+*  [_XREF Design_]
+
+*  [_XREF Declarations_]
+
+*  [_XREF switch Statement_]
+
+*  [_XREF Preprocessor_]
+
+*  [_XREF Style_]
+
+*  [_XREF Compiling_]
+
+*  [_XREF The Ten
+Commandments for C++
+Programmers_]
+
+*  [_XREF Final Note_]
+
+*  [_XREF Answers to Chapter
+Questions_]
+
+29	
+
+29: Programming Adages
+
+Second thoughts are ever wiser
+
+---Euripides
+
+[_A_]  General
+
+*  Comment, comment, comment. Put a lot of comments in your
+program. They tell other programmers what you did. They also
+tell you what you did.
+
+*  Use the "KISS" principle (Keep It Simple, Stupid). Clear and
+simple is better than complex and wonderful.
+
+*  Avoid side effects. Use ++ and -- on lines by themselves.
+
+*  Never put an assignment inside a conditional. Never put an
+assignment inside any other statement.
+
+*  Know the difference between = and ==. Using = for == is a very
+common mistake and is difficult to find.
+
+*  Never do "nothing" silently.
+
+[_Code_] // Don't program like this
+
+[_Code_] for (index = 0; data[index] < key; ++index);
+
+[_Code_] // Did you see the semicolon at the end of the last line?
+
+Always put in a comment.
+
+[_Code_] for (index = 0; data[index] < key; ++index)
+
+[_Code_]         /* Do nothing */;
+
+*  Practice coding. Practice is crucial for people involved in almost
+every other profession that requires a significant level of skill
+and creativity (e.g., artists, athletes). Help others learn to
+program. It makes good practice for you to go over what you
+already know, or think you know.
+
+[_A_]  Design
+
+*  If you come to a choice between a relatively "quick hack" or a
+somewhat more involved but more flexible solution, always go
+for the more flexible solution. You're more likely to reuse it or
+learn from it. You're also more likely to be thankful later on
+when requirements shift a little and your code is ready for it.
+
+*  Never trust any user input to be what you expect. What would
+your program do at any given point if a cat walked across the
+keyboard, several times?
+
+*  Watch out for signed-unsigned conversions and over/underflow
+conditions.
+
+[_A_]  Declarations
+
+*  Put variable declarations one per line and comment them.
+
+*  Make variable names long enough to be easily understood, but
+not so long that they are difficult to type in. (Two or three
+words is usually enough.)
+
+*  Never use default return declarations. If a function returns an
+integer, declare it as type int.
+
+[_A_]  switch Statement
+
+*  Always put a default case in a switch statement. Even if it does
+nothing, put it in:
+
+[_Code_] switch (expression) {
+
+[_Code_]     default:
+
+[_Code_]         /* Do nothing */;
+
+[_Code_]         break;
+
+[_Code_] }
+
+*  Every case in a switch should end with a break or a
+/* fall through */ statement.
+
+[_A_]  Preprocessor
+
+*  Always put parentheses, (  ), around each constant expression
+defined by a pre-processor #define directive:
+
+[_Code_] #define BOX_SIZE (3 * 10) /* Size of the box in pixels */
+
+*  Put (  ) around each argument of a parameterized macro:
+
+[_Code_] #define SQUARE(x) ((x) * (x))
+
+*  Surround macros that contain complete statements with curly
+braces:
+
+[_Code_] // A fatal error has occurred.  Tell user and abort
+
+[_Code_] #define DIE(msg) {(void)printf(msg);exit(8);}
+
+*  When using the #ifdef/#endif construct for conditional
+compilation, put the #define and #undef statements near the
+top of the program and comment them.
+
+*  Whenever possible, use const instead of #define.
+
+*  The use of inline functions is preferred over the use of
+parameterized macros.
+
+[_A_]  Style
+
+*  A single block of code enclosed in {  } should not span more than
+a couple of pages. Split up any bigger blocks into several
+smaller, simpler procedures.
+
+*  When your code starts to run into the right margin, it's about time
+to split the procedure into several smaller, simpler procedures.
+
+*  Always define a constructor, destructor, and copy constructor for
+a class. If using the C++ defaults, "define" these routines with a
+comment such as:
+
+[_Code_] class example {
+
+[_Code_]     public:
+
+[_Code_]         // Example -- default constructor
+
+[_A_]  Compiling
+
+*  Always create a Makefile so others will know how to compile
+your program.
+
+*  When compiling, turn on all the warning flags. You never know
+what the compiler might find.
+
+[_A_]  The Ten Commandments for C++ Programmers
+
+By Phin Straite
+
+1.  Thou shalt not rely on the compiler default methods for
+construction, destruction, copy construction, or assignment for
+any but the simplest of classes. Thou shalt forget these "big four"
+methods for any nontrivial class.
+
+2.  Thou shalt declare and define thy destructor as virtual such that
+others may become heir to the fruits of your labors.
+
+3.  Thou shalt not violate the "is-a" rule by abusing the inheritance
+mechanism for thine own twisted perversions.
+
+4.  Thou shalt not rely on any implementation-dependent behavior
+of a compiler, operating system, or hardware environment, lest
+thy code be forever caged within that dungeon.
+
+5.  Thou shalt not augment the interface of a class at the lowest
+level without most prudent deliberation. Such ill-begotten
+practices imprison thy clients unjustly into thy classes and create
+unrest when code maintenance and extension are required.
+
+6.  Thou shalt restrict thy friendship to truly worthy contemporaries.
+Beware, for thou art exposing thyself rudely as from a trenchcoat.
+
+7.  Thou shalt not abuse thy implementation data by making it
+public or static except in the rarest of circumstances. Thy data
+are thine own; share it not with others.
+
+8.  Thou shalt not suffer dangling pointers or references to be
+harbored within thy objects. These are nefarious and precarious
+agents of random and wanton destruction.
+
+9.  Thou shalt make use of available class libraries as
+conscientiously as possible. Code reuse, not just thine own but
+that of thy clients as well, is the holy grail of OO.
+
+10.  Thou shalt forever forswear the use of the vile printf/scanf,
+rather favoring the flowing streams. Cast off thy vile C cloak
+and partake of the wondrous fruit of flexible and extensible I/O.
+
+[_A_]  Final Note
+
+Just when you think you've discovered all the things C++ can do to
+you - think again. There are still more surprises in store.
+
+Question 29-1: Why does Example 29-1 think everything is two? (This inspired the
+last adage.)
+
+Example 29-1
+
+. not2/not2.cc
+
+[_Code_] #include <iostream.h>
+
+[_Code_]
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     int number;
+
+[_Code_]
+[_Code_]     cout << "Enter a number: ";
+
+[_Code_]
+[_Code_]     cin >> number;
+
+[_Code_]
+[_Code_]     if (number =! 2)
+
+[_Code_]         cout << "Number is not two\n";
+
+[_Code_]     else
+
+[_Code_]         cout << "Number is two\n";
+
+[_Code_]
+[_Code_]     return (0);
+
+[_Code_] }
+
+[_A_]  Answers to Chapter Questions
+
+Answer 29-1: The statement (number =! 2) is not a relational equation, but an
+assignment statement. It is equivalent to:
+
+[_Code_]     number = (!2);
+
+(Because 2 is nonzero, !2 is zero.)
+
+The programmer accidently reversed the not equals != so it became
+=!. The statement should read:
+
+[_Code_]     if (number != 2)

@@ -1,0 +1,750 @@
+Chapter 8Part II: Simple Programming
+
+In This Chapter:
+
+*  [_XREF for Statement_]
+
+*  [_XREF switch Statement_]
+
+*  [_XREF switch, break, and
+continue_]
+
+*  [_XREF Programming
+Exercises_]
+
+*  [_XREF Answers to Chapter
+Questions_]
+
+8	
+
+8: More Control Statements
+
+Grammar, which knows how to
+control
+even kings . . .
+
+---Molière
+
+[_A_]  for Statement
+
+The for statement allows you to execute a block of code a
+specified number of times. The general form of the for statement is:
+
+[_Code_] for (initial-statement; condition; iteration-statement)
+
+[_Code_]     body-statement;
+
+this is equivalent to:
+
+[_Code_] initial-statement;
+
+[_Code_] while (condition) {
+
+[_Code_]     body-statement;
+
+[_Code_]     iteration-statement;
+
+[_Code_] }
+
+For example, Example 8-1 uses a while loop to add five numbers.
+
+Example 8-1
+
+. total6/total6w.cc
+
+[_Code_] #include <iostream.h>
+
+[_Code_]
+[_Code_] int total;      // Total of all the numbers
+
+[_Code_] int current;    // Current value from the user
+
+[_Code_] int counter;    // While loop counter
+
+[_Code_]
+[_Code_] main() {
+
+[_Code_]     total = 0;
+
+[_Code_]
+[_Code_]     counter = 0;
+
+[_Code_]     while (counter < 5) {
+
+[_Code_]         cout << "Number? ";
+
+[_Code_]
+[_Code_]         cin >> current;
+
+[_Code_]         total += current;
+
+[_Code_]
+[_Code_]         ++counter;
+
+[_Code_]     }
+
+[_Code_]     cout << "The grand total is " << total << '\n';
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+The same program can be rewritten using a for statement as seen
+in [_XREF Example 8-2_].
+
+Example 8-2
+
+. total6/total6.cc
+
+[_Code_] #include <iostream.h>
+
+[_Code_]
+[_Code_] int total;      // Total of all the numbers
+
+[_Code_] int current;    // Current value from the user
+
+[_Code_] int counter;    // For loop counter
+
+[_Code_]
+[_Code_] main() {
+
+[_Code_]     total = 0;
+
+[_Code_]     for (counter = 0; counter < 5; ++counter) {
+
+[_Code_]         cout << "Number? ";
+
+[_Code_]
+[_Code_]         cin >> current;
+
+[_Code_]         total += current;
+
+[_Code_]     }
+
+[_Code_]     cout << "The grand total is " << total << '\n';
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+Note that counter goes from 0 to 4. Normally you count five items
+as 1, 2, 3, 4, 5. You will get along much better in C++ if you change
+your thinking to zero-based counting and count five items as 0, 1, 2,
+3, 4. (One-based counting is one of the main causes of array
+overflow errors. See Chapter 5, Arrays, Qualifiers, and Reading
+Numbers.)
+
+Careful examination of the two flavors of this program reveals the
+similarities between the two versions, as shown in [_XREF
+Figure 8-1_].
+
+Figure 8-1
+
+. Similarities between while and for
+
+Many older programming languages do not allow you to change the
+control variable (in this case counter) inside the loop. C++ is not
+so picky. You can change the control variable anytime you wish-
+you can jump into and out of the loop and generally do things that
+would make a PASCAL or FORTRAN programmer cringe. (Even
+though C++ gives you the freedom to do such insane things, that
+doesn't mean you should do them.)
+
+Question 8-1: Example 8-3 contains an error.
+
+Example 8-3
+
+. cent/cent.cc
+
+[_Code_] #include <iostream.h>
+
+[_Code_] /*
+
+[_Code_]  * This program produces a Celsius to Fahrenheit conversion
+
+[_Code_]  *    chart for the numbers 0 to 100.
+
+[_Code_]  *
+
+[_Code_]  * Restrictions:
+
+[_Code_]  *      This program deals with integers only, so the
+
+[_Code_]  *      calculations may not be exact.
+
+[_Code_]  */
+
+[_Code_]
+[_Code_] // The current Celsius temperature we are working with
+
+[_Code_] int celsius;
+
+[_Code_] main() {
+
+[_Code_]     for (celsius = 0; celsius <= 100; ++celsius);
+
+[_Code_]         cout << "Celsius: " << celsius <<
+
+[_Code_]                 " Fahrenheit: " << ((celsius * 9) / 5 + 32) << '\n';
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+When run, this program prints out:
+
+[_Code_] Celsius: 101 Fahrenheit: 213
+
+and nothing more. Why?
+
+Question 8-2: Example 8-4 reads a list of five numbers and counts the number of
+threes and sevens in the data. Why does it give us the wrong answers?
+
+Example 8-4. seven/seven.cc
+
+.
+
+[_Code_] include <iostream.h>
+
+[_Code_]
+[_Code_] int seven_count;    // Number of sevens in the data
+
+[_Code_] int data[5];        // The data to count 3 and 7 in
+
+[_Code_] int three_count;    // Number of threes in the data
+
+[_Code_] int index;          // Index into the data
+
+[_Code_]
+[_Code_] main() {
+
+[_Code_]     seven_count = 0;
+
+[_Code_]     three_count = 0;
+
+[_Code_]
+[_Code_]     cout << "Enter 5 numbers\n";
+
+[_Code_]     cin >> data[1] >> data[2] >> data[3] >>
+
+[_Code_]            data[4] >> data[5];
+
+[_Code_]
+[_Code_]     for (index = 1; index <= 5; ++index) {
+
+[_Code_]         if (data[index] == 3)
+
+[_Code_]             ++three_count;
+
+[_Code_]         if (data[index] == 7)
+
+[_Code_]             ++seven_count;
+
+[_Code_]     }
+
+[_Code_]     cout << "Threes " << three_count << " Sevens " << seven_count << '\n';
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+When we run this program with the data 3 7 3 0 2, the results are:
+
+[_Code_] Threes 4 Sevens 1
+
+(Your results may vary.)
+
+[_A_]  switch Statement
+
+The switch statement is similar to a chain of if-else statements.
+The general form of a switch statement is:
+
+[_Code_] switch (expression) {
+
+[_Code_]     case constant1:
+
+[_Code_]         statement
+
+[_Code_]         . . . .
+
+[_Code_]         break;
+
+[_Code_]
+
+[_Code_]     case constant2:
+
+[_Code_]         statement
+
+[_Code_]         . . . .
+
+[_Code_]         // Fall through
+
+[_Code_]
+
+[_Code_]     default:
+
+[_Code_]         statement
+
+[_Code_]         . . . .
+
+[_Code_]         break;
+
+[_Code_]
+
+[_Code_]     case constant3:
+
+[_Code_]         statement
+
+[_Code_]         . . . .
+
+[_Code_]         break;
+
+[_Code_] }
+
+The switch statement evaluates the value of an expression and
+branches to one of the case labels. Duplicate labels are not
+allowed, so only one case will be selected. The expression must
+evaluate to a integer, character, or enumeration.
+
+case labels can be in any order and must be constants. The
+default label can be put anywhere in the switch.
+
+When C++ sees a switch statement, it evaluates the expression
+and then looks for a matching case label. If none is found, the
+default label is used. If no default is found, the statement does
+nothing.
+
+A break statement inside a switch tells the computer to continue
+the execution after the switch. If the break is not there,
+execution continues with the next statement.
+
+[_NOTE_]  The switch statement is very similar to the
+PASCAL case statement. The main differences are that while
+PASCAL allows only one statement after the label, C++ allows
+many. C++ keeps executing until it hits a break statement.
+In PASCAL you can't "fall through" from one case to
+another. In C++ you can.
+
+The calculator program in Chapter 7, The Programming Process,
+contains a series of if-else statements.
+
+[_Code_]         if (operator == '+') {
+
+[_Code_]             result += value;
+
+[_Code_]         } else if (operator == '-') {
+
+[_Code_]             result -= value;
+
+[_Code_]         } else if (operator == '*') {
+
+[_Code_]             result *= value;
+
+[_Code_]         } else if (operator == '/') {
+
+[_Code_]             if (value == 0) {
+
+[_Code_]                 cout << "Error: Divide by zero\n";
+
+[_Code_]                 cout << "   operation ignored\n";
+
+[_Code_]             } else
+
+[_Code_]                 result /= value;
+
+[_Code_]         } else {
+
+[_Code_]             cout << "Unknown operator " << operator << '\n';
+
+[_Code_]         }
+
+This section of code can easily be rewritten as a switch statement.
+In this switch, we use a different case for each operation. The
+default clause takes care of all the illegal operators.
+
+Rewriting the program using a switch statement makes it not only
+simpler, but also easier to read as seen in Example 8-5.
+
+Example 8-5
+
+. calc-sw/calc3.cc
+
+[_Code_] #include <iostream.h>
+
+[_Code_] int   result;      // The result of the calculations
+
+[_Code_] char  oper_char;   // The user-specified operator
+
+[_Code_] int   value;       // Value specified after the operator
+
+[_Code_]
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     result = 0;                 // Initialize the result
+
+[_Code_]
+[_Code_]     // Loop forever (or until break reached)
+
+[_Code_]     while (1) {
+
+[_Code_]         cout << "Result: " << result << '\n';
+
+[_Code_]         cout << "Enter operator and number: ";
+
+[_Code_]         cin >> oper_char >> value;
+
+[_Code_]
+[_Code_]         if ((oper_char == 'q') || (oper_char == 'Q'))
+
+[_Code_]             break;
+
+[_Code_]
+[_Code_]         switch (oper_char) {
+
+[_Code_]             case '+':
+
+[_Code_]                 result += value;
+
+[_Code_]                 break;
+
+[_Code_]             case '-':
+
+[_Code_]                 result -= value;
+
+[_Code_]                 break;
+
+[_Code_]             case '*':
+
+[_Code_]                 result *= value;
+
+[_Code_]                 break;
+
+[_Code_]             case '/':
+
+[_Code_]                 if (value == 0) {
+
+[_Code_]                     cout << "Error: Divide by zero\n";
+
+[_Code_]                     cout << "   operation ignored\n";
+
+[_Code_]                 } else
+
+[_Code_]                     result /= value;
+
+[_Code_]                 break;
+
+[_Code_]             default:
+
+[_Code_]                 cout << "Unknown operator " << oper_char << '\n';
+
+[_Code_]                 break;
+
+[_Code_]         }
+
+[_Code_]     }
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+A break statement is not required at the end of a case. If the
+break is not there, execution will continue with the next statement.
+
+For example:
+
+[_Code_] control = 0;
+
+[_Code_]
+
+[_Code_] // A not so good example of programming
+
+[_Code_] switch (control) {
+
+[_Code_]         case 0:
+
+[_Code_]                 cout << "Reset\n";
+
+[_Code_]         case 1:
+
+[_Code_]                 cout << "Initializing\n";
+
+[_Code_]                 break;
+
+[_Code_]         case 2:
+
+[_Code_]                 cout "Working\n";
+
+[_Code_] }
+
+In this case, when control == 0, the program prints:
+
+[_Code_] Reset
+
+[_Code_] Initializing
+
+Case 0 does not end with a break statement. After printing
+"Reset" the program falls through to the next statement (case 1)
+and prints "Initializing."
+
+But there is a problem with this syntax. You can't be sure that the
+program is supposed to fall through from case 0 to case 1, or if the
+programmer forgot to put in a break statement. To clear up this
+confusion, a case section should always end with a break
+statement or the comment "//fall through."
+
+[_Code_] // A better example of programming
+
+[_Code_] switch (control) {
+
+[_Code_]         case 0:
+
+[_Code_]                 cout << "Reset\n";
+
+[_Code_]                 // Fall through
+
+[_Code_]         case 1:
+
+[_Code_]                 cout << "Initializing\n";
+
+[_Code_]                 break;
+
+[_Code_]         case 2:
+
+[_Code_]                 cout << "Working\n";
+
+[_Code_] }
+
+Because case 2 is last, it doesn't absolutely need a break statement.
+A break would cause the program to skip to the end of the
+switch, but we're already there.
+
+But suppose we modify the program slightly and add another case
+to the switch:
+
+[_Code_] // We have a little problem
+
+[_Code_] switch (control) {
+
+[_Code_]         case 0:
+
+[_Code_]                 cout << "Reset\n";
+
+[_Code_]                 // Fall through
+
+[_Code_]         case 1:
+
+[_Code_]                 cout << "Initializing\n";
+
+[_Code_]                 break;
+
+[_Code_]         case 2:
+
+[_Code_]                 cout << "Working\n";
+
+[_Code_]         case 3:
+
+[_Code_]                 cout << "Closing down\n";
+
+[_Code_] }
+
+Now when control == 2 the program prints:
+
+[_Code_] Working
+
+[_Code_] Closing down
+
+This is an unpleasant surprise. The problem is caused by the fact
+that case 2 is no longer the last case. We fall through.
+(Unintentionally, or otherwise we would have included a // Fall
+through comment.) A break is now necessary. If you always put
+in a break statement, you don't have to worry about whether or
+not it is really needed.
+
+[_Code_] // Almost there
+
+[_Code_] switch (control) {
+
+[_Code_]         case 0:
+
+[_Code_]                 cout << "Reset\n";
+
+[_Code_]                 // Fall through
+
+[_Code_]         case 1:
+
+[_Code_]                 cout << "Initializing\n";
+
+[_Code_]                 break;
+
+[_Code_]         case 2:
+
+[_Code_]                 cout << "Working\n";
+
+[_Code_]                 break;
+
+[_Code_] }
+
+Finally, we ask the question: What happens when control == 5?
+In this case, since there is no matching case or a default clause,
+the entire switch statement is skipped.
+
+In this example, the programmer did not include a default
+statement because control will never be anything but 0, 1, or 2.
+However, variables can get assigned strange values, so we need a
+little more defensive programming.
+
+[_Code_] // The final version
+
+[_Code_] switch (control) {
+
+[_Code_]     case 0:
+
+[_Code_]         cout << "Reset\n";
+
+[_Code_]         // Fall through
+
+[_Code_]     case 1:
+
+[_Code_]         cout << "Initializing\n";
+
+[_Code_]         break;
+
+[_Code_]     case 2:
+
+[_Code_]         cout << "Working\n";
+
+[_Code_]         break;
+
+[_Code_]     default:
+
+[_Code_]         cout << "Internal error, control value " << control <<
+
+[_Code_]                 " impossible\n";
+
+[_Code_]         break;
+
+[_Code_] }
+
+Although a default is not required, it should be put in every
+switch. Even though the default may be just:
+
+[_Code_] default:
+
+[_Code_]         // Do nothing
+
+[_Code_]         break;
+
+it should be included. This indicates that you want to ignore out-of-
+range data.
+
+[_A_]  switch, break, and continue
+
+The break statement has two uses. Used inside a switch it causes
+the program to exit the switch statement. Inside of a for or
+while loop, it causes a loop exit. The continue statement is only
+valid inside a loop and causes the program to go to the top of the
+loop.
+
+To illustrate how these statements work, we've produced a new
+version of the calculator program. The new program prints the
+result only after valid data is input and has a Help command.
+
+The Help command is special. We don't want to print the result
+after the Help command, so instead of ending the Help case with a
+break we end it with a continue. The continue forces
+execution to go to the top of the loop.
+
+When an unknown operator is entered, we print an error message.
+As with the Help case, we use a continue statement to skip
+printing the result.
+
+Finally, there is one special command: quit. This command is
+handled outside the switch. It is handled by the break at the top
+of the loop. Since the break is outside the switch, it belongs to
+the while loop and causes the program to exit the while.
+
+The control flow for this program can be seen in Figure 8-2.
+
+Figure 8-2
+
+. switch/continue
+
+[_A_]  Programming Exercises
+
+Exercise 8-1: Print a checkerboard (8-by-8 grid). Each square should be 5-by-3
+characters wide. A 2-by-2 example follows:
+
+[_Code_] +-----+-----+
+
+[_Code_] |     |     |
+
+[_Code_] |     |     |
+
+[_Code_] |     |     |
+
+[_Code_] +-----+-----+
+
+[_Code_] |     |     |
+
+[_Code_] |     |     |
+
+[_Code_] |     |     |
+
+[_Code_] +-----+-----+
+
+Exercise 8-2: The total resistance of n resistors in parallel is:
+
+[_EQUATION_]
+
+Suppose we have a network of two resistors with the values 400W
+and 200W. Then our equation would be:
+
+[_EQUATION_]
+
+Substituting in the value of the resistors we get:
+
+[_EQUATION_]
+
+[_EQUATION_]
+
+[_EQUATION_]
+
+So the total resistance of our two-resistor network is 133.3W.
+
+Write a program to compute the total resistance for any number of
+parallel resistors.
+
+Exercise 8-3: Write a program to average n numbers.
+
+Exercise 8-4: Write a program to print out the multiplication table.
+
+Exercise 8-5: Write a program that reads a character and prints out whether or not
+it is a vowel or a consonant.
+
+Exercise 8-6: Write a program that converts numbers to words. Example: 895
+results in "eight nine five."
+
+Exercise 8-7: The number 85 is said "eighty-five" not "eight five." Modify the
+previous program to handle the numbers 0-100 so all numbers come out as we
+really say them. Example: 13 ¿ "thirteen," 100 ¿ "one hundred."
+
+[_A_]  Answers to Chapter Questions
+
+Answer 8-1: The problem lies with the semicolon (;) at the end of the for state-
+ment. The body of the for statement is between the closing parentheses and the
+semicolon. In this case it is nothing. Even though the cout statement is indented,
+it is not part of the for statement. The indentation is misleading. The C++
+compiler does not look at indentation. The program does nothing until the
+expression
+
+[_Code_] centigrade <= 100
+
+becomes false (centigrade == 101). Then the cout is executed.
+
+Answer 8-2: The problem is that we read the number into data[1] through
+data[5]. In C++ the range of legal array indices is 0 to <array size>-1 or in this
+case 0 to 4. data[5] is illegal. When we use it strange things happen; in this case
+the variable three_count is changed. The solution is to use only data[0] to
+data[4].

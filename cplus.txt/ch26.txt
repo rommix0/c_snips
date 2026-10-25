@@ -1,0 +1,2520 @@
+Chapter 26Part V: Other Language Features
+
+In This Chapter:
+
+*  [_XREF Requirements_]
+
+*  [_XREF Code Design_]
+
+*  [_XREF Coding_]
+
+*  [_XREF Functional
+Description_]
+
+*  [_XREF Testing_]
+
+*  [_XREF Revisions_]
+
+*  [_XREF A Final Warning_]
+
+*  [_XREF Program Files_]
+
+*  [_XREF Programming
+Exercises_]
+
+26	
+
+26: Putting It All Together
+
+For there isn't a job on the top of the
+earth
+the beggar don't know, nor do.
+
+---Kipling
+
+In this chapter we create a complete program. Every step of the
+process is covered, from setting forth the requirements to testing the
+result.
+
+[_A_]  Requirements
+
+Before we start, we need to decide what it is we are going to do.
+This is a very important step and is left out of far too many
+programming cycles.
+
+This chapter's program must fulfill several requirements. First, it
+must be long enough to demonstrate modular programming, but at
+the same time be short enough to fit inside a single chapter.
+Second, it must be complex enough to demonstrate a wide range of
+C++ features, but be simple enough for a novice C++ programmer
+to understand.
+
+Finally, it must be useful. This is not so simple to define. What's
+useful to one person might not be useful to another. We decided to
+refine this requirement and restate it as "It must be useful to C++
+programmers." The program we have selected reads C++ source
+files and generates simple statistics on the nesting of parentheses,
+and the ratio of comments to code lines.
+
+The specification for our statistics program is:
+
+Preliminary Specification for a C++ Statistics Gathering Program
+
+Steve Oualline
+
+February 10, 1995
+
+The program stat gathers statistics about C++ source files and
+prints them. The command line is:
+
+[_Code_] stat <files..>
+
+where <files..> is a list of source files. The following shows the
+output of the program on a short test file.
+
+Example 26-1
+
+. stat/stat.out
+
+[_Code_]    1 (0  {0  #include <iostream.h>
+
+[_Code_]    2 (0  {0  /********************************************************
+
+[_Code_]    3 (0  {0   * calc -- a simple 4-function calculator               *
+
+[_Code_]    4 (0  {0   ********************************************************/
+
+[_Code_]    5 (0  {0  int   result;      // The result of the calculations
+
+[_Code_]    6 (0  {0  char  oper_char;   // User-specified operator
+
+[_Code_]    7 (0  {0  int   value;       // Value specified after the operator
+
+[_Code_]    8 (0  {0  main()
+
+[_Code_]    9 (0  {1  {
+
+[_Code_]   10 (0  {1      result = 0;                 // Initialize the result
+
+[_Code_]   11 (0  {1
+
+[_Code_]   12 (0  {1      // Le (1) {
+
+[_Code_]   14 (0  {2          cout << "Result: " << result << '\n';
+
+[_Code_]   15 (0  {2          cout << "Enter operator and number: ";
+
+[_Code_]   16 (0  {2
+
+[_Code_]   17 (0  {2          cin >> oper_char >> value;
+
+[_Code_]   18 (0  {2
+
+[_Code_]   19 (1  {2          if ((oper_char == 'q') ||
+
+[_Code_]   20 (0  {2              (oper_char == 'Q'))
+
+[_Code_]   21 (0  {2              break;
+
+[_Code_]   22 (0  {2
+
+[_Code_]   23 (0  {3          switch (oper_char) {
+
+[_Code_]   24 (0  {3              case '+':
+
+[_Code_]   25 (0  {3                  result += value;
+
+[_Code_]   26 (0  {3                  break;
+
+[_Code_]   27 (0  {3              case '-':
+
+[_Code_]   28 (0  {3                  result -= value;
+
+[_Code_]   29 (0  {3                  break;
+
+[_Code_]   30 (0  {3              case '*':
+
+[_Code_]   31 (0  {3                  result *= value;
+
+[_Code_]   32 (0  {3                  break;
+
+[_Code_]   33 (0  {3              case '/':
+
+[_Code_]   34 (0  {4                  if (value == 0) {
+
+[_Code_]   35 (0  {4                      cout << "Error: Divide by zero\n";
+
+[_Code_]   36 (0  {4                      cout << "   operation ignored\n";
+
+[_Code_]   37 (0  {3                  } else
+
+[_Code_]   38 (0  {3                      result /= value;
+
+[_Code_]   39 (0  {3                  break;
+
+[_Code_]   40 (0  {3              default:
+
+[_Code_]   41 (0  {3                  cout << "Unknown operator " <<
+
+[_Code_]   42 (0  {3                           oper_char << '\n';
+
+[_Code_]   43 (0  {3                  break;
+
+[_Code_]   44 (0  {2          }
+
+[_Code_]   45 (0  {1      }
+
+[_Code_]   46 (0  {1      return (0);
+
+[_Code_]   47 (0  {0  }
+
+[_Code_] Total number of lines: 47
+
+[_Code_] Maximum nesting of () : 2
+
+[_Code_] Maximum nesting of {} : 4
+
+[_Code_] Number of blank lines .................4
+
+[_Code_] Number of comment only lines ..........4
+
+[_Code_] Number of code only lines .............35
+
+[_Code_] Number of lines with code and comments 4
+
+[_Code_] Comment to code ratio 20.5%
+
+[_A_]  Code Design
+
+There are several schools of code design. In structured
+programming, you divide the code up into modules and then divide
+the module into submodules, divide the sub-modules into sub-
+submodules, and so on. This is also known as procedure- oriented
+programming. In object-oriented programming, you try to think of
+the problem as a collection of data that you manipulate through
+member functions.
+
+There also are other approaches, such as state tables and transition
+diagrams. All of these have the same basic principle at heart:
+"Arrange the program's information in the clearest and simplest way
+possible and then try to turn it into C++ code."
+
+Our program breaks down into several logical modules. First, there
+is a token scanner, which reads raw C++ code and turns it into
+tokens. Actually, this function sub-divides into two smaller modules.
+The first reads the input stream and determines what type of
+character we have. The second takes in character-type information
+and uses it to assemble tokens. The other module contains the
+statistics gathering and a small main program.
+
+[_B_]  Token Module
+
+Our program scans C++ source code and uses the tokens to
+generate statistics. A token is a group of characters that form a
+single word, number, or symbol. For example, the line:
+
+[_Code_] answer = (123 + 456) / 89;  // Compute some sort of result
+
+consists of the tokens:
+
+[_Code_] T_ID				The word "answer"
+
+[_Code_] T_OPERATOR				The character "="
+
+[_Code_] T_L_PAREN				Left pParenthesis
+
+[_Code_] T_NUMBER				The number 123
+
+[_Code_] T_OPERATOR				The character "+"
+
+[_Code_] T_NUMBER				The number 456
+
+[_Code_] T_R_PAREN				Right parenthesis
+
+[_Code_] T_OPERATOR				The divide operator
+
+[_Code_] T_NUMBER				The number 89
+
+[_Code_] T_OPERATOR				The semicolon
+
+[_Code_] T_COMMENT				The // comment
+
+[_Code_] T_NEW_LINE				The end-of-line character
+
+Our token module needs to identify groups of characters. For
+example, an identifier is defined as a letter or underscore, followed
+by any number of letters or digits. So our tokenizer needs to contain
+the pseudocode:
+
+[_Code_] If the current character is a letter then
+
+[_Code_] 		scan until we get a character that's not a letter or digit
+
+As you can see from the pseudocode, our tokenizer depends a great
+deal on character types, so we need a module to help us with the
+type information.
+
+[_B_]  Character-type Module
+
+The purpose of the character-type module is to read characters and
+decode their types. Some types overlap. For example, C_ALPHA_
+NUMERIC includes the C_NUMERIC character set. This module stores
+most of the type information in an array and requires only a little
+logic to handle the special types like C_ALPHA_NUMERIC.
+
+[_B_]  Statistics Class
+
+In this program, a statistic is an object that consumes tokens and
+outputs statistics. We start by defining an abstract class for our
+statistics. This class is used as the basis for the statistics we are
+collecting. The class diagram can be seen in Figure 26-1.
+
+Figure 26-1
+
+. Statistics class hierarchy
+
+Our definition of a statistic is "something that uses tokens to collect
+statistics." These statistics may be printed at the beginning of each
+line or at the end of the file.
+
+Our four statistics are more specific. For example, the class paren_
+counter counts the nesting of parenthesis as well as the maximum
+nesting. The current nesting is printed at the beginning of each line
+(the "(" number). The maximum nesting level is written out at the
+end of the file.
+
+The other classes are defined in a similar manner. The only trick
+used here is that we've made the line numbering a statistic. It
+counts the number of T_NEW_LINE tokens and outputs that count at
+the start of each line.
+
+[_A_]  Coding
+
+The coding process was fairly simple. The only problem that came
+up was getting the end-of-line correct.
+
+[_A_]  Functional Description
+
+This section describes all the classes and major functions in our
+program. For a more complete and detailed description, take a look
+at the listings at the end of this chapter.
+
+[_B_]  char_type Class
+
+The char_type class sets the type of a character. For the most part,
+this is done through a table named type_info. Some types, such as
+C_ALPHA_NUMERIC, include two different types of characters, C_
+ALPHA and C_DIGIT. Therefore, in addition to our table, we need a
+little code for the special cases.
+
+[_B_]  input_ file Class
+
+This class reads data from the input file one character at a time. It
+buffers up a line and on command writes the line to the output.
+
+[_B_]  token Class
+
+We want an input stream of tokens. We have an input stream
+consisting of characters. The main function of this class, next_
+token, turns characters into tokens. Actually, our tokenizer is rather
+simple, because we don't have to deal with most of the details that
+a full C++ tokenizer must handle.
+
+The coding for this function is fairly straightforward, except for the
+fact that it breaks up multiline comments into a series of T_COMMENT
+and T_NEW_LINE tokens.
+
+One clever trick is used in this section. The TOKEN_LIST macro is
+used to generate an enumerated list of token types as well as a
+string array containing the names of each of the tokens. Let's
+examine how this is done in more detail.
+
+The definition of the TOKEN_LIST class is:
+
+[_Code_] #define TOKEN_LIST \
+
+[_Code_]    T(T_NUMBER),      /* Simple number (floating point or integer) */ \
+
+[_Code_]    T(T_STRING),      /* String or character constant */              \
+
+[_Code_]    T(T_COMMENT),     /* Comment */                                   \
+
+[_Code_]    T(T_NEWLINE),     /* Newline character */                         \
+
+[_Code_]    T(T_OPERATOR),    /* Arithmetic operator */                       \
+
+[_Code_]    T(T_L_PAREN),     /* Character "(" */                             \
+
+[_Code_]    T(T_R_PAREN),     /* Character ")" */                             \
+
+[_Code_]    T(T_L_CURLY),     /* Character "{" */                             \
+
+[_Code_]    T(T_R_CURLY),     /* Character "}" */                             \
+
+[_Code_]    T(T_ID),          /* Identifier */                                \
+
+[_Code_]    T(T_EOF)          /* End of File */
+
+When invoked, this macro will generate the code:
+
+[_Code_] T(T_NUMBER),
+
+[_Code_] T(T_STRING),
+
+[_Code_] // .. and so on
+
+If we define a T macro, it will be expanded when the TOKEN_LIST
+macro is expanded. We would like to use the TOKEN_LIST macro
+to generate a list of names, so we define the T macro as:
+
+[_Code_] #define T(x) x          // Define T() as the name
+
+Now, our TOKEN_LIST macro will generate:
+
+[_Code_] T_NUMBER,
+
+[_Code_] T_STRING,
+
+[_Code_] // .. and so on
+
+Putting all this together with a little more code, we get a way to
+generate a TOKEN_TYPE enum list:
+
+[_Code_] #define T(x) x          // Define T() as the name
+
+[_Code_] enum TOKEN_TYPE {
+
+[_Code_]    TOKEN_LIST
+
+[_Code_] };
+
+[_Code_] #undef T                // Remove old temporary macro
+
+Later we redefine T so it generates a string:
+
+[_Code_] #define T(x) #x         // Define x as a string
+
+This allows us to use TOKEN_LIST to generate a list of strings
+containing the names of the tokens:
+
+[_Code_] #define T(x) #x         // Define x as a string
+
+[_Code_] const char *const TOKEN_NAMES[] = {
+
+[_Code_]    TOKEN_LIST
+
+[_Code_] };
+
+[_Code_] #undef T                // Remove old temporary macro
+
+When expanded, this macro generates:
+
+[_Code_] const char *const TOKEN_NAMES[] = {
+
+[_Code_]     "T_NUMBER",
+
+[_Code_]     "T_STRING",
+
+[_Code_]     //....
+
+Using tricks like this is acceptable in limited cases. However, such
+tricks should be extensively commented so the maintenance
+programmer who has to fix your code can understand what you did.
+
+[_B_]  stat Class
+
+stat class is an abstract class that is used as a basis for the four real
+statistics we are collecting. It starts with a member function to
+consume tokens. This function is a pure virtual function, which
+means that any derived classes must define the function take_
+token.
+
+[_Code_] class stat {
+
+[_Code_]     public:
+
+[_Code_]         virtual void take_token(TOKEN_TYPE token) = 0;
+
+The function take_token generates statistics from tokens. We need
+some way of printing them. We print statistics in two places. The
+first is at the beginning of each line and the second is at the end of
+the file. Our abstract class contains two virtual functions to handle
+these two cases:
+
+[_Code_]         virtual void line_start(void) {};
+
+[_Code_]         virtual void eof(void) {};
+
+[_Code_] };
+
+Unlike take_token, these functions have default bodies-empty
+bodies, but bodies just the same. What does this mean? Our derived
+classes must define take_token. They don't have to define line_
+start or eof.
+
+[_B_]  line_counter class
+
+The simplest statistic we collect is a count of the number of lines
+processed so far. This counting is done through the line_counter
+class. The only token it cares about is T_NEW_LINE. At the
+beginning of each line it outputs the line number (the current count
+of the T_NEW_LINE tokens). At the end of file, this class outputs
+nothing. As a matter of fact, the line_counter class doesn't even
+define an eof function. Instead, we let the default in the base class
+(stat) do the "work."
+
+[_B_]  brace_counter class
+
+This class keeps track of the nesting level of the curly braces {  }. We
+feed the class a stream of tokens through the take_token member
+function. This function keeps track of the left and right curly braces
+and ignores everything else.
+
+[_Code_]         // Consume tokens,  count the nesting of {}
+
+[_Code_]         void brace_counter::take_token(TOKEN_TYPE token) {
+
+[_Code_]             switch (token) {
+
+[_Code_]                 case T_L_CURLY:
+
+[_Code_]                     ++cur_level;
+
+[_Code_]                     if (cur_level > max_level)
+
+[_Code_]                         max_level = cur_level;
+
+[_Code_]                     break;
+
+[_Code_]                 case T_R_CURLY:
+
+[_Code_]                     --cur_level;
+
+[_Code_]                     break;
+
+[_Code_]                 default:
+
+[_Code_]                     // Ignore
+
+[_Code_]                     break;
+
+[_Code_]             }
+
+[_Code_]         }
+
+The results of this statistic are printed in two places. The first is at
+the beginning of each line. The second is at the end of file. We
+define two member functions to print these statistics:
+
+[_Code_]         // Output start of line statistics
+
+[_Code_]         // namely the current line number
+
+[_Code_]         void brace_counter::line_start(void) {
+
+[_Code_]            cout.setf(ios::left);
+
+[_Code_]            cout.width(2);
+
+[_Code_]
+
+[_Code_]            cout << '{' <<  cur_level << ' ';
+
+[_Code_]
+
+[_Code_]            cout.unsetf(ios::left);
+
+[_Code_]            cout.width();
+
+[_Code_]         }
+
+[_Code_]
+
+[_Code_]         // Output eof statistics
+
+[_Code_]         // namely the total number of lines
+
+[_Code_]         void brace_counter::eof(void) {
+
+[_Code_]            cout << "Maximum nesting of {} : " << max_level << '\n';
+
+[_Code_]         }
+
+[_B_]  paren_counter class
+
+This class is very similar to the brace_counter class. As a matter
+of fact, it was created by copying the brace_counter class and
+performing a few simple edits.
+
+We probably should combine the paren_counter class and the
+brace_counter class into one class that uses a parameter to tell it
+what to count. Oh well, something for the next version.
+
+[_B_]  comment_counter class
+
+In this class, we keep track of lines with comments in them, lines
+with code in them, lines with both, and lines with none. The results
+are printed at the end of file.
+
+[_B_]  do_file procedure
+
+The do_file procedure reads each file one token at a time, and
+sends them to the take_token routine for every statistic class. But
+how does it know what statistics classes to use? There is a list:
+
+[_Code_] static line_counter line_count;         // Counter of lines
+
+[_Code_] static paren_counter paren_count;       // Counter of () levels
+
+[_Code_] static brace_counter brace_count;       // Counter of {} levels
+
+[_Code_] static comment_counter comment_count;   // Counter of comment info
+
+[_Code_]
+
+[_Code_] // A list of the statistics we are collecting
+
+[_Code_] static stat *stat_list[] = {
+
+[_Code_]     &line_count,
+
+[_Code_]     &paren_count,
+
+[_Code_]     &brace_count,
+
+[_Code_]     &comment_count,
+
+[_Code_]     NULL
+
+[_Code_] };
+
+A couple of things should be noted about this list. Even though
+line_count, paren_count, brace_count, and comment_count
+are all different types, they are all based on the type stat. This
+means that we can put them in an array called stat_list. This
+design also makes it easy to add another statistic to the list. All we
+have to do is define a new class and put a new entry in the stat_
+list.
+
+[_A_]  Testing
+
+To test this program, we came up with a small C++ program that
+contains every different type of possible token. The results are
+shown in [_XREF Example 26-2_].
+
+Example 26-2
+
+. stat/test.cc
+
+[_Code_] /********************************************************
+
+[_Code_]  * This is a mult-line comment                          *
+
+[_Code_]  *      T_COMMENT, T_NEWLINE                            *
+
+[_Code_]  ********************************************************/
+
+[_Code_] const int LINE_MAX = 500;       // T_ID, T_OPERATOR, T_NUMBER
+
+[_Code_]
+[_Code_] // T_L_PAREN, T_R_PAREN
+
+[_Code_] static void do_file( const char *const name)
+
+[_Code_] {
+
+[_Code_]     // T_L_CURLY
+
+[_Code_]     char *name = "Test"         // T_STRING
+
+[_Code_]
+[_Code_]     // T_R_CURLY
+
+[_Code_] }
+
+[_Code_] // T_EOF
+
+[_Code_]
+[_A_]  Revisions
+
+As it stands, the program collects a very limited set of statistics. It
+might be nice to add things like average identifier size, per-
+procedure statistic, and pre-class statistics. One thing we kept in
+mind when we designed our program is the need for expendability.
+
+We stopped our statistics collection at four types of statistics
+because we had fulfilled our mission to demonstrate a reasonable
+advanced set of C++ constructs. We didn't add more because it
+would make the program too complex to fit in the chapter. On the
+whole, the program does its job well.
+
+[_A_]  A Final Warning
+
+Just because you can generate a statistic doesn't mean that it's useful.
+
+[_A_]  Program Files
+
+[_B_]  The ch_type.h file
+
+Example 26-3
+
+. stat/ch_type.h
+
+[_Code_] /********************************************************
+
+[_Code_]  * char_type -- Character type class                    *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Member functions:                                    *
+
+[_Code_]  *      type -- returns the type of a character.        *
+
+[_Code_]  *              (Limited to simple types)               *
+
+[_Code_]  *      is(ch, char_type) -- check to see if ch is      *
+
+[_Code_]  *              a member of the given type.             *
+
+[_Code_]  *              (Works for derrived types as well.)     *
+
+[_Code_]  ********************************************************/
+
+[_Code_] class char_type {
+
+[_Code_]     public:
+
+[_Code_]         enum CHAR_TYPE {
+
+[_Code_]             C_EOF,              // End of file character
+
+[_Code_]             C_WHITE,    // Whitespace or control character
+
+[_Code_]             C_NEWLINE,  // A newline character
+
+[_Code_]             C_ALPHA,    // A letter (includes _)
+
+[_Code_]             C_DIGIT,    // A number
+
+[_Code_]             C_OPERATOR, // Random operator
+
+[_Code_]             C_SLASH,    // The character '/'
+
+[_Code_]             C_L_PAREN,  // The character '('
+
+[_Code_]             C_R_PAREN,  // The character ')'
+
+[_Code_]             C_L_CURLY,  // The character '{'
+
+[_Code_]             C_R_CURLY,  // The character '}'
+
+[_Code_]             C_SINGLE,   // The character '\''
+
+[_Code_]             C_DOUBLE,   // The character '"'
+
+[_Code_]             // End of simple types, more complex, derived types follow
+
+[_Code_]             C_HEX_DIGIT,// Hexidecimal digit
+
+[_Code_]             C_ALPHA_NUMERIC     // Alpha numeric
+
+[_Code_]         };
+
+[_Code_]     private:
+
+[_Code_]         static enum CHAR_TYPE type_
+info[256];   // Information on each character
+
+[_Code_]
+
+[_Code_]         // Fill in a range of type info stuff
+
+[_Code_]         void fill_range(int start, int end, CHAR_TYPE type);
+
+[_Code_]     public:
+
+[_Code_]         char_type();    // Initialize the data
+
+[_Code_]         // ~char_type   -- default destructor
+
+[_Code_]
+[_Code_]         // Returns true if character is a given type
+
+[_Code_]         int is(int ch, CHAR_TYPE kind);
+
+[_Code_]
+[_Code_]         CHAR_TYPE type(int ch);
+
+[_Code_] };
+
+[_B_]  The ch_type.cc file
+
+Example 26-4
+
+. stat/ch_type.cc
+
+[_Code_] /********************************************************
+
+[_Code_]  * ch_type package                                      *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * The class ch_type is used to tell the type of        *
+
+[_Code_]  * various characters.                                  *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * The main member functions are:                       *
+
+[_Code_]  *      is -- True if the character is the indicated    *
+
+[_Code_]  *              type.                                   *
+
+[_Code_]  *      type -- Return type of character.               *
+
+[_Code_]  ********************************************************/
+
+[_Code_] #include <iostream.h>
+
+[_Code_]
+[_Code_] #include "ch_type.h"
+
+[_Code_]
+[_Code_] // Define the type information array
+
+[_Code_] char_type::CHAR_TYPE char_type::type_info[256];
+
+[_Code_] /********************************************************
+
+[_Code_]  * fill_range -- fill in a range of types for the       *
+
+[_Code_]  *      character type class                            *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Parameters                                           *
+
+[_Code_]  *      start, end -- range of items to fill in         *
+
+[_Code_]  *      type -- type to use for filling                 *
+
+[_Code_]  ********************************************************/
+
+[_Code_] void char_type::fill_range(int start, int end, CHAR_TYPE type)
+
+[_Code_] {
+
+[_Code_]     int cur_ch;
+
+[_Code_]
+[_Code_]     for (cur_ch = start; cur_ch <= end; ++cur_ch) {
+
+[_Code_]         type_info[cur_ch] = type;
+
+[_Code_]     }
+
+[_Code_] }
+
+[_Code_]
+[_Code_] /*********************************************************
+
+[_Code_]  * char_type::char_type -- initialize the char type table*
+
+[_Code_]  *********************************************************/
+
+[_Code_] char_type::char_type()
+
+[_Code_] {
+
+[_Code_]     fill_range(0, 255, C_WHITE);
+
+[_Code_]
+[_Code_]     fill_range('A', 'Z', C_ALPHA);
+
+[_Code_]     fill_range('a', 'z', C_ALPHA);
+
+[_Code_]     type_info['_'] = C_ALPHA;
+
+[_Code_]
+[_Code_]     fill_range('0', '9', C_DIGIT);
+
+[_Code_]
+[_Code_]     type_info['!'] = C_OPERATOR;
+
+[_Code_]     type_info['#'] = C_OPERATOR;
+
+[_Code_]     type_info['$'] = C_OPERATOR;
+
+[_Code_]     type_info['%'] = C_OPERATOR;
+
+[_Code_]     type_info['^'] = C_OPERATOR;
+
+[_Code_]     type_info['&'] = C_OPERATOR;
+
+[_Code_]     type_info['*'] = C_OPERATOR;
+
+[_Code_]     type_info['-'] = C_OPERATOR;
+
+[_Code_]     type_info['+'] = C_OPERATOR;
+
+[_Code_]     type_info['='] = C_OPERATOR;
+
+[_Code_]     type_info['|'] = C_OPERATOR;
+
+[_Code_]     type_info['~'] = C_OPERATOR;
+
+[_Code_]     type_info[','] = C_OPERATOR;
+
+[_Code_]     type_info[':'] = C_OPERATOR;
+
+[_Code_]     type_info['?'] = C_OPERATOR;
+
+[_Code_]     type_info['.'] = C_OPERATOR;
+
+[_Code_]     type_info['<'] = C_OPERATOR;
+
+[_Code_]     type_info['>'] = C_OPERATOR;
+
+[_Code_]
+[_Code_]     type_info['/'] = C_SLASH;
+
+[_Code_]     type_info['\n'] = C_NEWLINE;
+
+[_Code_]
+[_Code_]     type_info['('] = C_L_PAREN;
+
+[_Code_]     type_info[')'] = C_R_PAREN;
+
+[_Code_]
+[_Code_]     type_info['{'] = C_L_CURLY;
+
+[_Code_]     type_info['}'] = C_R_CURLY;
+
+[_Code_]
+[_Code_]     type_info['"'] = C_DOUBLE;
+
+[_Code_]     type_info['\''] = C_SINGLE;
+
+[_Code_] }
+
+[_Code_]
+[_Code_] int char_type::is(int ch, CHAR_TYPE kind)
+
+[_Code_] {
+
+[_Code_]     if (ch == EOF) return (kind == C_EOF);
+
+[_Code_]
+[_Code_]     switch (kind) {
+
+[_Code_]         case C_HEX_DIGIT:
+
+[_Code_]             if (type_info[ch] == C_DIGIT)
+
+[_Code_]                 return (1);
+
+[_Code_]             if ((ch >= 'A') && (ch <= 'F'))
+
+[_Code_]                 return (1);
+
+[_Code_]             if ((ch >= 'a') && (ch <= 'f'))
+
+[_Code_]                 return (1);
+
+[_Code_]             return (0);
+
+[_Code_]         case C_ALPHA_NUMERIC:
+
+[_Code_]             return ((type_info[ch] == C_ALPHA) ||
+
+[_Code_]                     (type_info[ch] == C_DIGIT));
+
+[_Code_]         default:
+
+[_Code_]             return (type_info[ch] == kind);
+
+[_Code_]     }
+
+[_Code_] };
+
+[_Code_]
+[_Code_] char_type::CHAR_TYPE char_type::type(int ch) {
+
+[_Code_]    if (ch == EOF) return (C_EOF);
+
+[_Code_]    return (type_info[ch]);
+
+[_Code_] }
+
+[_B_]  The token.h file
+
+Example 26-5
+
+. stat/token.h
+
+[_Code_] /********************************************************
+
+[_Code_]  * token -- token handling module                       *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Functions:                                           *
+
+[_Code_]  *      next_token -- get the next token from the input *
+
+[_Code_]  ********************************************************/
+
+[_Code_]
+[_Code_] /*
+
+[_Code_]  * A list of tokens
+
+[_Code_]  *      Note, how this list is used depends on defining the macro T.
+
+[_Code_]  *      This macro is used for defining the tokens types themselves
+
+[_Code_]  *      as well as the string version of the tokens.
+
+[_Code_]  */
+
+[_Code_] #define TOKEN_LIST \
+
+[_Code_]    T(T_NUMBER),         /* Simple number (floating point or integer) */ \
+
+[_Code_]    T(T_STRING),         /* String or character constant */              \
+
+[_Code_]    T(T_COMMENT),        /* Comment */                                   \
+
+[_Code_]    T(T_NEWLINE),        /* Newline character */                         \
+
+[_Code_]    T(T_OPERATOR),       /* Arithmetic operator */                       \
+
+[_Code_]    T(T_L_PAREN),        /* Character "(" */                             \
+
+[_Code_]    T(T_R_PAREN),        /* Character ")" */                             \
+
+[_Code_]    T(T_L_CURLY),        /* Character "{" */                             \
+
+[_Code_]    T(T_R_CURLY),        /* Character "}" */                             \
+
+[_Code_]    T(T_ID),             /* Identifier */                                \
+
+[_Code_]    T(T_EOF)             /* End of File */
+
+[_Code_]
+[_Code_] /*
+
+[_Code_]  * Define the enumerated list of tokens.
+
+[_Code_]  *      This makes use of a trick using the T macro
+
+[_Code_]  *      and our TOKEN_LIST
+
+[_Code_]  */
+
+[_Code_] #define T(x) x          // Define T() as the name
+
+[_Code_] enum TOKEN_TYPE {
+
+[_Code_]    TOKEN_LIST
+
+[_Code_] };
+
+[_Code_] #undef T                // Remove old temporary macro
+
+[_Code_]
+[_Code_] // A list of the names of the tokens
+
+[_Code_] extern const char *const TOKEN_NAMES[];
+
+[_Code_]
+[_Code_] const int LINE_MAX = 500;       // Longest possible line
+
+[_Code_]
+[_Code_] /********************************************************
+
+[_Code_]  * input_file -- data from the input file               *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * The current two characters are store in              *
+
+[_Code_]  *      cur_char and next_char                          *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * The member function read_char moves eveyone up       *
+
+[_Code_]  * one character.                                       *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * The line is buffered and output everytime a newline  *
+
+[_Code_]  * is passed.                                           *
+
+[_Code_]  ********************************************************/
+
+[_Code_] class input_file: public ifstream {
+
+[_Code_]     private:
+
+[_Code_]         char line[LINE_MAX];    // Current line
+
+[_Code_]         char *char_ptr;         // Current character on the line
+
+[_Code_]     public:
+
+[_Code_]         int cur_char;   // Current character (can be EOF)
+
+[_Code_]         int next_char;  // Next character (can be EOF)
+
+[_Code_]
+[_Code_]         /*
+
+[_Code_]          * Initialize the input file and read the first 2
+
+[_Code_]          * characters.
+
+[_Code_]          */
+
+[_Code_]         input_file(const char *const name) : ifstream(name) {
+
+[_Code_]             if (bad())
+
+[_Code_]                 return;
+
+[_Code_]             cur_char = get();
+
+[_Code_]             next_char = get();
+
+[_Code_]             char_ptr = line;
+
+[_Code_]         }
+
+[_Code_]
+[_Code_]         /*
+
+[_Code_]          * Write the line to the screen
+
+[_Code_]          */
+
+[_Code_]         void flush_line() {
+
+[_Code_]            *char_ptr = '\0';
+
+[_Code_]            cout << line;
+
+[_Code_]            cout.flush();
+
+[_Code_]            char_ptr = line;
+
+[_Code_]         }
+
+[_Code_]         /*
+
+[_Code_]          * Advance one character
+
+[_Code_]          */
+
+[_Code_]         void read_char(void) {
+
+[_Code_]            *char_ptr = cur_char;
+
+[_Code_]            ++char_ptr;
+
+[_Code_]
+[_Code_]            cur_char = next_char;
+
+[_Code_]            next_char = get();
+
+[_Code_]         }
+
+[_Code_] };
+
+[_Code_]
+[_Code_] #ifndef TRUE
+
+[_Code_] #define TRUE 1          // Define a simple TRUE/FALSE value
+
+[_Code_] #define FALSE 0
+
+[_Code_] #endif /* TRUE */
+
+[_Code_]
+[_Code_] /********************************************************
+
+[_Code_]  * token class                                          *
+
+[_Code_]  *                                                      *
+
+[_Code_]  *      Reads the next token in the input stream        *
+
+[_Code_]  *      and returns its type.                           *
+
+[_Code_]  ********************************************************/
+
+[_Code_] class token {
+
+[_Code_]     private:
+
+[_Code_]         // True if we are in the middle of a comment
+
+[_Code_]         int in_comment;
+
+[_Code_]
+[_Code_]         // True if we need to read a character
+
+[_Code_]         // (This hack is designed to get the new lines right)
+
+[_Code_]         int need_to_read_one;
+
+[_Code_]
+[_Code_]         // Read a /* */ style comment
+
+[_Code_]         TOKEN_TYPE read_comment(input_file &in_file);
+
+[_Code_]     public:
+
+[_Code_]         token(void) {
+
+[_Code_]             in_comment = FALSE;
+
+[_Code_]             need_to_read_one = 0;
+
+[_Code_]         }
+
+[_Code_]
+[_Code_]         // Return the next token in the stream
+
+[_Code_]         TOKEN_TYPE next_token(input_file &in_file);
+
+[_Code_] };
+
+[_B_]  The token.cc file
+
+Example 26-6
+
+. stat/token.cc
+
+[_Code_] /********************************************************
+
+[_Code_]  * token -- token handling module                       *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Functions:                                           *
+
+[_Code_]  *      next_token -- get the next token from the input *
+
+[_Code_]  ********************************************************/
+
+[_Code_] #include <fstream.h>
+
+[_Code_] #include <stdlib.h>
+
+[_Code_]
+[_Code_] #include "ch_type.h"
+
+[_Code_] #include "token.h"
+
+[_Code_]
+[_Code_] /*
+
+[_Code_]  * Define the token name list
+
+[_Code_]  *      This makes use of a trick using the T macro
+
+[_Code_]  *      and our TOKEN_LIST
+
+[_Code_]  */
+
+[_Code_] #define T(x) #x         // Define x as a string
+
+[_Code_] const char *const TOKEN_NAMES[] = {
+
+[_Code_]    TOKEN_LIST
+
+[_Code_] };
+
+[_Code_] #undef T                // Remove old temporary macro
+
+[_Code_]
+[_Code_] static char_type char_type;     // Character type information
+
+[_Code_] /********************************************************
+
+[_Code_]  * read_comment -- read in a comment                    *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Parameters                                           *
+
+[_Code_]  *      in_file -- file to read                         *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Returns                                              *
+
+[_Code_]  *      Token read.  Can be a T_COMMENT or T_NEW_LINE   *
+
+[_Code_]  *      depending on what we read.                      *
+
+[_Code_]  *                                                      *
+
+[_Code_]  *      Multi-line comments are split into multiple     *
+
+[_Code_]  *      tokens.                                         *
+
+[_Code_]  ********************************************************/
+
+[_Code_] TOKEN_TYPE token::read_comment(input_file &in_file)
+
+[_Code_] {
+
+[_Code_]     if (in_file.cur_char == '\n') {
+
+[_Code_]         in_file.read_char();
+
+[_Code_]         return (T_NEWLINE);
+
+[_Code_]     }
+
+[_Code_]     while (1) {
+
+[_Code_]         in_comment = TRUE;
+
+[_Code_]         if (in_file.cur_char == EOF) {
+
+[_Code_]             cerr << "Error: EOF inside comment\n";
+
+[_Code_]             return (T_EOF);
+
+[_Code_]         }
+
+[_Code_]         if (in_file.cur_char == '\n')
+
+[_Code_]             return (T_COMMENT);
+
+[_Code_]         if ((in_file.cur_char == '*') &&
+
+[_Code_]             (in_file.next_char == '/')) {
+
+[_Code_]             in_comment = FALSE;
+
+[_Code_]             // Skip past the ending */
+
+[_Code_]             in_file.read_char();
+
+[_Code_]             in_file.read_char();
+
+[_Code_]             return (T_COMMENT);
+
+[_Code_]         }
+
+[_Code_]         in_file.read_char();
+
+[_Code_]     }
+
+[_Code_] }
+
+[_Code_] /********************************************************
+
+[_Code_]  * next_token -- read the next token in an input stream *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Parameters                                           *
+
+[_Code_]  *      in_file -- file to read                         *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Returns                                              *
+
+[_Code_]  *      next token                                      *
+
+[_Code_]  ********************************************************/
+
+[_Code_] TOKEN_TYPE token::next_token(input_file &in_file)
+
+[_Code_] {
+
+[_Code_]
+[_Code_]     if (need_to_read_one)
+
+[_Code_]         in_file.read_char();
+
+[_Code_]
+
+[_Code_]     need_to_read_one = 0;
+
+[_Code_]
+[_Code_]     if (in_comment)
+
+[_Code_]         return (read_comment(in_file));
+
+[_Code_]
+[_Code_]     while (char_type.is(in_file.cur_char, char_type::C_WHITE)) {
+
+[_Code_]         in_file.read_char();
+
+[_Code_]     }
+
+[_Code_]     if (in_file.cur_char == EOF)
+
+[_Code_]         return (T_EOF);
+
+[_Code_]
+[_Code_]     switch (char_type.type(in_file.cur_char)) {
+
+[_Code_]         case char_type::C_NEWLINE:
+
+[_Code_]             in_file.read_char();
+
+[_Code_]             return (T_NEWLINE);
+
+[_Code_]         case char_type::C_ALPHA:
+
+[_Code_]             while (char_type.is(in_file.cur_char,
+
+[_Code_]                                 char_type::C_ALPHA_NUMERIC))
+
+[_Code_]                 in_file.read_char();
+
+[_Code_]             return (T_ID);
+
+[_Code_]         case char_type::C_DIGIT:
+
+[_Code_]             in_file.read_char();
+
+[_Code_]             if ((in_file.cur_char == 'X') || (in_file.cur_char == 'x')) {
+
+[_Code_]                 in_file.read_char();
+
+[_Code_]                 while (char_type.is(in_file.cur_char, char_type::C_HEX_
+DIGIT))
+
+[_Code_]                     in_file.read_char();
+
+[_Code_]                 return (T_NUMBER);
+
+[_Code_]             }
+
+[_Code_]             while (char_type.is(in_file.cur_char, char_type::C_DIGIT))
+
+[_Code_]                 in_file.read_char();
+
+[_Code_]             return (T_NUMBER);
+
+[_Code_]         case char_type::C_SLASH:
+
+[_Code_]             // Check for  /* characters
+
+[_Code_]             if (in_file.next_char == '*') {
+
+[_Code_]                 return (read_comment(in_file));
+
+[_Code_]             }
+
+[_Code_]             // Now check for double slash comments
+
+[_Code_]             if (in_file.next_char == '/') {
+
+[_Code_]                 while (1) {
+
+[_Code_]                     // Comment starting with // and ending with EOF is legal
+
+[_Code_]                     if (in_file.cur_char == EOF)
+
+[_Code_]                         return (T_COMMENT);
+
+[_Code_]                     if (in_file.cur_char == '\n')
+
+[_Code_]                         return (T_COMMENT);
+
+[_Code_]                     in_file.read_char();
+
+[_Code_]                 }
+
+[_Code_]             }
+
+[_Code_]             // Fall through
+
+[_Code_]         case char_type::C_OPERATOR:
+
+[_Code_]             in_file.read_char();
+
+[_Code_]             return (T_OPERATOR);
+
+[_Code_]         case char_type::C_L_PAREN:
+
+[_Code_]             in_file.read_char();
+
+[_Code_]             return (T_L_PAREN);
+
+[_Code_]         case char_type::C_R_PAREN:
+
+[_Code_]             in_file.read_char();
+
+[_Code_]             return (T_R_PAREN);
+
+[_Code_]         case char_type::C_L_CURLY:
+
+[_Code_]             in_file.read_char();
+
+[_Code_]             return (T_L_CURLY);
+
+[_Code_]         case char_type::C_R_CURLY:
+
+[_Code_]             in_file.read_char();
+
+[_Code_]             return (T_R_CURLY);
+
+[_Code_]         case char_type::C_DOUBLE:
+
+[_Code_]             while (1) {
+
+[_Code_]                 in_file.read_char();
+
+[_Code_]                 // Check for end of string
+
+[_Code_]                 if (in_file.cur_char == '"')
+
+[_Code_]                     break;
+
+[_Code_]
+[_Code_]                 // Escape character, then skip the next character
+
+[_Code_]                 if (in_file.cur_char == '\\')
+
+[_Code_]                     in_file.read_char();
+
+[_Code_]             }
+
+[_Code_]             in_file.read_char();
+
+[_Code_]             return (T_STRING);
+
+[_Code_]         case char_type::C_SINGLE:
+
+[_Code_]             while (1) {
+
+[_Code_]                 in_file.read_char();
+
+[_Code_]                 // Check for end of character
+
+[_Code_]                 if (in_file.cur_char == '\'')
+
+[_Code_]                     break;
+
+[_Code_]
+[_Code_]                 // Escape character, then skip the next character
+
+[_Code_]                 if (in_file.cur_char == '\\')
+
+[_Code_]                     in_file.read_char();
+
+[_Code_]             }
+
+[_Code_]             in_file.read_char();
+
+[_Code_]             return (T_STRING);
+
+[_Code_]         default:
+
+[_Code_]             cerr << "Internal error: Very strange character\n";
+
+[_Code_]             abort();
+
+[_Code_]     }
+
+[_Code_]     cerr << "Internal error: We should never get here\n";
+
+[_Code_]     abort();
+
+[_Code_]     return (T_EOF);     // Should never get here either
+
+[_Code_] }
+
+[_B_]  The stat.cc file
+
+Example 26-7
+
+. stat/stat.cc
+
+[_Code_] /********************************************************
+
+[_Code_]  * stat                                                 *
+
+[_Code_]  *      Produce statistics about a program              *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Usage:                                               *
+
+[_Code_]  *      stat [options] <file-list>                      *
+
+[_Code_]  *                                                      *
+
+[_Code_]  ********************************************************/
+
+[_Code_] #include <iostream.h>
+
+[_Code_] #include <fstream.h>
+
+[_Code_] #include <iomanip.h>
+
+[_Code_] #include <stdlib.h>
+
+[_Code_] #include <memory.h>
+
+[_Code_]
+[_Code_] #include "ch_type.h"
+
+[_Code_] #include "token.h"
+
+[_Code_]
+[_Code_] /********************************************************
+
+[_Code_]  * stat -- general purpose statistic                    *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Member functions:                                    *
+
+[_Code_]  *      take_token -- receives token and uses it to     *
+
+[_Code_]  *                      compute statistic               *
+
+[_Code_]  *      line_start -- output stat at the beginning of   *
+
+[_Code_]  *                      a line                          *
+
+[_Code_]  *      eof     -- output stat at the end of the file   *
+
+[_Code_]  ********************************************************/
+
+[_Code_] class stat {
+
+[_Code_]     public:
+
+[_Code_]         virtual void take_token(TOKEN_TYPE token) = 0;
+
+[_Code_]         virtual void line_start(void) {};
+
+[_Code_]         virtual void eof(void) {};
+
+[_Code_]         // Default constructor
+
+[_Code_]         // Default destructor
+
+[_Code_]         // Copy constructor defaults as well (probably not used)
+
+[_Code_] };
+
+[_Code_]
+[_Code_] /********************************************************
+
+[_Code_]  * line_counter -- handle line number / line count      *
+
+[_Code_]  *              stat.                                   *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Counts the number of T_NEW_LINE tokens seen and      *
+
+[_Code_]  * outputs the current line number at the beginning     *
+
+[_Code_]  * of the line.                                         *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * At EOF it will output the total number of lines      *
+
+[_Code_]  ********************************************************/
+
+[_Code_] class line_counter: public stat {
+
+[_Code_]     private:
+
+[_Code_]         int cur_line;   // Line number for the current line
+
+[_Code_]     public:
+
+[_Code_]         // Initialize the line counter -- to zero
+
+[_Code_]         line_counter(void) {
+
+[_Code_]             cur_line = 0;
+
+[_Code_]         };
+
+[_Code_]         // Default destrctor
+
+[_Code_]         // Default copy constructor (probably never called)
+
+[_Code_]
+[_Code_]         // Consume tokens,  count the number of new line tokens
+
+[_Code_]         void take_token(TOKEN_TYPE token) {
+
+[_Code_]             if (token == T_NEWLINE)
+
+[_Code_]                 ++cur_line;
+
+[_Code_]         }
+
+[_Code_]
+[_Code_]         // Output start of line statistics
+
+[_Code_]         // namely the current line number
+
+[_Code_]         void line_start(void) {
+
+[_Code_]            cout << setw(4) << cur_line << ' ' << setw(0);
+
+[_Code_]         }
+
+[_Code_]
+[_Code_]         // Output eof statistics
+
+[_Code_]         // namely the total number of lines
+
+[_Code_]         void eof(void) {
+
+[_Code_]            cout << "Total number of lines: " << cur_line << '\n';
+
+[_Code_]         }
+
+[_Code_] };
+
+[_Code_]
+[_Code_] /********************************************************
+
+[_Code_]  * paren_count -- count the nesting level of ()         *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Counts the number of T_L_PAREN vs T_R_PAREN tokens   *
+
+[_Code_]  * and writes the current nesting level at the beginning*
+
+[_Code_]  * of each line.                                        *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Also keeps track of the maximum nesting level.       *
+
+[_Code_]  ********************************************************/
+
+[_Code_] class paren_counter: public stat {
+
+[_Code_]     private:
+
+[_Code_]         int cur_level;          // Current nesting level
+
+[_Code_]         int max_level;          // Maximum nesting level
+
+[_Code_]     public:
+
+[_Code_]         // Initialize the counter
+
+[_Code_]         paren_counter(void) {
+
+[_Code_]             cur_level = 0;
+
+[_Code_]             max_level = 0;
+
+[_Code_]         };
+
+[_Code_]         // Default destructor
+
+[_Code_]         // Default copy constructor (probably never called)
+
+[_Code_]
+[_Code_]         // Consume tokens,  count the nesting of ()
+
+[_Code_]         void take_token(TOKEN_TYPE token) {
+
+[_Code_]             switch (token) {
+
+[_Code_]                 case T_L_PAREN:
+
+[_Code_]                     ++cur_level;
+
+[_Code_]                     if (cur_level > max_level)
+
+[_Code_]                         max_level = cur_level;
+
+[_Code_]                     break;
+
+[_Code_]                 case T_R_PAREN:
+
+[_Code_]                     --cur_level;
+
+[_Code_]                     break;
+
+[_Code_]                 default:
+
+[_Code_]                     // Ignore
+
+[_Code_]                     break;
+
+[_Code_]             }
+
+[_Code_]         }
+
+[_Code_]
+[_Code_]         // Output start of line statistics
+
+[_Code_]         // namely the current line number
+
+[_Code_]         void line_start(void) {
+
+[_Code_]            cout.setf(ios::left);
+
+[_Code_]            cout.width(2);
+
+[_Code_]
+[_Code_]            cout << '(' <<  cur_level << ' ';
+
+[_Code_]
+[_Code_]            cout.unsetf(ios::left);
+
+[_Code_]            cout.width();
+
+[_Code_]         }
+
+[_Code_]
+[_Code_]         // Output eof statistics
+
+[_Code_]         // namely the total number of lines
+
+[_Code_]         void eof(void) {
+
+[_Code_]            cout << "Maximum nesting of () : " << max_level << '\n';
+
+[_Code_]         }
+
+[_Code_] };
+
+[_Code_]
+[_Code_] /********************************************************
+
+[_Code_]  * brace_counter -- count the nesting level of {}       *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Counts the number of T_L_CURLY vs T_R_CURLY tokens   *
+
+[_Code_]  * and writes the current nesting level at the beginning*
+
+[_Code_]  * of each line.                                        *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Also keeps track of the maximum nesting level.       *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Note: brace_counter and paren_counter should         *
+
+[_Code_]  * probably be combined.                                *
+
+[_Code_]  ********************************************************/
+
+[_Code_] class brace_counter: public stat {
+
+[_Code_]     private:
+
+[_Code_]         int cur_level;          // Current nesting level
+
+[_Code_]         int max_level;          // Maximum nesting level
+
+[_Code_]     public:
+
+[_Code_]         // Initialize the counter
+
+[_Code_]         brace_counter(void) {
+
+[_Code_]             cur_level = 0;
+
+[_Code_]             max_level = 0;
+
+[_Code_]         };
+
+[_Code_]         // Default destructor
+
+[_Code_]         // Default copy constructor (probably never called)
+
+[_Code_]
+[_Code_]         // Consume tokens,  count the nesting of ()
+
+[_Code_]         void take_token(TOKEN_TYPE token) {
+
+[_Code_]             switch (token) {
+
+[_Code_]                 case T_L_CURLY:
+
+[_Code_]                     ++cur_level;
+
+[_Code_]                     if (cur_level > max_level)
+
+[_Code_]                         max_level = cur_level;
+
+[_Code_]                     break;
+
+[_Code_]                 case T_R_CURLY:
+
+[_Code_]                     --cur_level;
+
+[_Code_]                     break;
+
+[_Code_]                 default:
+
+[_Code_]                     // Ignore
+
+[_Code_]                     break;
+
+[_Code_]             }
+
+[_Code_]         }
+
+[_Code_]
+[_Code_]         // Output start of line statistics
+
+[_Code_]         // namely the current line number
+
+[_Code_]         void line_start(void) {
+
+[_Code_]            cout.setf(ios::left);
+
+[_Code_]            cout.width(2);
+
+[_Code_]
+[_Code_]            cout << '{' <<  cur_level << ' ';
+
+[_Code_]
+[_Code_]            cout.unsetf(ios::left);
+
+[_Code_]            cout.width();
+
+[_Code_]         }
+
+[_Code_]
+[_Code_]         // Output eof statistics
+
+[_Code_]         // namely the total number of lines
+
+[_Code_]         void eof(void) {
+
+[_Code_]            cout << "Maximum nesting of {} : " << max_level << '\n';
+
+[_Code_]         }
+
+[_Code_] };
+
+[_Code_]
+[_Code_] /********************************************************
+
+[_Code_]  * comment_counter -- counts the number of lines        *
+
+[_Code_]  *      with and without comments.                      *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Outputs nothing at the beginning of each line, but   *
+
+[_Code_]  * will output a ratio at the end of file               *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Note: This class makes use of two bits:              *
+
+[_Code_]  *      CF_COMMENT  -- a comment was seen               *
+
+[_Code_]  *      CF_CODE     -- code was seen                    *
+
+[_Code_]  * to collect statistics.                               *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * These are combined to form an index into the counter *
+
+[_Code_]  * array, so the value of these two bits is very        *
+
+[_Code_]  * important.                                           *
+
+[_Code_]  ********************************************************/
+
+[_Code_] static const int CF_COMMENT = (1<<0);   // Line contains comment
+
+[_Code_] static const int CF_CODE    = (1<<1);   // Line contains code
+
+[_Code_] // These bits are combined to form the statistics
+
+[_Code_] //
+
+[_Code_] //      0                  -- [0] Blank line
+
+[_Code_] //      CF_COMMENT         -- [1] Comment only line
+
+[_Code_] //      CF_CODE            -- [2] Code only line
+
+[_Code_] //      CF_COMMENT|CF_CODE -- [3] Comments and code on this line
+
+[_Code_]
+[_Code_] class comment_counter: public stat {
+
+[_Code_]     private:
+
+[_Code_]         int counters[4];        // Count of various types of stats
+
+[_Code_]         int flags;              // Flags for the current line
+
+[_Code_]     public:
+
+[_Code_]         // Initialize the counters
+
+[_Code_]         comment_counter(void) {
+
+[_Code_]             memset(counters, '\0', sizeof(counters));
+
+[_Code_]             flags = 0;
+
+[_Code_]         };
+
+[_Code_]         // Default destructor
+
+[_Code_]         // Default copy constructor (probably never called)
+
+[_Code_]
+[_Code_]         // Consume tokens,  count the nesting of ()
+
+[_Code_]         void take_token(TOKEN_TYPE token) {
+
+[_Code_]             switch (token) {
+
+[_Code_]                 case T_COMMENT:
+
+[_Code_]                     flags |= CF_COMMENT;
+
+[_Code_]                     break;
+
+[_Code_]                 default:
+
+[_Code_]                     flags |= CF_CODE;
+
+[_Code_]                     break;
+
+[_Code_]                 case T_NEWLINE:
+
+[_Code_]                     ++counters[flags];
+
+[_Code_]                     flags = 0;
+
+[_Code_]                     break;
+
+[_Code_]             }
+
+[_Code_]         }
+
+[_Code_]
+[_Code_]         // void line_start(void) -- defaults to base
+
+[_Code_]
+[_Code_]         // Output eof statistics
+
+[_Code_]         // namely the total number of lines
+
+[_Code_]         void eof(void) {
+
+[_Code_]             cout << "Number of blank lines ................." <<
+
+[_Code_]                     counters[0] << '\n';
+
+[_Code_]             cout << "Number of comment only lines .........." <<
+
+[_Code_]                     counters[1] << '\n';
+
+[_Code_]             cout << "Number of code only lines ............." <<
+
+[_Code_]                     counters[2] << '\n';
+
+[_Code_]             cout << "Number of lines with code and comments " <<
+
+[_Code_]                     counters[3] << '\n';
+
+[_Code_]             cout.setf(ios::fixed);
+
+[_Code_]             cout.precision(1);
+
+[_Code_]             cout << "Comment to code ratio " <<
+
+[_Code_]                float(counters[1] + counters[3]) /
+
+[_Code_]                float(counters[2] + counters[3]) * 100.0 << "%\n";
+
+[_Code_]         }
+
+[_Code_] };
+
+[_Code_]
+[_Code_]
+[_Code_] static line_counter line_count;         // Counter of lines
+
+[_Code_] static paren_counter paren_count;       // Counter of () levels
+
+[_Code_] static brace_counter brace_count;       // Counter of {} levels
+
+[_Code_] static comment_counter comment_count;   // Counter of comment info
+
+[_Code_]
+[_Code_] // A list of the statistics we are collecting
+
+[_Code_] static stat *stat_list[] = {
+
+[_Code_]     &line_count,
+
+[_Code_]     &paren_count,
+
+[_Code_]     &brace_count,
+
+[_Code_]     &comment_count,
+
+[_Code_]     NULL
+
+[_Code_] };
+
+[_Code_]
+[_Code_]
+[_Code_] /********************************************************
+
+[_Code_]  * do_file -- process a single file                     *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Parameters                                           *
+
+[_Code_]  *      name -- the name of the file to process         *
+
+[_Code_]  ********************************************************/
+
+[_Code_] static void do_file(const char *const name)
+
+[_Code_] {
+
+[_Code_]     input_file in_file(name);   // File to read
+
+[_Code_]     token token;                // Token reader/parser
+
+[_Code_]     TOKEN_TYPE cur_token;       // Current token type
+
+[_Code_]     class stat **cur_stat;      // Pointer to stat for collection/writing
+
+[_Code_]
+[_Code_]     if (in_file.bad()) {
+
+[_Code_]         cerr << "Error: Could not open file " << name << " for reading\n";
+
+[_Code_]         return;
+
+[_Code_]     }
+
+[_Code_]     while (1) {
+
+[_Code_]         cur_token = token.next_token(in_file);
+
+[_Code_]         for (cur_stat = stat_list; *cur_stat != NULL; ++cur_stat)
+
+[_Code_]            (*cur_stat)->take_token(cur_token);
+
+[_Code_] #ifdef DEBUG
+
+[_Code_]         cout << "   " << TOKEN_NAMES[cur_token] << '\n';
+
+[_Code_] #endif /* DEBUG */
+
+[_Code_]
+[_Code_]         switch (cur_token) {
+
+[_Code_]             case T_NEWLINE:
+
+[_Code_]                 for (cur_stat = stat_list; *cur_stat != NULL; ++cur_stat)
+
+[_Code_]                     (*cur_stat)->line_start();
+
+[_Code_]                 in_file.flush_line();
+
+[_Code_]                 break;
+
+[_Code_]             case T_EOF:
+
+[_Code_]                 for (cur_stat = stat_list; *cur_stat != NULL; ++cur_stat)
+
+[_Code_]                    (*cur_stat)->eof();
+
+[_Code_]                 return;
+
+[_Code_]             default:
+
+[_Code_]                 // Do nothing
+
+[_Code_]                 break;
+
+[_Code_]         }
+
+[_Code_]     }
+
+[_Code_] }
+
+[_Code_]
+[_Code_] main(int argc, char *argv[])
+
+[_Code_] {
+
+[_Code_]     char *prog_name = argv[0];  // Name of the program
+
+[_Code_]
+[_Code_]     if (argc == 1) {
+
+[_Code_]         cerr << "Usage is " << prog_name << "[options] <file-list>\n";
+
+[_Code_]         exit (8);
+
+[_Code_]     }
+
+[_Code_]
+[_Code_]     for (/* argc set */; argc > 1; --argc) {
+
+[_Code_]        do_file(argv[1]);
+
+[_Code_]        ++argv;
+
+[_Code_]     }
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+[_Code_]
+[_B_]  UNIX Makefile for CC (Generic Unix)
+
+Example 26-8
+
+. stat/makefile.unx
+
+[_Code_] #
+
+[_Code_] # Makefile for many UNIX compilers using the
+
+[_Code_] # "standard" command name CC
+
+[_Code_] #
+
+[_Code_] CC=CC
+
+[_Code_] CFLAGS=-g
+
+[_Code_] OBJS= stat.o ch_type.o token.o
+
+[_Code_]
+[_Code_] all: stat.out stat
+
+[_Code_]
+[_Code_] stat.out: stat
+
+[_Code_]         stat ../calc3/calc3.cc >stat.out
+
+[_Code_]
+[_Code_] stat: $(OBJS)
+
+[_Code_]         $(CC) $(CCFLAGS) -o stat $(OBJS)
+
+[_Code_]
+[_Code_] stat.o: stat.cc token.h
+
+[_Code_]         $(CC) $(CCFLAGS) -c stat.cc
+
+[_Code_]
+[_Code_] ch_type.o: ch_type.cc ch_type.h
+
+[_Code_]         $(CC) $(CCFLAGS) -c ch_type.cc
+
+[_Code_]
+[_Code_] token.o: token.cc token.h ch_type.h
+
+[_Code_]         $(CC) $(CCFLAGS) -c token.cc
+
+[_Code_]
+[_Code_]
+[_Code_] clean:
+
+[_Code_]         rm stat stat.o ch_type.o token.o
+
+[_B_]  UNIX Makefile for g++
+
+Example 26-9
+
+. stat/makefile.gnu
+
+[_Code_] #
+
+[_Code_] # Makefile for the Free Software Foundations g++ compiler
+
+[_Code_] #
+
+[_Code_] CC=g++
+
+[_Code_] CFLAGS=-g -Wall
+
+[_Code_] OBJS= stat.o ch_type.o token.o
+
+[_Code_]
+[_Code_] all: stat.out stat
+
+[_Code_]
+[_Code_] stat.out: stat
+
+[_Code_]         stat ../calc3/calc3.cc >stat.out
+
+[_Code_]
+[_Code_] stat: $(OBJS)
+
+[_Code_]         $(CC) $(CCFLAGS) -o stat $(OBJS)
+
+[_Code_]
+[_Code_] stat.o: stat.cc token.h
+
+[_Code_]         $(CC) $(CCFLAGS) -c stat.cc
+
+[_Code_]
+[_Code_] ch_type.o: ch_type.cc ch_type.h
+
+[_Code_]         $(CC) $(CCFLAGS) -c ch_type.cc
+
+[_Code_]
+[_Code_] token.o: token.cc token.h ch_type.h
+
+[_Code_]         $(CC) $(CCFLAGS) -c token.cc
+
+[_Code_]
+[_Code_]
+[_Code_] clean:
+
+[_Code_]         rm stat stat.o ch_type.o token.o
+
+[_B_]  Turbo C++ Makefile
+
+Example 26-10
+
+. stat/makefile.tcc
+
+[_Code_] #
+
+[_Code_] # Makefile for Borland's Turbo-C++ compiler
+
+[_Code_] #
+
+[_Code_] CC=tcc
+
+[_Code_] #
+
+[_Code_] # Flags
+
+[_Code_] #       -N  -- Check for stack overflow
+
+[_Code_] #       -v  -- Enable debugging
+
+[_Code_] #       -w  -- Turn on all warnings
+
+[_Code_] #       -ml -- Large model
+
+[_Code_] #
+
+[_Code_] CFLAGS=-N -v -w -ml
+
+[_Code_] OBJS= stat.obj ch_type.obj token.obj
+
+[_Code_]
+[_Code_] all: stat.out stat.exe
+
+[_Code_]
+[_Code_] stat.out: stat.exe
+
+[_Code_]         stat ..\calc3\calc3.cpp >stat.out
+
+[_Code_]
+[_Code_] stat.exe: $(OBJS)
+
+[_Code_]         $(CC) $(CCFLAGS) -estat $(OBJS)
+
+[_Code_]
+[_Code_] stat.obj: stat.cpp token.h
+
+[_Code_]         $(CC) $(CCFLAGS) -c stat.cpp
+
+[_Code_]
+[_Code_] ch_type.obj: ch_type.cpp ch_type.h
+
+[_Code_]         $(CC) $(CCFLAGS) -c ch_type.cpp
+
+[_Code_]
+[_Code_] token.obj: token.cpp token.h ch_type.h
+
+[_Code_]         $(CC) $(CCFLAGS) -c token.cpp
+
+[_Code_]
+[_Code_]
+[_Code_] clean:
+
+[_Code_]         erase stat.exe stat.obj ch_type.obj token.obj
+
+[_B_]  Borland-C++ Makefile
+
+Example 26-11
+
+. stat/makefile.bcc
+
+[_Code_] #
+
+[_Code_] # Makefile for Borland's Borland-C++ compiler
+
+[_Code_] #
+
+[_Code_] CC=bcc
+
+[_Code_] #
+
+[_Code_] # Flags
+
+[_Code_] #       -N  -- Check for stack overflow
+
+[_Code_] #       -v  -- Enable debugging
+
+[_Code_] #       -w  -- Turn on all warnings
+
+[_Code_] #       -ml -- Large model
+
+[_Code_] #
+
+[_Code_] CFLAGS=-N -v -w -ml
+
+[_Code_] OBJS= stat.obj ch_type.obj token.obj
+
+[_Code_]
+[_Code_] all: stat.out stat.exe
+
+[_Code_]
+[_Code_] stat.out: stat.exe
+
+[_Code_]         stat ..\calc3\calc3.cpp >stat.out
+
+[_Code_]
+[_Code_] stat.exe: $(OBJS)
+
+[_Code_]         $(CC) $(CCFLAGS) -estat $(OBJS)
+
+[_Code_]
+[_Code_] stat.obj: stat.cpp token.h
+
+[_Code_]         $(CC) $(CCFLAGS) -c stat.cpp
+
+[_Code_]
+[_Code_] ch_type.obj: ch_type.cpp ch_type.h
+
+[_Code_]         $(CC) $(CCFLAGS) -c ch_type.cpp
+
+[_Code_]
+[_Code_] token.obj: token.cpp token.h ch_type.h
+
+[_Code_]         $(CC) $(CCFLAGS) -c token.cpp
+
+[_Code_]
+[_Code_]
+[_Code_] clean:
+
+[_Code_]         erase stat.exe stat.obj ch_type.obj token.obj
+
+[_B_]  Microsoft Visual C++ Makefile
+
+Example 26-12
+
+. stat/makefile.msc
+
+[_Code_] #
+
+[_Code_] # Makefile for Microsoft Visual C++
+
+[_Code_] #
+
+[_Code_] CC=cl
+
+[_Code_] #
+
+[_Code_] # Flags
+
+[_Code_] #       AL -- Compile for large model
+
+[_Code_] #       Zi -- Enable debugging
+
+[_Code_] #       W1 -- Turn on warnings
+
+[_Code_] #
+
+[_Code_] CFLAGS=/AL /Zi /W1
+
+[_Code_] OBJS= stat.obj ch_type.obj token.obj
+
+[_Code_]
+[_Code_] all: stat.out stat.exe
+
+[_Code_]
+[_Code_] stat.out: stat.exe
+
+[_Code_]         stat ..\calc3\calc3.cpp >stat.out
+
+[_Code_]
+[_Code_] stat.exe: $(OBJS)
+
+[_Code_]         $(CC) $(CCFLAGS)  $(OBJS)
+
+[_Code_]
+[_Code_] stat.obj: stat.cpp token.h
+
+[_Code_]         $(CC) $(CCFLAGS) -c stat.cpp
+
+[_Code_]
+[_Code_] ch_type.obj: ch_type.cpp ch_type.h
+
+[_Code_]         $(CC) $(CCFLAGS) -c ch_type.cpp
+
+[_Code_]
+[_Code_] token.obj: token.cpp token.h ch_type.h
+
+[_Code_]         $(CC) $(CCFLAGS) -c token.cpp
+
+[_Code_]
+[_Code_]
+[_Code_] clean:
+
+[_Code_]         erase stat.exe stat.obj ch_type.obj token.obj
+
+[_A_]  Programming Exercises
+
+Exercise 26-1: Write a program that checks a text file for doubled words.
+
+Exercise 26-2: Write a program that removes four-letter words from a file and
+replaces them with more acceptable equivalents.
+
+Exercise 26-3: Write a mailing list program. This program will read, write, sort and
+print mailing labels.
+
+Exercise 26-4: Update the statics program presented in this chapter to add a cross-
+reference capability.
+
+Exercise 26-5: Write a program that takes a text file and splits each long line into
+two smaller lines. The split point should be at the end of a sentence if possible,
+or at the end of a word if a sentence is too long.

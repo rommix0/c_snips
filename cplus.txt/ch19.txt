@@ -1,0 +1,671 @@
+Chapter 19Part IV: Advanced Programming Concepts
+
+In This Chapter:
+
+*  [_XREF Floating-Point Format_
+]
+
+*  [_XREF Floating
+Addition/Subtraction_]
+
+*  [_XREF Multiplication_]
+
+*  [_XREF Division_]
+
+*  [_XREF Overflow and
+Underflow_]
+
+*  [_XREF Roundoff Error_]
+
+*  [_XREF Accuracy_]
+
+*  [_XREF Minimizing Roundoff
+Error_]
+
+*  [_XREF Determining Accuracy_
+]
+
+19
+
+19: Floating Point
+
+1 is equal to 2 for sufficiently large
+values of 1.
+
+---Anonymous
+
+Computers handle integers very well. The arithmetic is simple,
+exact, and fast. Floating point is the opposite. Computers do floating-
+point arithmetic only with great difficulty.
+
+This chapter discusses some of the problems that can occur with
+floating point. In order to address the principles involved in floating-
+point arithmetic, we have defined a simple decimal floating-point
+format. We suggest you put aside your computer and work through
+these problems using pencil and paper so you can see firsthand the
+problems and pitfalls that occur.
+
+The format used by computers is very similar to the one defined in
+this chapter, except that instead of using base 10, computers use
+base 2, 8, or 16. However, all the problems demonstrated here on
+paper can occur in a computer.
+
+[_A_]  Floating-Point Format
+
+Floating point numbers consist of three parts: a sign, a fraction, and
+an exponent. Our fraction is expressed as a four-digit decimal. The
+exponent is a single-decimal digit. So our format is:
+
+where:
+
+	is the sign (plus or minus).
+
+f.fff 	is the four-digit fraction.
+
+e 	is the single-digit exponent.
+
+Zero is . We represent these numbers in "E" format:
+f.fff Ee.
+
+This format is similar to the floating-point format used in many
+computers. The IEEE has defined a floating-point standard (#742),
+but not all machines use it.
+
+[_XREF Table 19-1_] shows some typical floating-point numbers.
+
+Table 19-1
+
+. Floating-Point Examples
+
+Notation
+
+Number
+
++1.000E+0
+
+1.0
+
++3.300E+5
+
+33000.0
+
+-8.223E-3
+
+-0.008223
+
++0.000E+0
+
+0.0
+
+The floating-point operations defined in this chapter follow a rigid
+set of rules. To minimize errors we make use of a guard digit. That
+is an extra digit added to the end of the fraction during
+computation. Many computers use a guard digit in their floating-
+point units.
+
+[_A_]  Floating Addition/Subtraction
+
+To add two numbers like 2.0 and 0.3, the computer must perform
+the following steps:
+
+1.  Start with the numbers.
+
++2.000E+0	The number is 2.0
+
++3.000E-1	The number is 0.3
+
+2.  Add guard digits to both numbers. 	
+
++2.0000E+0	The number is 2.0
+
++3.0000E-1	The number is 0.3
+
+3.  Shift the number with the smallest exponent to the right one
+digit and increment its exponent. Continue until the exponents
+of the two numbers match.
+
++2.0000E+0	The number is 2.0
+
++0.3000E-0	The number is 0.3
+
+4.  Add the two fractions. The result has the same exponent as the
+two numbers.
+
++2.0000E+0	The number is 2.0
+
++0.3000E-0	The number is 0.3
+
++2.3000E+0	Result 2.3
+
+5.  Normalize the number by shifting it left or right until there is just
+one non-zero digit to the left of the decimal point. Adjust the
+exponent accordingly. A number like +0.1234E+0 would be
+normalized to +1.2340E-1. Because the number +2.3000E+0 is
+already normalized, we do nothing.
+
+6.  Finally, if the guard digit is greater than or equal to 5, round the
+next digit up. Otherwise, truncate the number.
+
++2.3000E+0	Round last digit
+
++2.300E+0	Result 2.3
+
+7.  For floating-point subtraction, change the sign of the second
+operand and add.
+
+[_A_]  Multiplication
+
+When we want to multiply two numbers such as 0.12 ¥ 11.0, the
+following rules apply.
+
+1.  Add the guard digit.
+
++1.2000E-1	The number is 0.12
+
++1.1000E+1	The number is 11.0
+
+2.  Multiply the two fractions and add the exponents. (1.2 ¥ 1.1 =
+1.32) (-1 + 1 = 0)
+
++1.2000E-1	The number is 0.12
+
++1.1000E+1	The number is 11.0
+
++1.3200E+0	The result is 1.32
+
+3.  Normalize the result. If the guard digit is greater than or equal to
+5, round the next digit up. Otherwise, truncate the number.
+
++1.3200E+0	The number is 1.32
+
+Notice that in multiply, you didn't have to go through all that
+shifting. The rules for multiplication are a lot shorter than those for
+add. Integer multiplication is a lot slower than integer addition. In
+floating point, multiplication speed is a lot closer to that of addition.
+
+[_A_]  Division
+
+To divide numbers like 100.0 by 30.0, we must perform the
+following steps.
+
+1.  Add the guard digit.
+
++1.0000E+2	The number is 100.0
+
++3.0000E+1	The number is 30.0
+
+2.  Divide the fractions, and subtract the exponents.
+
++1.0000E+2	The number is 100.0
+
++3.0000E+1	The number is 30.0
+
++0.3333E+1	The result is 3.333
+
+3.  Normalize the result.
+
++3.3330E+0	The result is 3.333
+
+4.  If the guard digit is less than or equal to 5, round the next digit
+up. Otherwise, truncate the number.
+
++3.333E+0	The result is 3.333
+
+[_A_]  Overflow and Underflow
+
+There are limits to the size of the number a computer can handle.
+What are the results of the following calculation?
+
+[_Code_] 9.000E+9 ¥ 9.000E+9
+
+Multiplying it out, we get:
+
+[_Code_] 8.1 ¥ 1019
+
+However, we are limited to a single-digit exponent, too small to
+hold 19. This is an example of overflow (sometimes called exponent
+overflow). Some computers generate a trap when this occurs, thus
+interrupting the program and causing an error message to be
+printed. Others are not so nice and generate a wrong answer (like
+8.100E+9). Computers that follow the IEEE floating-point standard
+generate a special value called +Infinity.
+
+Underflow occurs when the numbers become too small for the
+computer to handle. Example:
+
+[_Code_] 1.000E-9 ¥ 1.000E-9
+
+The result is:
+
+[_Code_] 1.0 ¥ 10-18
+
+Because -18 is too small to fit into one digit, we have underflow.
+
+[_A_]  Roundoff Error
+
+Floating point is not exact. Everyone knows that 1 + 1 is 2, but did
+you know that 1/3 + 1/3 != 2/3? This can be shown by the
+following floating-point calculations:
+
+2/3 as floating point is 6.667E-1
+
+1/3 as floating point is 3.333-1
+
++3.333E-1
+
++3.333E-1
+
++6.666E-1, or 0.6666
+
+which is not:
+
++6.667E-1
+
+Every computer has a similar problem with its floating point. For
+example, the number 0.2 has no exact representation in binary
+floating point.
+
+Floating point should never be used for money. Because we are
+used to dealing with dollars and cents, it is tempting to define the
+amount $1.98 as:
+
+[_Code_] float amount = 1.98;
+
+However, the more calculations you do with floating point, the
+bigger the roundoff error. Banks, credit cards, and the IRS tend to
+be very fussy about money. Giving the IRS a check that's almost
+right is not going to make them happy. Money should be stored as
+an integer number of pennies.
+
+[_A_]  Accuracy
+
+How many digits of the fraction are accurate? At first glance you
+might be tempted to say all four digits. Those of you who have read
+the previous section on roundoff error might be tempted to change
+your answer to three.
+
+The answer is: The accuracy depends on the calculation. Certain
+operations, such as subtracting two numbers that are close to each
+other, generate inexact results. Consider the following equation:
+
+[_Code_] 1 - 1/3 - 1/3 - 1/3
+
+[_Code_]
+
+1.000E+0
+
+-3.333E-1
+
+-3.333E-1
+
+-3.333E-1
+
+or:
+
+1.000E+0
+
+-3.333E-1
+
+-3.333E-1
+
+-3.333E-1
+
+0.0010E+0, or 1.000E-3
+
+The correct answer is 0.000E+0 and we got 1.000E-3. The very first
+digit of the fraction is wrong. This is an example of the problem
+called roundoff error that can occur during floating-point operations.
+
+[_A_]  Minimizing Roundoff Error
+
+There are many techniques for minimizing roundoff error. Guard
+digits have already been discussed. Another trick is to use double
+instead of float. This gives you approximately twice the accuracy
+as well as twice the range. It also pushes away the minimization
+problem twice as far. But roundoff errors still can creep in.
+
+Advanced techniques for limiting the problems caused by floating
+point can be found in books on numerical analysis. They are
+beyond the scope of this text. The purpose of this chapter is to give
+you some idea of what sort of problems can be encountered.
+
+Floating point by its very nature is not exact. People tend to think
+of computers as very accurate machines. They can be, but they also
+can give wildly wrong results. You should be aware of the places
+where errors can slip into your program.
+
+[_A_]  Determining Accuracy
+
+There is a simple way of determining how accurate your floating
+point is (for simple calculations). The method used in the following
+program is to add 1.0 + 0.1, 1.0 + 0.01, 1.0 + 0.001, and so on until
+the second number gets so small that it makes no difference in the
+result.
+
+The old C language specified that all floating-point numbers were to
+be done in double. C++ removed that restriction, but because
+many C++ compilers are really front-ends to a C complier,
+frequently C++ arithmetic is done in double. This means that the
+expression:
+
+[_Code_] float number1, number2;
+
+[_Code_]
+
+[_Code_] . . .
+
+[_Code_]
+
+[_Code_] while (number1 + number2 != number1)
+
+is equivalent to:
+
+[_Code_] while (double(number1) + double(number2) != double(number1))
+
+If you use the 1 + 0.001 trick, the automatic conversion of float to
+double may give a distorted picture of the accuracy of your
+machine. (In one case, 84 bits of accuracy were reported for a 32-bit
+format.) [_XREF Example 19-1_] computes the accuracy of both
+floating point as used in equations and floating point as stored in
+memory. Note the trick used to determine the accuracy of the
+floating-point numbers in storage.
+
+Example 19-1
+
+.  float/float.cc
+
+[_Code_] #include <iostream.h>
+
+[_Code_] #include <iomanip.h>
+
+[_Code_]
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     // Two numbers to work with
+
+[_Code_]     float number1, number2;
+
+[_Code_]     float result;               // Result of calculation
+
+[_Code_]     int   counter;              // Loop counter and accuracy check
+
+[_Code_]
+[_Code_]     number1 = 1.0;
+
+[_Code_]     number2 = 1.0;
+
+[_Code_]     counter = 0;
+
+[_Code_]
+[_Code_]     while (number1 + number2 != number1) {
+
+[_Code_]         ++counter;
+
+[_Code_]         number2 = number2 / 10.0;
+
+[_Code_]     }
+
+[_Code_]     cout << setw(2) << counter << " digits accuracy in calculations\n";
+
+[_Code_]
+[_Code_]     number2 = 1.0;
+
+[_Code_]     counter = 0;
+
+[_Code_]
+[_Code_]     while (1) {
+
+[_Code_]         result = number1 + number2;
+
+[_Code_]         if (result == number1)
+
+[_Code_]             break;
+
+[_Code_]         ++counter;
+
+[_Code_]         number2 = number2 / 10.0;
+
+[_Code_]     }
+
+[_Code_]     cout << setw(2) << counter << " digits accuracy in storage\n";
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+Running this on a Sun-3/50 with an MC68881 floating-point chip,
+we get:
+
+[_Code_] 20 digits accuracy in calculations
+
+[_Code_]  8 digits accuracy in storage
+
+This program only gives an approximation of the floating-point
+precision arithmetic. A more precise definition can be found in the
+standard include file float.h.
+
+[_A_]  Precision and Speed
+
+A variable of type double has about twice the precision of a
+normal float variable. Most people assume that double-precision
+arithmetic takes longer than single-precision. This is not always the
+case. Let's assume we have one of the older compilers that does
+everything in double.
+
+For the equation:
+
+[_Code_] float answer, number1, number2;
+
+[_Code_]
+
+[_Code_] answer = number1 + number2;
+
+C++ must perform the following steps:
+
+1.  Convert number1 from single to double precision
+
+2.  Convert number2 from single to double precision
+
+3.  Double-precision add
+
+4.  Convert result into single precision and store in answer
+
+If the variables were of type double, C++ would only have to
+perform the steps:
+
+1.  Double-precision add
+
+2.  Store result in answer
+
+As you can see, the second form is a lot simpler, requiring three
+fewer conversions. In some cases, converting a program from single
+precision to double precision makes it run faster.
+
+[_NOTE_]  Because C++ specifies that floating point can be
+done in double or float, you can't be sure of anything.
+Changing all floats into doubles may make the program
+run faster, slower, or the same. The only thing you can be
+sure of when using floating point is that the results are
+unpredictable.
+
+Many computers, including the PC and Sun/3 series machines, have
+a special chip called a floating-point processor that does all the
+floating-point arithmetic. Actual tests using the Motorola 68881
+floating-point chip (which is used in the Sun/3) as well as floating
+point on the PC show that single precision and double precision
+run at the same speed.
+
+[_A_]  Power Series
+
+Many trigonometry functions are computed using a power series. For
+example, the series for sine is:
+
+The question is, how many terms do we need to get four-digit
+accuracy? [_XREF Table 19-2_] contains the terms for sin(p/2).
+
+Table 19-2
+
+. Terms for sin(p/2)
+
+Term
+
+Value
+
+Total
+
+1
+
+x
+
+1.571E+0
+
+2
+
+6.462E-1
+
+9.248E-1
+
+3
+
+7.974E-2
+
+1.005E+0
+
+4
+
+4.686E-3
+
+9.998E-1
+
+5
+
+1.606E-4
+
+1.000E+0
+
+6
+
+3.604E-6
+
+1.000E+0
+
+From this we conclude that five terms are needed. However, if we
+try to compute sin(p) we get Table 19-3.
+
+Table 19-3
+
+. Terms for sin(p)
+
+Term
+
+Value
+
+Total
+
+1
+
+x
+
+3.142E+0
+
+2
+
+5.170E+0
+
+-2.028E+0
+
+3
+
+2.552E-0
+
+5.241E-1
+
+4
+
+5.998E-1
+
+-7.570E-2
+
+5
+
+8.224E-2
+
+6.542E-3
+
+6
+
+7.381E-3
+
+-8.388E-4
+
+7
+
+4.671E-4
+
+-3.717E-4
+
+8
+
+2.196E-5
+
+-3.937E-4
+
+9
+
+7.970E-7
+
+-3.929E-4
+
+10
+
+2.300E-8
+
+-3.929E-4
+
+p needs nine terms. So, different angles require a different number
+of terms. (A program for computing the sine to four-digit accuracy
+showing intermediate terms is included in Appendix D.)
+
+Compiler designers have a dilemma when it comes to designing a
+sine function. If they know ahead of time the number of terms to
+use, they can optimize their algorithms for that number of terms.
+However, they lose accuracy for some angles. So a compromise
+must be struck between speed and accuracy.
+
+Don't assume that because the number came from the computer, it
+is accurate. The library functions can generate bad answers-
+especially when working with excessively large or small values.
+Most of the time you will not have any problems with these
+functions, but you should be aware of their limitations.
+
+Finally, there is the question of what is sin(1,000,000)? Our floating-
+point format is good for only four digits. The sine function is
+cyclical. That is, sin(0) = sin(2p) = sin(4p). Therefore, sin(1,000,000)
+is the same as sin(1,000,000 mod 2p).
+
+Because our floating-point format is good to only four digits,
+sin(1,000,000) is actually sin(1,000,000 mod 1,000). Since 1,000 is
+bigger than 2p, the error renders meaningless the result of the sine.
+
+[_SIDEBAR_]  I attended a physics class at Cal Tech taught by two
+professors. One was giving a lecture on the sun when he said, "...
+and the mean temperature of the inside of the sun is 13,000,000
+to 25,000,000 degrees." At this point the other instructor broke in
+and asked, "Is that Celsius or Kelvin (absolute zero or Celsius
+-273)?"
+
+[_SIDEBAR_]  The first lecturer turned to the board for a minute
+and then said, "What's the difference?" The moral of the story is
+that when your calculations have a possible error of 12,000,000,
+a difference of 273 doesn't mean very much.
+
+[_A_]  Programming Exercises
+
+Exercise 19-1: Write a class that uses strings to represent floating-point numbers in
+the format used in this chapter. The class should have functions to read, write,
+add, subtract, multiply, and divide floating-point numbers.
+
+Exercise 19-2: Create a class to handle fixed-point numbers. A fixed-point number
+has a constant (fixed) number of digits to the right of the decimal point.

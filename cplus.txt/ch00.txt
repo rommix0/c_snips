@@ -1,0 +1,490 @@
+Chapter 1(BOOK TITLE)
+
+1	
+
+1: Preface
+
+This book is devoted to practical C++ programming. It teaches you
+not only the mechanics of the language, but also style and
+debugging. The entire life cycle of a program is discussed, including
+conception, design, writing, debugging, release, documentation,
+maintenance, and revision.
+
+Style is emphasized. Creating a good program involves more than
+just typing code. It is an art in which writing and programming
+skills blend to form a masterpiece. A well-written program not only
+functions correctly, but also is simple and easy to understand.
+Comments allow programmers to include descriptive text in their
+programs. Clearly written, well-commented programs are highly
+prized.
+
+A program should be as simple as possible. Avoid the use of clever
+tricks. Cleverness and complexity can kill programs. This book
+stresses simple, practical rules. For example, the 15 operator-
+precedence rules in C++ can be simplified to 2:
+
+1.  Multiply and divide before you add and subtract.
+
+2.  Put parentheses around everything else.
+
+Consider two programs. One was written by a clever programmer,
+using all the tricks. The program contains no comments, but it
+works. The other is nicely commented and well structured, but
+doesn't work. Which program is more useful? In the long run, the
+"broken" one is more useful because it can be fixed and maintained
+easily. Although the clever one works now, sooner or later it will
+have to be modified. The hardest work you will ever have to do is
+modifying a cleverly written program.
+
+[_A_]  Scope of This Handbook
+
+This handbook is written for people with no previous programming
+experience, for programmers who know C and want to upgrade
+their skills to C++, and for those who already know C++ and want
+to improve their programming style and reliability. You should have
+access to a computer and know how to use the basic functions such
+as the text editor and file system.
+
+Computer languages are best learned by writing and debugging
+programs. Sweating over a broken program at two o'clock in the
+morning only to find that you typed = where you should have
+typed == is a very effective teaching tool. Many programming
+examples are used throughout this book. Most of them contain
+deliberate errors. You are encouraged to enter the examples into
+your computer and then run and debug them. This process
+introduces you to common errors using short programs so you will
+know how to spot and correct such errors in your own larger
+programs. (Instructions for obtaining copies of the programs
+presented in this book are located at the end of this chapter.)
+
+Several dialects of C++ are presented:
+
+*  A "generic" UNIX compiler that should work on most UNIX
+systems
+
+*  The GNU C++ compiler, named g++ (available for most UNIX
+systems)
+
+*  Borland's Turbo C++ compiler for MS-DOS
+
+*  Borland C++ for MS-DOS/Windows
+
+*  Microsoft's Visual C++ for MS-DOS/Windows
+
+As far as standard C++ is concerned there are only minor
+differences among the various compilers. This book clearly indicates
+where compiler differences can affect the programmer. Specific
+instructions are given for producing and running programs using
+each of these compilers. The book also gives examples of using the
+programming utility make for automated program production.
+
+[_A_]  How This Book Is Organized
+
+You must crawl before you walk. In Part I: The Basics you learn
+how to crawl. These chapters teach you enough to write very
+simple programs. You start with the mechanics of programming and
+programming style. Next, you learn how to use variables and very
+simple decision and control statements.
+
+At this point you will have learned enough to create very simple
+programs; therefore, in Chapter 7, The Programming Process, you
+embark on a complete tour of the programming process that shows
+you how real programs are created.
+
+Chapter 1, What Is C++?, gives you an overview of C++, describes
+its history and uses, and explains how the language is organized.
+
+Chapter 2, The Basics of Program Writing, explains the basic
+programming process and gives you enough information to write a
+very simple program.
+
+Chapter 3, Style, discusses programming style. How to comment a
+program is covered, as well as how to write clear and simple code.
+
+Chapter 4, Basic Declarations and Expressions, introduces simple
+C++ statements. Basic variables and the assignment statement are
+covered in detail along with the arithmetic operators: +, -, *, /, and
+%.
+
+Chapter 5, Arrays, Qualifiers, and Reading Numbers, covers arrays
+and more complex variables. The shorthand operators ++, --, *=, =,
++=, -=, and %= are described.
+
+Chapter 6, Decision and Control Statements, explains simple
+decision statements including if, else and for. The problem of
+== versus = is discussed.
+
+Chapter 7, The Programming Process, takes you through the steps
+required for creating a simple program, from specification through
+release. Structured programming, fast prototyping, and debugging
+are discussed.
+
+Part II: Simple Programming, describes all the other simple
+statements and operators that are used in programming. You also
+learn how to organize these statements into simple functions.
+
+Chapter 8, More Control Statements, describes additional control
+statements. Included are while, break, and continue. The
+switch statement is discussed in detail.
+
+Chapter 9, Variable Scope and Functions, introduces local variables,
+functions, and parameters.
+
+Chapter 10, The C++ Preprocessor, describes the C++ preprocessor,
+which gives you great flexibility in creating code. It also provides a
+tremendous number of ways for you to screw up. Simple rules that
+help keep the preprocessor from becoming a problem are described.
+
+Chapter 11, Bit Operations, discusses the logical C++ operators that
+work on bits.
+
+In Part III: Advanced Types and Classes, you learn how basic
+declarations and statements can be used in the construction of
+advanced types such as structures, unions, and classes. You also
+learn about the concept of pointers.
+
+Chapter 12, Advanced Types, explains structures and other advanced
+types. The sizeof operator and the enum type are included.
+
+Chapter 13, Simple Classes, introduces the concept of a class. This is
+one of the more powerful features of C++. Classes allow you to
+group data and the operations that can be performed on that data
+into one object.
+
+Chapter 14, More on Classes, describes additional operations that
+can be performed with classes.
+
+Chapter 15, Simple Pointers, introduces C++ pointer variables and
+shows some of their uses.
+
+Advanced programming techniques are explored in Part IV:
+Advanced Programming Concepts. In this section, you explore a
+number of C++ features that let you create complex, yet easy-to-use
+objects or classes.
+
+Chapter 16, File Input/Output, describes both buffered and
+unbuffered input/output (I/O). ASCII and binary files are discussed
+and you are shown how to construct a simple file. Old C-style I/O
+operations are also included.
+
+Chapter 17, Debugging and Optimization, describes how to debug
+a program, as well as how to use an interactive debugger. You are
+shown not only how to debug a program, but also how to write a
+program so that it is easy to debug. This chapter also describes
+many optimization techniques to make your programs run faster
+and more efficiently.
+
+Chapter 18, Operator Overloading, explains that C++ allows you to
+extend the language by defining additional meanings for the
+language's operators. In this chapter, you create a complex type and
+the operators that work on it.
+
+Chapter 19, Floating Point, uses a simple decimal floating-point
+format to introduce the problems inherent in using floating points,
+such as roundoff errors, precision loss, overflow, and underflow.
+
+Chapter 20, Advanced Pointers, describes advanced use of pointers
+to construct dynamic structures such as linked lists and trees.
+
+Chapter 21, Advanced Classes, shows how to build complex,
+derived classes out of simple, base ones.
+
+Finally a number of miscellaneous features are described in V: Other
+Language Features.
+
+Chapter 22, Exceptions, explains how to handle unexpected
+conditions within a program.
+
+Chapter 23, Modular Programming, shows how to split a program
+into several files and use modular programming techniques. The
+make utility is explained in more detail.
+
+Chapter 24, Templates, allows you to define a generic function or
+class that generates a family of functions.
+
+Chapter 25, Portability Problems, describes the problems that can
+occur when porting a program (moving a program from one
+machine to another).
+
+Chapter 26, Putting It All Together, details the steps necessary to
+take a complex program from conception to completion.
+Information hiding and modular programming techniques, as well
+as object-oriented programming, are stressed.
+
+Chapter 27, From C to C++, describes how to turn C code into C++
+code, and addresses many of the traps lurking in C code that bite
+the C++ programmer.
+
+Chapter 28, C++'s Dustier Corners, describes the do/while
+statement, the comma operator, and the ?: operators.
+
+Chapter 29, Programming Adages, lists programming adages that
+will help you construct good C++ programs.
+
+Appendix A, ASCII Table, contains a list of character codes and their
+values.
+
+Appendix B, Ranges, lists the numeric ranges of some C++ variable
+types.
+
+Appendix C,  Operator Precedence Rules, lists the rules that
+determine the order in which operators are evaluated.
+
+Appendix D, Computing sine Using a Power Series, contains a
+program that shows how the computer can compute the value of
+the sine function.
+
+[_A_]  How to Read This Book If You Already Know C
+
+C++ is built on the C language. If you know C, you will find much
+of the material presented in Chapters 2 through 12 familiar.
+
+C++ does introduce a number of new features, including:
+
+*  An entirely new I/O system. (The basics are described in
+Chapter 4, Basic Declarations and Expressions. The new file
+system is discussed in detail in Chapter 16, File Input/Output.)
+
+*  Constant and reference variables. (Described in Chapter 5, Arrays,
+Qualifiers, and Reading Numbers.)
+
+*  Function overloading, inline functions, reference parameters,
+and default parameters. (Read Chapter 9, Variable Scope and
+Functions.)
+
+Starting with Chapter 13, Simple Classes, you will begin to learn
+entirely new concepts. Classes are unique to C++ and are one of the
+more powerful features of the language.
+
+[_A_]  Font Conventions
+
+The following conventions are used in this book:
+
+Italic
+is used for directories and to emphasize new terms and concepts when they
+are introduced. Italic is also used to highlight comments in examples.
+
+Bold
+is used for C keywords.
+
+Constant Width
+is used for programs and the elements of a program and in examples to show
+the contents of files or the output from commands. A reference in text to a
+word or item used in an example or code fragment is also shown in constant
+width font.
+
+Constant Bold
+is used in examples to show commands or other text that should be typed
+literally by the user. (For example, rm foo means to type "rm foo" exactly as
+it appears in the text or the example.)
+
+Constant Italic
+is used in examples to show variables for which a context-specific substitu-
+tion should be made. (The variable filename, for example, would be
+replaced by some actual filename.)
+
+Quotes
+are used to identify system messages or code fragments in explanatory text.
+
+%
+is the UNIX C shell prompt.
+
+$
+is the UNIX Bourne shell or Korn shell prompt.
+
+#
+is the UNIX superuser prompt (either Bourne or C shell). We usually use this
+for examples that should be executed only by root.
+
+[ ]
+surround optional values in a description of program syntax. (The brackets
+themselves should never by typed.)
+
+. . .
+stands for text (usually computer output) that's been omitted for clarity or to
+save space.
+
+The notation CTRL-X or ^X indicates use of control characters. It
+means hold down the "control" key while typing the character "x".
+We denote other keys similarly (e.g., RETURN indicates a carriage
+return).
+
+All examples of command lines are followed by a RETURN unless
+otherwise indicated.
+
+[_A_]  Obtaining Source Code
+
+You can obtain the source code for the programs presented in this
+book from O'Reilly & Associates through their Internet server.
+
+The example programs in this book are available electronically in a
+number of ways: by FTP, Ftpmail, BITFTP, and UUCP. The
+cheapest, fastest, and easiest ways are listed first. If you read from
+the top down, the first one that works for you is probably the best.
+Use FTP if you are directly on the Internet. Use Ftpmail if you are
+not on the Internet, but can send and receive electronic mail to
+Internet sites (this includes CompuServe users). Use BITFTP if you
+send electronic mail via BITNET. Use UUCP if none of the above
+works.
+
+[_B_]  FTP
+
+To use FTP, you need a machine with direct access to the Internet.
+A sample session is shown, with what you should type in
+boldface.
+
+[_Code_] % ftp ftp.uu.net
+Connected to ftp.uu.net.
+220 FTP server (Version 6.21 Tue Mar 10 22:09:55 EST 1992) ready.
+Name (ftp.uu.net:joe): anonymous
+331 Guest login ok, send domain style e-mail address as password.
+Password: joe@ora.com (use your user name and host here)
+230 Guest login ok, access restrictions apply.
+ftp> cd /published/oreilly/nutshell/practcpp
+250 CWD command successful.
+ftp> binary (Very important! You must specify binary transfer for compressed files.)
+200 Type set to I.
+ftp> get examples.tar.gz
+200 PORT command successful.
+150 Opening BINARY mode data connection for examples.tar.gz.
+226 Transfer complete.
+ftp> quit
+221 Goodbye.
+%
+
+The file is a compressed tar archive; extract the files from the
+archive by typing:
+
+[_Code_] % gzcat examples.tar.gz | tar xvf -
+
+System V systems require the following tar command instead:
+
+[_Code_] % gzcat examples.tar.gz | tar xof -
+
+If gzcat is not available on your system, use separate gunzip and
+tar or shar commands.
+
+[_Code_] % gunzip examples.tar.gz
+
+[_Code_] % tar xvf examples.tar
+
+[_B_]  Ftpmail
+
+Ftpmail is a mail server available to anyone who can send electronic
+mail to and receive it from Internet sites. This includes any
+company or service provider that allows email connections to the
+Internet. Here's how you do it.
+
+You send mail to ftpmail@online.ora.com. In the message body,
+give the FTP commands you want to run. The server will run
+anonymous FTP for you and mail the files back to you. To get a
+complete help file, send a message with no subject and the single
+word "help" in the body.
+
+The following is a sample mail session that should get you the
+examples. This command sends you a listing of the files in the
+selected directory and the requested example files. The listing is
+useful if there's a later version of the examples you're interested in.
+
+[_Code_] % mail ftpmail@online.ora.com
+Subject:
+
+[_Code_] reply-to janetv@xyz.com    (Where you want files mailed)
+open
+
+[_Code_] cd /published/oreilly/nutshell/practcpp
+mode binary
+uuencode
+get examples.tar.gz
+quit
+
+[_Code_] .
+
+A signature at the end of the message is acceptable as long as it
+appears after "quit."
+
+[_B_]  BITFTP
+
+BITFTP is a mail server for BITNET users. You send it electronic mail
+messages requesting files, and it sends you back the files by
+electronic mail. BITFTP currently serves only users who send it mail
+from nodes that are directly on BITNET, EARN, or NetNorth. BITFTP is a
+public service of Princeton University. Here's how it works.
+
+To use BITFTP, send mail containing your ftp commands to
+BITFTP@PUCC. For a complete help file, send HELP as the message
+body.
+
+The following is the message body you send to BITFTP:
+
+[_Code_] FTP  ftp.uu.net  NETDATA
+USER  anonymous
+PASS  myname@podunk.edu Put your Internet email address here (not your BITNET address)
+CD /published/oreilly/nutshell/practcpp
+DIR
+
+[_Code_] BINARY
+
+[_Code_] GET  examples.tar.gz
+
+[_Code_] QUIT
+
+Once you've got the desired file, follow the directions under FTP to
+extract the files from the archive. Since you are probably not on a
+UNIX system, you may need to get versions of uudecode,
+uncompress, atob, and tar for your system. VMS, DOS, and Mac
+versions are available.
+
+[_B_]  UUCP
+
+UUCP is standard on virtually all UNIX systems and is available for IBM-
+compatible PCs and Apple Macintoshes. The examples are available
+by UUCP via modem from UUNET; UUNET's connect-time charges
+apply.
+
+You can get the examples from UUNET whether you have an
+account there or not. If you or your company has an account with
+UUNET, you have a system somewhere with a direct UUCP connection
+to UUNET. Find that system, and type:
+
+[_Code_] uucp uunet\!~/published/oreilly/nutshell/practcpp/examples.tar.gz
+yourhost\!~/yourname/
+
+The backslashes can be omitted if you use the Bourne shell (sh)
+instead of csh. The file should appear some time later (up to a day
+or more) in the directory /usr/spool/uucppublic yourname. If you
+don't have an account, but would like one so that you can get
+electronic mail, contact UUNET at 703-204-8000.
+
+It's a good idea to get the file /published/oreilly/ls-lR.Z as a short test
+file containing the filenames and sizes of all the files available.
+
+Once you've got the desired file, follow the directions under FTP to
+extract the files from the archive.
+
+[_A_]  Comments and Questions
+
+Please address comments and questions concerning this book to the
+publisher:
+
+O'Reilly & Associates, Inc.
+101 Morris Street
+Sebastopol, CA 95472
+
+1-800-998-9938 (in the U.S. or Canada)
+1-707-829-0515 (international or local)
+1-707-829-0104 (FAX)
+
+[_A_]  Acknowledgments
+
+Thanks to Peg Kovar for her proofreading and editing help. Special
+thanks to Dale Dougherty for ripping apart my first book and
+forcing me to put it together correctly. I greatly appreciate the hard
+work put in by Phil Straite and Gregory Satir. I especially thank all
+those people who reviewed and edited my book. My thanks also go
+to the production group at O'Reilly & Associates-Nicole Gipson,
+project manager and production editor; John Files, Juliette Muellner,
+and Jane Ellin, production assistants; and Mike Sierra, book design
+implementor. Finally, special thanks go to all the hard-working
+programmers out there whose code has taught me so much.
+

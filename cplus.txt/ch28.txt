@@ -1,0 +1,364 @@
+Chapter 28Part V: Other Language Features
+
+In This Chapter:
+
+*  [_XREF do/while_]
+
+*  [_XREF goto_]
+
+*  [_XREF The ?: Construct_]
+
+*  [_XREF The Comma Operator_]
+
+*  [_XREF Overloading the (  )
+Operator_]
+
+*  [_XREF Pointers to Members_]
+
+*  [_XREF Vampire Features_]
+
+*  [_XREF Answers to Chapter
+Questions_]
+
+28	
+
+28: C++'s Dustier Corners
+
+There be of them that have left
+a name behind them.
+
+---Ecclesiasticus XLIV, 1
+
+This chapter describes the few remaining features of C++ that are
+not described in any of the previous chapters. It is titled C++'s
+Dustier Corners because these statements are hardly ever used in
+real programming.
+
+[_A_]  do/while
+
+The do/while statement has the following syntax:
+
+[_Code_] do {
+
+[_Code_]         statement
+
+[_Code_]         statement
+
+[_Code_] } while    (expression);
+
+The program loops, tests the expression, and stops if the expression
+is false (0).
+
+[_NOTE_]  This construct always executes at least once.
+
+do/while is not frequently used in C++ because most
+programmers prefer to use a while/break combination.
+
+[_A_]  goto
+
+All the sample programs in this book were coded without using a
+single goto. In actual practice I find I use a goto statement about
+once every other year. For those rare times that a goto is
+necessary, its syntax is:
+
+[_Code_] goto label;
+
+where label is a statement label. Statement labels follow the same
+naming convention as variable names. Labeling a statement is done
+as follows:
+
+[_Code_] label: statement
+
+For example:
+
+[_Code_]     for (x = 0; x < X_LIMIT; ++x) {
+
+[_Code_]         for (y = 0; y < Y_LIMIT; ++y) {
+
+[_Code_]             if (data[x][y] == 0)
+
+[_Code_]                 goto found;
+
+[_Code_]         }
+
+[_Code_]     }
+
+[_Code_]     cout << "Not found\n";
+
+[_Code_]     exit(8);
+
+[_Code_]
+
+[_Code_] found:
+
+[_Code_]     cout << "Found at (" << x << ',' << y << ")\n";
+
+Question 28-1: Why does Example 28-1 not print an error message when an incor-
+rect command is entered? Hint: There is a reason I put this in the goto section.
+
+Example 28-1
+
+. def/def.cc
+
+[_Code_] #include <iostream.h>
+
+[_Code_] #include <stdlib.h>
+
+[_Code_]
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     char  line[10];
+
+[_Code_]
+[_Code_]     while (1) {
+
+[_Code_]         cout << "Enter add(a), delete(d), quit(q): ";
+
+[_Code_]         cin.getline(line, sizeof(line));
+
+[_Code_]
+[_Code_]         switch (line[0]) {
+
+[_Code_]         case 'a':
+
+[_Code_]             cout << "Add\n";
+
+[_Code_]             break;
+
+[_Code_]         case 'd':
+
+[_Code_]             cout << "Delete\n";
+
+[_Code_]             break;
+
+[_Code_]         case 'q':
+
+[_Code_]             cout << "Quit\n";
+
+[_Code_]             exit(0);
+
+[_Code_]         defualt:
+
+[_Code_]             cout << "Error: Bad command " << line[0] << '\n';
+
+[_Code_]             break;
+
+[_Code_]         }
+
+[_Code_]     }
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+[_A_]  The ?: Construct
+
+The ? and : operators work much the same as if/then/else.
+Unlike if/then/else, the ?: operators can be used inside of an
+expression. The general form of ?: is:
+
+[_Code_] (expression) ? expr1 : expr2
+
+For example, the following assigns to amount_owed the value of
+the balance or zero, depending on the amount of the balance:
+
+[_Code_] amount_owed = (balance < 0) ? 0 : balance;
+
+The following macro returns the minimum of its two arguments:
+
+[_Code_] #define min(x, y) ((x) < (y) ? (x) : (y))
+
+[_NOTE_]  It is better to define min as an inline function
+instead of as a parameterized macro. See Chapter 10, The
+C++ Preprocessor, for details.
+
+[_A_]  The Comma Operator
+
+The comma operator (,) can be used to group statements. For
+example:
+
+[_Code_] if (total < 0) {
+
+[_Code_]     cout << "You owe nothing\n";
+
+[_Code_]     total = 0;
+
+[_Code_] }
+
+can be written as:
+
+[_Code_] if (total < 0)
+
+[_Code_]     cout << "You owe nothing\n", total = 0;
+
+In most cases, { } should be used instead of a comma. About the
+only place the comma operator is useful is in a for statement. The
+following for loop increments two counters, two and three, by 2
+and 3:
+
+[_Code_] for (two = 0, three = 0;
+
+[_Code_]      two < 10;
+
+[_Code_]      two += 2, three += 3)
+
+[_Code_]          cout << two << ' ' << three << '\n';
+
+[_A_]  Overloading the (  ) Operator
+
+The "(  )" operator can be overloaded for a class to give the class a
+"default" function. For example:
+
+[_Code_] class example {
+
+[_Code_]     public:
+
+[_Code_]         int operator () (int i) {
+
+[_Code_]             return (i * 2);
+
+[_Code_]         }
+
+[_Code_] };
+
+[_Code_] // ....
+
+[_Code_]      example example_var;
+
+[_Code_]
+
+[_Code_]      j = example_var(3);    // j is assigned the value 6 (3 * 2)
+
+Overloading the (  ) operator is rarely done. Normal member
+functions can easily be used for the same purpose but have the
+advantage of providing the user with a function name.
+
+[_A_]  Pointers to Members
+
+The operator ::* is used to point to a member of a class. For
+example, in the following code we declare data_ptr as a "pointer
+to an integer in sample":
+
+[_Code_] class sample {
+
+[_Code_]     public:
+
+[_Code_]         int i;    // A couple of member variables
+
+[_Code_]         int j;
+
+[_Code_] };
+
+[_Code_]
+
+[_Code_] int sample::* data_ptr;
+
+Now data_ptr can point to either the i or the j member of
+sample. (After all, they are the only integer members of sample.)
+
+Let's set data_ptr so it points to the member i:
+
+[_Code_]     data_ptr = &sample::i;
+
+An ordinary pointer identifies a single item. A member pointer
+identifies a member but does not identify an individual variable. All
+we've done is set data_ptr to a member of sample. data_ptr
+does not point to a particular integer.
+
+To use data_ptr you need to tell it which class you want:
+
+[_Code_] sample a_sample; // A typical sample
+
+[_Code_] sample b_sample;
+
+[_Code_]
+
+[_Code_] cout << a_sample.*data_ptr << '\n';
+
+[_Code_] cout << b_sample.*data_ptr << '\n'
+
+The line:
+
+[_Code_] cout << a_sample.*data_ptr << '\n';
+
+tells C++ that we want to print an element of the variable a_
+sample. The variable data_ptr points to an integer member of
+sample. (The members i and j are our only two integer
+members.)
+
+There is a shorthand notation for use with class pointers as well:
+
+[_Code_] sample *sample_ptr = &sample1;
+
+[_Code_]
+
+[_Code_] cout << sample_ptr->*data_ptr << '\n';
+
+The syntax for pointers to members is a little convoluted and not
+terribly useful. I've only seen it used once by an extremely clever
+programmer. (The first maintenance programmer who got the code
+immediately ripped it out anyway.)
+
+[_A_]  Vampire Features
+
+This section discusses features that have been defined in the draft
+C++ standard but have not yet been implemented in any of the
+currently available compilers. "Vampire features" are those features
+of a language that have yet to see the light of day.
+
+Because I've been unable to actually use these features, the
+information presented here is a bit sketchy.
+
+bool
+Boolean type that can be either true or false
+
+const_cast
+A new version of a cast that makes the result constant
+
+dynamic_case
+A new casting operator that makes use of runtime-type information to allow
+safe casting between types
+
+false
+New constant for use with the bool type
+
+mutable
+Modifier that indicates that a member of a constant instance of a class can be
+changed
+
+namespace
+This keyword allows the program to better divide up the program into
+different name spaces or sorts of modules
+
+reinterpret_cast
+
+A cast that helps the programmer safely cast from a base class to a derived
+class
+
+static_cast
+Another new casting operator
+
+true
+New constant for use with the bool type
+
+typeid
+Allows the programmer to get type information from inside the program at
+runtime
+
+[_NOTE_]  Many header files define macros for "bool," "true,"
+and "false." This does not present a problem with compilers
+that have not yet implemented the bool type. However, as
+soon as the compiler makers catch up with the standard,
+such macros will cause problems.
+
+[_A_]  Answers to Chapter Questions
+
+Answer 28-1: The compiler didn't see our default line because we misspelled
+"default" as "defualt." This was not flagged as an error because "defualt" is a valid
+goto label. That's why when we compile the program we get the warning:
+
+[_Code_] def.c(26): warning: defualt unused in function main
+
+which means we defined a label for a goto, but never used it.

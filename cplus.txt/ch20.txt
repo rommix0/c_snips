@@ -1,0 +1,1363 @@
+Chapter 20Part IV: Advanced Programming Concepts
+
+In This Chapter:
+
+*  [_XREF Pointers, Structures,
+and Classes_]
+
+*  [_XREF delete Operator_]
+
+*  [_XREF Linked List_]
+
+*  [_XREF Ordered Linked Lists_]
+
+*  [_XREF Double-linked List_]
+
+*  [_XREF Trees_]
+
+*  [_XREF Printing a Tree_]
+
+*  [_XREF The Rest of the
+Program_]
+
+*  [_XREF Data Structures for a
+Chess Program_]
+
+*  [_XREF Programming
+Exercises_]
+
+*  [_XREF Answers to Chapter
+Questions_]
+
+20	
+
+20: Advanced Pointers
+
+A race that binds
+Its body in chains and calls them
+Liberty,
+And calls each fresh link progress.
+
+---Robert Buchanan
+
+One of the more useful and complex features of C++ is its use of
+pointers. With pointers you can create complex data structures such
+as linked lists and trees. [_XREF Figure 20-1_] illustrates some of
+these data structures.
+
+Figure 20-1
+
+. Examples of pointer use
+
+Up to now all your data structures have been allocated by the
+compiler as either permanent or temporary variables. With pointers
+you can create and allocate dynamic data structures, which can
+grow or shrink as needed. In this chapter you will learn how to use
+some of the more common dynamic data structures.
+
+[_A_]  Pointers, Structures, and Classes
+
+Structures and classes may contain pointers, or even a pointer to
+another instance of the same structure. In the following example:
+
+[_Code_] class item {
+
+[_Code_]     public:
+
+[_Code_]         int value;
+
+[_Code_]         item *next_ptr;
+
+[_Code_] };
+
+the structure item is illustrated by [_XREF Figure 20-2_].
+
+Figure 20-2
+
+. Item
+
+The operator new allocates storage for a variable and returns a
+pointer. It is used to create new things out of thin air (actually out
+of an area of memory called the heap). Up to now we've used
+pointers solely to point to named variables. So if we used a
+statement like:
+
+[_Code_]     int data;
+
+[_Code_]     int *number_ptr;
+
+[_Code_]
+
+[_Code_]     number_ptr = &data;
+
+the thing we are pointing to has a name (data). The operator new
+creates a new, unnamed variable and returns a pointer to it. The
+"things" created by new can only be referenced through pointers,
+never by name.
+
+In the following example, we use new to allocate an integer from
+the heap. The variable element_ptr will point to our new integer.
+
+[_Code_] int *element_ptr;   // Pointer to an integer
+
+[_Code_]
+
+[_Code_] element_ptr = new int;   // Get an integer from the heap
+
+The operator new takes a single argument: the type of the item to
+be allocated. According to the latest C++ standard, if new runs out
+of memory it should throw an exception and abort the program.
+(See Chapter 22, Exceptions, for information on how to handle this.)
+On older C++ systems, when new runs out of memory, it returns a
+null pointer.
+
+Suppose we are working on a complex database that contains
+(among other things) a mailing list. We want to keep our storage
+use to a minimum, so we only want to allocate memory for a
+person if he or she exists. Creating an array of class person
+would allocate the data statically and use up too much space. So we
+will allocate space as needed. Our structure for a person is:
+
+[_Code_] class person {
+
+[_Code_]     public:
+
+[_Code_]         char    name[30];           // Name of the person
+
+[_Code_]         char    address[30];        // Where he lives
+
+[_Code_]         char    city_state_zip[30]; // Part 2 of address
+
+[_Code_]         int     age;                // His age
+
+[_Code_]         float   height;             // His height in inches
+
+[_Code_] }
+
+We want to allocate space for this person. Later the pointer to this
+record will be put in the database.
+
+To create a new person, we use the following:
+
+[_Code_] struct person *new_ptr;
+
+[_Code_]
+
+[_Code_] new_ptr = new person;
+
+The operator new can also allocate more complex data types such
+as arrays. [_XREF Example 20-1_] allocates storage for a character
+array 80 bytes long ('\0' included). The variable string_ptr
+points to this storage.
+
+Example 20-1
+
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     char *string_ptr;
+
+[_Code_]
+[_Code_]     string_ptr = new char[80];
+
+All we've done is substitute a simple type (such as person) with an
+array specification (char[80]).
+
+[_A_]  delete Operator
+
+The operator new gets memory from the heap. To return the
+memory to the heap you use the operator delete. The general
+form of the delete operator is:
+
+[_Code_] delete pointer;       // Where pointer is a pointer to a simple object
+
+[_Code_] pointer = NULL;
+
+where pointer is a pointer previously allocated by new. If the new
+operator allocated an array, then you must use the form:
+
+[_Code_] delete []pointer;       // Where pointer is a pointer to an array
+
+[_Code_] pointer = NULL;
+
+[_NOTE_]  The reason there are two forms of the delete
+operator is because there is no way for C++ to tell the
+difference between a pointer to an object and a pointer to an
+array of objects. The delete operator relies on the
+programmer using "[]" to tell the two apart.
+
+Strictly speaking, the line:
+
+[_Code_] pointer = NULL;
+
+is unnecessary. However, it is a good idea to "null out" pointers
+after they are deleted. That way, you don't try use a pointer to
+deleted memory, and also you help prevent any attempts to delete
+the same memory twice.
+
+The following is an example using new to get storage and delete
+to dispose of it.
+
+[_Code_] const DATA_SIZE = (16 * 1024);
+
+[_Code_]
+
+[_Code_] void copy(void)
+
+[_Code_] {
+
+[_Code_]     char *data_ptr;     // Pointer to large data buffer
+
+[_Code_]
+
+[_Code_]     data_ptr = new char[DATA_SIZE];       // Get the buffer
+
+[_Code_]
+
+[_Code_]     /*
+
+[_Code_]      * Use the data buffer to copy a file
+
+[_Code_]      */
+
+[_Code_]     delete[] data_ptr;
+
+[_Code_]     data_ptr = NULL;
+
+[_Code_] }
+
+But what happens if we forget to free the memory? The buffer
+becomes dead. That is, the memory management system thinks it's
+being used, but no one is using it. (The technical term for this is a
+"memory leak.") If the delete statement is removed from the
+function copy then each successive call eats up another 16K of
+memory.
+
+The other problem that can occur is using memory that has been
+freed. When delete is used, the memory is returned to the
+memory pool and can be reused. Using a pointer after a delete
+call is similar to an array index out-of-bounds error. You are using
+memory that belongs to someone else. This can cause unexpected
+results or program crashes.
+
+[_A_]  Linked List
+
+Suppose you are writing a program to send a list of names to
+another computer using a communications line. The operator types
+in the names during the day, and then after work you dial up the
+other computer and send the names. The problem is, you don't
+know ahead of time how many names are going to be typed. By
+using a linked-list data structure, you can create a list of names that
+can grow as more names are entered. With a linked list you can
+also easily insert names into the middle of the list (which would be
+slow and difficult with an array). Also, as you will see later, linked
+lists can be combined with other data structures to handle extremely
+complex data.
+
+A linked list is a chain of items where each item points to the next
+item in the chain. Think about the treasure hunt games you played
+when you were a kid. You were given a note that said, "Look in the
+mailbox." You raced to the mailbox and found the next clue, "Look
+in the big tree in the back yard," and so on until you found your
+treasure (or you got lost). In a treasure hunt each clue points to the
+next one.
+
+[_XREF Figure 20-3_] graphically illustrates a linked list.
+
+Figure 20-3
+
+. Linked list
+
+The class declarations for a linked list are:
+
+[_Code_] class linked_list {
+
+[_Code_]     public:
+
+[_Code_]         class linked_list_element {
+
+[_Code_]             public:
+
+[_Code_]                 char    data[30];             // Data in this element
+
+[_Code_]             private:
+
+[_Code_]                 // Pointer to next element
+
+[_Code_]                 linked_list_element *next_ptr;
+
+[_Code_]              friend class linked_list;
+
+[_Code_]         };
+
+[_Code_]
+
+[_Code_]     public:
+
+[_Code_]         linked_list_element *first_ptr;   // First element in the list
+
+[_Code_]
+
+[_Code_]         // Initialize the linked list
+
+[_Code_]         linked_list(void) {first_ptr = NULL;}
+
+[_Code_]
+
+[_Code_]         // ... Other member functions
+
+[_Code_] };
+
+The variable first_ptr points to the first element of the list. In the
+beginning, before we insert any elements into the list (it is empty),
+this variable is initialized to NULL.
+
+[_XREF Figure 20-4_] illustrates how a new element can be added to
+the beginning of a linked list. Now all we have to do is translate this
+into C++ code.
+
+Figure 20-4
+
+. New element
+
+To do this in C++, we execute the following steps:
+
+1. Create the item we are going to add.
+
+[_Code_] new_ptr = new linked_list;
+
+2. Store the item in the new element.
+
+[_Code_] (*new_ptr).data = item;
+
+3. Make the first element of the list point to the new element.
+
+[_Code_] (*new_ptr).next_ptr = first_ptr;
+
+4. The new element is now the first element.
+
+[_Code_] first_ptr = new_ptr;
+
+The code for the actual program is:
+
+[_Code_] void linked_list::add_list(int item)
+
+[_Code_] {
+
+[_Code_]     // Pointer to the next item in the list
+
+[_Code_]     linked_list_element *new_ptr;
+
+[_Code_]
+
+[_Code_]     new_ptr = new linked_list_element;
+
+[_Code_]
+
+[_Code_]     strcpy((*new_ptr).data, item);
+
+[_Code_]     (*new_ptr).next_ptr = first_ptr;
+
+[_Code_]     first_ptr = new_ptr;
+
+[_Code_] }
+
+Now that we can put things in a list, let's use that ability. We'll now
+write a short function to search the list till we find a key item or we
+run out of data. [_XREF Example 20-2_] contains the new find
+function.
+
+Example 20-2
+
+.  find/find.cc
+
+[_Code_] #include <iostream.h>
+
+[_Code_] #include <string.h>
+
+[_Code_] #include "linked.h"
+
+[_Code_] /********************************************************
+
+[_Code_]  * Find -- look for a data item in the list             *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Parameters                                           *
+
+[_Code_]  *      name -- name to look for in the list            *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Returns                                              *
+
+[_Code_]  *      1 if name is found                              *
+
+[_Code_]  *      0 if name is not found                          *
+
+[_Code_]  ********************************************************/
+
+[_Code_] int linked_list::find(char *name)
+
+[_Code_] {
+
+[_Code_]     /* Current structure we are looking at */
+
+[_Code_]     linked_list_element *current_ptr;
+
+[_Code_]
+[_Code_]     current_ptr = first_ptr;
+
+[_Code_]
+[_Code_]     while ((strcmp(current_ptr->data, name) != 0) &&
+
+[_Code_]            (current_ptr != NULL))
+
+[_Code_]         current_ptr = current_ptr->next_ptr;
+
+[_Code_]
+[_Code_]     /*
+
+[_Code_]      * If current_ptr is null, we fell off the end of the list and
+
+[_Code_]      * didn't find the name
+
+[_Code_]      */
+
+[_Code_]     return (current_ptr != NULL);
+
+[_Code_] }
+
+Question 20-1: Why does running this program sometimes result in a bus error?
+Other times it will report "found" (return 1) for an item that is not in the list.
+
+In our find program we had to use the cumbersome notation
+(*current_ptr).data to access the data field of the structure.
+C++ provides a shorthand for this construct using the -> operator.
+The dot (.) operator means the field of a structure, and the structure
+pointer operator (->) indicates the field of a structure pointer.
+
+The following two expressions are equivalent:
+
+[_Code_] (*current_ptr).data = value;
+
+[_Code_] current_ptr->data = value;
+
+[_A_]  Ordered Linked Lists
+
+So far we have only added new elements to the head of a linked
+list. Suppose we want to add elements in order. [_XREF Figure 20-5_
+] is an example of an ordered linked list.
+
+Figure 20-5
+
+. Ordered list	
+
+[_XREF Figure 20-6_] shows the steps necessary to add a new
+element, "53," to the list.
+
+Figure 20-6
+
+. Adding element "53" to an ordered list
+
+The following member function implements this algorithm. The first
+step is to locate the insertion point. The first_ptr points to the
+first element of the list. The program moves the variable before_
+ptr along the list until it finds the proper place for the insertion.
+The variable after_ptr is set to point to the previous value. The
+new element will be inserted between these elements.
+
+[_Code_] void linked_list::enter(int item)
+
+[_Code_] {
+
+[_Code_]     item *before_ptr; // Insert before this element
+
+[_Code_]     item *after_ptr;  // Insert after this element
+
+[_Code_]
+
+[_Code_]     /*
+
+[_Code_]      * Warning: This routine does not take
+
+[_Code_]      *   care of the case where the element is
+
+[_Code_]      *   inserted at the head of the list
+
+[_Code_]      */
+
+[_Code_]
+
+[_Code_]     before_ptr = first_ptr;
+
+[_Code_]     while (1) {
+
+[_Code_]         before_ptr = insert_ptr;
+
+[_Code_]         insert_ptr = insert_ptr->next_ptr;
+
+[_Code_]
+
+[_Code_]         // Did we hit the end of the list?
+
+[_Code_]         if (insert_ptr == NULL)
+
+[_Code_]             break;
+
+[_Code_]
+
+[_Code_]         // Did we find the place?
+
+[_Code_]         if (item >= insert_ptr->data)
+
+[_Code_]             break;
+
+[_Code_]     }
+
+Now we know where to insert the new element. All we must do is
+insert it. We start at the element before the new one (before_ptr).
+This element should point to the new element, so:
+
+[_Code_]     before_ptr->next_ptr = new_ptr;
+
+Next is the new element (new_ptr). It needs to point to the
+element after it, or after_ptr. This is accomplished with the code:
+
+[_Code_]     new_ptr->next_ptr = after_ptr;
+
+The element after_ptr needs to point to the rest of the chain.
+Because it already does, we leave it alone. The full code for
+inserting the new element is:
+
+[_Code_]     // Create new item
+
+[_Code_]     new_ptr = new list;
+
+[_Code_]     new_ptr->data = item;
+
+[_Code_]
+
+[_Code_]     // Link in the new item
+
+[_Code_]     before_ptr->next_ptr = new_ptr;
+
+[_Code_]     new_ptr->next_ptr = after_ptr;
+
+[_Code_] }
+
+[_A_]  Double-linked List
+
+A double-linked list contains two links. One link points forward to
+the next element; the other points backward to the previous
+element. Double-linked lists are useful where the program needs to
+go through the list both forward and backward.
+
+The classes for a double-linked list are:
+
+[_Code_] class double_list {
+
+[_Code_]     private:
+
+[_Code_]         class double_list_element {
+
+[_Code_]             public:
+
+[_Code_]                 int data;                 // Data item
+
+[_Code_]             private:
+
+[_Code_]                 double_list_element *next_ptr;    // Forward link
+
+[_Code_]                 double_list_element *previous_ptr;// Backward link
+
+[_Code_]             friend class double_list;
+
+[_Code_]         };
+
+[_Code_]     public:
+
+[_Code_]         double_list_element *head_ptr;   // Head of the list
+
+[_Code_]
+
+[_Code_]         double_list(void) {head_ptr = NULL;}
+
+[_Code_]
+
+[_Code_]         // ... Other member functions
+
+This is shown graphically in [_XREF Figure 20-7_].
+
+Figure 20-7
+
+. Double-linked list
+
+To insert an item into the list, we first locate the insertion point:
+
+[_Code_] void double_list::enter(int item)
+
+[_Code_] {
+
+[_Code_]     double_list_elememt *insert_ptr; // Insert before this element
+
+[_Code_]
+
+[_Code_]     /*
+
+[_Code_]      * Warning: This routine does not take
+
+[_Code_]      *   care of the case where the element is
+
+[_Code_]      *   inserted at the head of the list
+
+[_Code_]      *   or the end of the list
+
+[_Code_]      */
+
+[_Code_]
+
+[_Code_]     insert_ptr = head_ptr;
+
+[_Code_]     while (1) {
+
+[_Code_]         insert_ptr = insert_ptr->next;
+
+[_Code_]
+
+[_Code_]         // Have we reached the end?
+
+[_Code_]         if (insert_ptr == NULL)
+
+[_Code_]             break;
+
+[_Code_]
+
+[_Code_]         // Have we reached the right place?
+
+[_Code_]         if (item >= insert_ptr->data)
+
+[_Code_]             break;
+
+[_Code_]     }
+
+Notice that we do not have to keep track of the variable after_
+ptr. The pointer insert_ptr->previous_ptr is used to locate
+the previous element. To insert a new element, we must adjust two
+sets of pointers. First we create the new element:
+
+[_Code_] // Create new element
+
+[_Code_] new_ptr = new double_list;
+
+Next we set up the forward pointer for the new item:
+
+[_Code_] new_ptr->next_ptr = insert_ptr;
+
+Graphically this is represented by Figure 20-8.
+
+Next we connect the link to the previous element using the code:
+
+Figure 20-8
+
+. Double-linked list insert, part #1
+
+[_Code_] new_ptr->previous_ptr = insert_ptr->previous_ptr;
+
+Graphically, this is represented in Figure 20-9.
+
+Figure 20-9
+
+. Double-linked list insert, part #2
+
+The links are set up for the new element. Now all we have to do is
+break the old links between items 11 and 36 and connect them to
+the new item (27).
+
+Getting to item 11 is a bit of a trick. We only have a pointer to item
+36 (insert_ptr). However, if we follow the previous link back
+(insert_ptr->previous_ptr), we get the item (11) that we want.
+Now all we have to do is fix the next_ptr for this item.
+
+The C++ code for this is surprisingly simple:
+
+[_Code_]         insert_ptr->previous_ptr->next_ptr = new_ptr;
+
+Visually we can see this operation in [_XREF Figure 20-9_].
+
+Figure 20-10
+
+. Double-linked list insert, part 3
+
+We have only one remaining link to fix: the previous_ptr of the
+insert_ptr. In C++ the code looks like:
+
+[_Code_]         insert_ptr->previous_ptr = new_ptr;
+
+Graphically this operation is represented by [_XREF Figure 20-11_].
+
+Figure 20-11
+
+. Double-linked list insert, Part 4
+
+In summary, to insert a new item in a double-linked list, you must
+set four links:
+
+1.  The new item's previous pointer:
+
+[_Code_] new_ptr->previous_ptr = insert_ptr->previous_ptr;
+
+2.  The new item's next pointer:
+
+[_Code_] new_ptr->next_ptr = insert_ptr;
+
+3.  The previous pointer of the item that will follow the new item:
+
+[_Code_]         insert_ptr->previous_ptr->next_ptr = new_ptr;
+
+4.  The next pointer of the item that will precede the new item:
+
+[_Code_]         insert_ptr->previous_ptr = new_ptr;
+
+[_A_]  Trees
+
+Suppose we want to create an alphabetized list of the words that
+appear in a file. We could use a linked list, but searching a linked
+list is slow because we must check each element until we find the
+correct insertion point. By using a data type called a tree, we can
+reduce the number of comparisons tremendously.
+
+A binary tree structure looks like [_XREF Figure 20-12_].
+
+Figure 20-12
+
+. Tree
+
+Each box is called a node of the tree. The box at the top is the root
+and the boxes at the bottom are the leaves. Each node contains two
+pointers: a left pointer and a right pointer, which point to the left
+and right subtrees.
+
+The structure for a tree is:
+
+[_Code_] class tree {
+
+[_Code_]         class node {
+
+[_Code_]             public:
+
+[_Code_]                 char *data;      // Word for this tree
+
+[_Code_]             private:
+
+[_Code_]                 node *right;     // Tree to the right
+
+[_Code_]                 node *left;      // Tree to the left
+
+[_Code_]             friend class tree;
+
+[_Code_]         };
+
+[_Code_]      public:
+
+[_Code_]         node *root;  // Top of the tree (the root)
+
+[_Code_]
+
+[_Code_]         tree(void) {root = NULL;};
+
+[_Code_]         // ... Other member function
+
+[_Code_] };
+
+Trees are often used for storing a symbol table (a list of variables
+used in a program). In this chapter we will use a tree to store a list
+of words and then to print the list alphabetically. The advantage of
+a tree over a linked list is that searching a tree takes considerably
+less time.
+
+In this example, each node stores a single word. The left subtree
+stores all the words less than the current word, and the right subtree
+stores all the words greater than the current word.
+
+For example, [_XREF Figure 20-13_] shows how we descend the
+tree to look for the word "orange." We would start at the root,
+"lemon." Because "orange" > "lemon," we would descend the right
+link and go to "pear." Because "orange" < "pear," we descend the
+left link, where we find "orange."
+
+Figure 20-13
+
+. Tree search
+
+Recursion is extremely useful with trees. Our rules for recursion are
+1) the function must make things simpler and 2) there must be
+some endpoint.
+
+The algorithm for inserting a word in a tree is:
+
+1.  If this is a null tree (or subtree), create a one-node tree with this
+word.
+
+2.  If this node contains the word, do nothing.
+
+3.  Otherwise, enter the word in the left or right subtree, depending
+on the value of the word.
+
+Does this algorithm satisfy our recursion rules? The function has two
+definite endpoints:
+
+1.  A match is found.
+
+2.  We have a null node.
+
+Otherwise, we enter the word into a subtree (which is simpler than
+the whole tree).
+
+To see how this works, consider what happens when we insert the
+word "fig" into the tree. First we check the word "fig" against
+"lemon." "Fig" is smaller, so we go to "apple." Because "fig" is
+bigger, we go to "grape." Because "fig" is smaller than "grape," we
+try the left link. It is NULL, so we create a new node.
+
+This code makes use of a new function: strdup. This function
+creates a copy of a string on the heap and returns a pointer to the
+new string. The string may later be returned to the heap using the
+delete operator.
+
+The function to enter a value into a tree is:
+
+[_Code_] void tree::enter_one(node *&node, char *word)
+
+[_Code_] {
+
+[_Code_]     int  result;        // Result of strcmp
+
+[_Code_]
+
+[_Code_]     // See if we have reached the end
+
+[_Code_]     if (node == NULL) {
+
+[_Code_]         node = new node;
+
+[_Code_]
+
+[_Code_]         node->left = NULL;
+
+[_Code_]         node->right = NULL;
+
+[_Code_]         node->word = strdup(word);
+
+[_Code_]     }
+
+[_Code_]     result = strcmp(node->word, word);
+
+[_Code_]     if (result == 0)
+
+[_Code_]         return;
+
+[_Code_]
+
+[_Code_]     if (result < 0)
+
+[_Code_]         enter(node->right, word);
+
+[_Code_]     else
+
+[_Code_]         enter(node->left, word);
+
+[_Code_] }
+
+[_Code_]
+
+And the function to kick it off is:
+
+[_Code_] void tree::enter(char *word) {
+
+[_Code_]     enter_one(root, word);
+
+[_Code_] };
+
+This function passes a pointer to the root of the tree to enter_one.
+If the root is NULL, enter_one creates the node. Because we are
+changing the value of a pointer, we must pass a reference to the
+pointer.
+
+[_A_]  Printing a Tree
+
+Despite the complex nature of a tree structure, it is easy to print.
+Again we use recursion. The printing algorithm is:
+
+1.  For the null tree, print nothing.
+
+2.  Print the data that comes before this node (left tree).
+
+3.  Print this node.
+
+4.  Print the data that comes after this node (right tree).
+
+The code for printing the tree is:
+
+[_Code_] void tree::print_one(node *top)
+
+[_Code_] {
+
+[_Code_]     if (top == NULL)
+
+[_Code_]         return;                 // Short tree
+
+[_Code_]
+
+[_Code_]     print_tree(top->left);
+
+[_Code_]     cout << top->word << '\n';
+
+[_Code_]     print_tree(top->right);
+
+[_Code_] }
+
+[_Code_] void tree::print(void) {
+
+[_Code_]      print_one(root);
+
+[_Code_] }
+
+[_A_]  The Rest of the Program
+
+Now that we have the data structure defined, all we need to
+complete the program is a few more functions. The main function
+checks for the correct number of arguments and then calls the
+scanner and the print_tree routine.
+
+The scan function reads the file and breaks it into words. It uses the
+standard macro isalpha. The macro returns 1 if its argument is a
+letter and 0 otherwise. It is defined in the standard include file
+ctype.h. After a word is found, the function enter is called to put
+the word in the tree. strdup creates the space for a string on the
+heap and then returns the pointer to it.
+
+Example 20-3 is the listing of words.cc.
+
+Example 20-3
+
+.  words/words.cc
+
+[_Code_] /********************************************************
+
+[_Code_]  * Words -- scan a file and print out a list of words   *
+
+[_Code_]  *              in ASCII order                          *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Usage:                                               *
+
+[_Code_]  *      words <file>                                    *
+
+[_Code_]  ********************************************************/
+
+[_Code_] #include <iostream.h>
+
+[_Code_] #include <fstream.h>
+
+[_Code_] #include <ctype.h>
+
+[_Code_] #include <string.h>
+
+[_Code_] #include <stdlib.h>
+
+[_Code_]
+[_Code_] class tree {
+
+[_Code_]     private:
+
+[_Code_]         // The basic node of a tree
+
+[_Code_]         class node {
+
+[_Code_]             private:
+
+[_Code_]                 node    *right;      // Tree to the right
+
+[_Code_]                 node    *left;       // Tree to the left
+
+[_Code_]             public:
+
+[_Code_]                 char    *word;       // Word for this tree
+
+[_Code_]
+[_Code_]             friend class tree;
+
+[_Code_]         };
+
+[_Code_]
+[_Code_]         // The top of the tree
+
+[_Code_]         node *root;
+
+[_Code_]
+[_Code_]         // Enter a new node into a tree or subtree
+
+[_Code_]         void enter_one(node *&node, char *word);
+
+[_Code_]
+[_Code_]         // Print a single node
+
+[_Code_]         void print_one(node *top);
+
+[_Code_]     public:
+
+[_Code_]         tree(void) {root = NULL;}
+
+[_Code_]
+[_Code_]         // Add a new word to the tree
+
+[_Code_]         void enter(char *word) {
+
+[_Code_]             enter_one(root, word);
+
+[_Code_]         }
+
+[_Code_]
+[_Code_]         // Print the tree
+
+[_Code_]         void print(void) {
+
+[_Code_]             print_one(root);
+
+[_Code_]         }
+
+[_Code_] };
+
+[_Code_]
+[_Code_] static tree words;      // List of words we are looking for
+
+[_Code_]
+
+[_Code_] /********************************************************
+
+[_Code_]  * Scan -- scan the file for words                      *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Parameters                                           *
+
+[_Code_]  *      name -- name of the file to scan                *
+
+[_Code_]  ********************************************************/
+
+[_Code_] void scan(char *name)
+
+[_Code_] {
+
+[_Code_]     char word[100];     // Word we are working on
+
+[_Code_]     int  index;         // Index into the word
+
+[_Code_]     int  ch;            // Current character
+
+[_Code_]     ifstream in_file;   // Input file
+
+[_Code_]
+[_Code_]     in_file.open(name, ios::in);
+
+[_Code_]     if (in_file.bad()) {
+
+[_Code_]         cerr << "Error: unable to open " << name << '\n';
+
+[_Code_]         exit(8);
+
+[_Code_]     }
+
+[_Code_]     while (1) {
+
+[_Code_]         // Scan past the white space
+
+[_Code_]         while (1) {
+
+[_Code_]             ch = in_file.get();
+
+[_Code_]
+[_Code_]             if (isalpha(ch) || (ch == EOF))
+
+[_Code_]                 break;
+
+[_Code_]         }
+
+[_Code_]
+[_Code_]         if (ch == EOF)
+
+[_Code_]             break;
+
+[_Code_]
+[_Code_]         word[0] = ch;
+
+[_Code_]         for (index = 1; index < sizeof(word); ++index) {
+
+[_Code_]             ch = in_file.get();
+
+[_Code_]             if (!isalpha(ch))
+
+[_Code_]                 break;
+
+[_Code_]             word[index] = ch;
+
+[_Code_]         }
+
+[_Code_]         // Put a null on the end
+
+[_Code_]         word[index] = '\0';
+
+[_Code_]
+[_Code_]         words.enter(word);
+
+[_Code_]     }
+
+[_Code_] }
+
+[_Code_]
+[_Code_]
+[_Code_] main(int argc, char *argv[])
+
+[_Code_] {
+
+[_Code_]     if (argc != 2) {
+
+[_Code_]         cerr <<  "Error: wrong number of parameters\n";
+
+[_Code_]         cerr <<  "      on the command line\n";
+
+[_Code_]         cerr <<  "Usage is:\n";
+
+[_Code_]         cerr <<  "    words 'file'\n";
+
+[_Code_]         exit(8);
+
+[_Code_]     }
+
+[_Code_]     scan(argv[1]);
+
+[_Code_]     words.print();
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+[_Code_]
+[_Code_] /********************************************************
+
+[_Code_]  * tree::enter_one -- enter a word into the tree        *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Parameters                                           *
+
+[_Code_]  *      new_node -- current node we are looking at      *
+
+[_Code_]  *      word -- word to enter                           *
+
+[_Code_]  ********************************************************/
+
+[_Code_] void tree::enter_one(node *&new_node, char *word)
+
+[_Code_] {
+
+[_Code_]     int  result;        // Result of strcmp
+
+[_Code_]
+[_Code_]     // See if we have reached the end
+
+[_Code_]     if (new_node == NULL) {
+
+[_Code_]         new_node = new node;
+
+[_Code_]
+[_Code_]         new_node->left = NULL;
+
+[_Code_]         new_node->right = NULL;
+
+[_Code_]         new_node->word = strdup(word);
+
+[_Code_]     }
+
+[_Code_]     result = strcmp(new_node->word, word);
+
+[_Code_]     if (result == 0)
+
+[_Code_]         return;
+
+[_Code_]
+[_Code_]     if (result < 0)
+
+[_Code_]         enter_one(new_node->right, word);
+
+[_Code_]     else
+
+[_Code_]         enter_one(new_node->left, word);
+
+[_Code_] }
+
+[_Code_]
+[_Code_] /********************************************************
+
+[_Code_]  * tree::print_one -- print out the words in a tree     *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Parameters                                           *
+
+[_Code_]  *      top -- the root of the tree to print            *
+
+[_Code_]  ********************************************************/
+
+[_Code_] void tree::print_one(node *top)
+
+[_Code_] {
+
+[_Code_]     if (top == NULL)
+
+[_Code_]         return;                 // Short tree
+
+[_Code_]
+[_Code_]     print_one(top->left);
+
+[_Code_]     cout << top->word << '\n';
+
+[_Code_]     print_one(top->right);
+
+[_Code_] }
+
+Question 20-2:  I once made a program that read the dictionary into memory using
+a tree structure and then used it in a program that searched for misspelled words.
+Although trees are supposed to be fast, this program was so slow you would think I
+used a linked list. Why?
+
+Hint: Graphically construct a tree using the words "able," "baker," "cook," "delta,"
+and "easy" and look at the result.
+
+[_A_]  Data Structures for a Chess Program
+
+A classic problem in artificial intelligence is the game of chess. So
+far, in spite of all our advances in computer science, no one has
+been able to create a program that plays chess better than the best
+grand masters.
+
+We are going to design a data structure for a chess-playing
+program. In chess there are several moves you can make. Your
+opponent has many responses, to which you have many answers,
+and so on back and forth for several levels of moves.
+
+Our data structure is beginning to look like a tree. But this is not a
+binary tree, because we have more than two branches for each
+node (Figure 20-14).
+
+Figure 20-14
+
+. Chess tree
+
+We are tempted to use the following data structure:
+
+[_Code_] class chess {
+
+[_Code_]     public:
+
+[_Code_]         class board_class board; // Current board position
+
+[_Code_]         class next_class {
+
+[_Code_]             class move_class move;        // Our next move
+
+[_Code_]             class chess *chess_ptr; // Pointer to the resulting position
+
+[_Code_]         } next[MAX_MOVES];
+
+[_Code_] };
+
+The problem is that the number of moves from any given position
+varies dramatically. For example, in the beginning you have lots of
+pieces running around. Things like rooks, queens, and bishops can
+move any number of squares in a straight line. When you reach the
+end game (in an evenly matched game), each side probably has
+only a few pawns and one major piece. The number of possible
+moves has been greatly reduced.
+
+We want to be as efficient in our storage as possible because a
+chess program stresses the limits of our machine. We can reduce
+storage requirements by changing the next-move array into a linked
+list. The resulting structure is:
+
+[_Code_] class next_class {
+
+[_Code_]     class move_class move;        // Our next move
+
+[_Code_]     class next_class *chess_ptr;  // Pointer to the resulting position
+
+[_Code_] };
+
+[_Code_]
+
+[_Code_] struct chess {
+
+[_Code_]     class board_class board;     // Current board position
+
+[_Code_]     class next_class *list_ptr;  // List of moves we can make from here
+
+[_Code_]     class next_class this_move;  // The move we are making
+
+[_Code_] };
+
+Graphically, this looks like [_XREF Figure 20-15_].
+
+Figure 20-15
+
+. Revised chess structure
+
+The new version adds a little complexity, but saves a great deal of
+storage.
+
+[_A_]  Programming Exercises
+
+Exercise 20-1: Write a cross-reference program.
+
+Exercise 20-2: Write a function to delete an element of a linked list.
+
+Exercise 20-3: Write a function to delete an element of a double-linked list.
+
+Exercise 20-4: Write a function to delete an element of a tree.
+
+[_A_]  Answers to Chapter Questions
+
+Answer 20-1: The problem is with the statement:
+
+[_Code_] while ((current_ptr->data != value) &&
+
+[_Code_]        (current_ptr != NULL))
+
+current_ptr->data is checked before we check to see whether
+current_ptr is a valid pointer (!= NULL). If it is NULL we can
+easily check a random memory location that could contain
+anything. The solution is to check current_ptr before checking
+what it is pointing to:
+
+[_Code_] while (current_ptr != NULL) {
+
+[_Code_]     if (current_ptr->data == value)
+
+[_Code_]         break;
+
+Answer 20-2: The problem was as follows: because the first word in the dictionary
+was the smallest, every other word used the right-hand link. In fact, because the
+entire list was ordered, only the right-hand link was used. Although this was
+defined as a tree structure, the result was a linked list. See [_XREF Figure 20-16_].
+
+Figure 20-16
+
+. Dictionary tree
+
+Some of the more advanced books on data structures, such as
+Knuth's Algorithms + Data Structures = Programs, discuss ways of
+preventing this by balancing a binary tree.
+
+Trivia Answer: You give up. That's right, the 21st move is to resign.

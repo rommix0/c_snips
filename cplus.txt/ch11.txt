@@ -1,0 +1,1356 @@
+Chapter 11Part II: Simple Programming
+
+In This Chapter:
+
+*  [_XREF Bit Operators_]
+
+*  The AND Operator
+
+*  Bitwise OR
+
+*  The Bitwise Exclusive OR
+
+*  The Ones Complement
+Operator
+
+*  The Left and Right Shift
+Operators
+
+*  [_XREF Setting, Clearing, and
+Testing Bits_]
+
+*  Bitmapped Graphics
+
+*  Exercises
+
+*  Answers to Questions
+
+11	
+
+11: Bit Operations
+
+To be or not to be, that is the question.
+
+---Shakespeare on Boolean algebra
+
+This chapter discusses bit-oriented operations. A bit is the smallest
+unit of information. Normally it is represented by the values 1 and
+0. (Other representations include on/off, true/false, and yes/no.) Bit
+manipulations are used to control the machine at the lowest level.
+They allow the programmer to get "under the hood" of the
+machine. Many higher-level programs will never need bit
+operations. Low-level coding such as writing device drivers or pixel-
+level graphic programming requires bit operations. If you plan to
+program only at a higher level, this chapter may be safely skipped.
+
+Eight bits together form a byte, represented by the C++ data type
+char. A byte might contain the following bits: 01100100.
+
+This can also be written as the hexadecimal number 0x64. (C++
+uses the prefix "0x" to indicate a hexadecimal (base 16) number.)
+Hexadecimal is convenient for representing binary data because
+each hexadecimal digit represents 4 binary bits. [_XREF Table 11-1_]
+gives the hexadecimal (hex) to binary conversion:
+
+Table 11-1
+
+. Hex and Binary
+
+Hex
+
+Binary
+
+Hex
+
+Binary
+
+0
+
+0000
+
+8
+
+1000
+
+1
+
+0001
+
+9
+
+1001
+
+2
+
+0010
+
+A
+
+1010
+
+3
+
+0011
+
+B
+
+1011
+
+4
+
+0100
+
+C
+
+1100
+
+5
+
+0101
+
+D
+
+1101
+
+6
+
+0110
+
+E
+
+1110
+
+7
+
+0111
+
+F
+
+1111
+
+So the hexadecimal number 0xAF represents the binary number
+10101111.
+
+[_A_]  Bit Operators
+
+Bit, or bitwise, operators allow the programmer to work on
+individual bits. For example, a short integer holds 16 bits (on most
+machines). The bit operators treat each of these as an independent
+bit. By contrast, an add operator treats the 16 bits as a single 16-bit
+number.
+
+Bit operators allow you to set, clear, test, and perform other
+operations on bits. The bit operators are listed in [_XREF Table 11-2_
+].
+
+Table 11-2
+
+. Bit Operators
+
+Operator
+
+Meaning
+
+&
+
+Bitwise AND
+
+|
+
+Bitwise OR
+
+^
+
+Bitwise exclusive OR
+
+~
+
+Complement
+
+<<
+
+Shift left
+
+>>
+
+Shift right
+
+These operators work on any integer or character-data type.
+
+[_A_]  The AND Operator (&)
+
+The AND operator compares two bits. If they both are 1, the result is
+1. The results of the AND operator are defined in [_XREF Table 11-3_].
+
+Table 11-3
+
+. AND Operator
+
+Bit1
+
+Bit2
+
+Bit1 & Bit2
+
+0
+
+0
+
+0
+
+0
+
+1
+
+0
+
+1
+
+0
+
+0
+
+1
+
+1
+
+1
+
+When two eight-bit variables (char variables) are "ANDed" together,
+the AND operator works on each bit independently. The following
+program segment illustrates this operation:
+
+[_Code_] int    c1, c2;
+
+[_Code_]
+
+[_Code_] c1 = 0x45;
+
+[_Code_] c2 = 0x71;
+
+[_Code_] cout << "Result of " << hex << c1 << " & " << c2 << " = " <<
+
+[_Code_]                               (c1 & c2) << dec << '\n';
+
+The output of this program is:
+
+[_Code_] Result of 45 & 71 = 41
+
+This is because:
+
+c1 = 0x45
+
+binary 01000101
+
+&
+
+c2 = 0x71
+
+binary 01110001
+
+=
+
+0x41
+
+binary 01000001
+
+The bitwise AND (&) is similar to the logical AND (&&). In the logical
+AND if both operands are true (nonzero), the result is true (1). In
+bitwise AND (&), if the corresponding bits of both operands are true
+(1s), then the corresponding bits of the results are true (1s). So the
+bitwise AND (&) works on each bit independently while the logical
+AND (&&) works on the operands as a whole.
+
+However, & and && are different operators, as [_XREF Example 11-1_
+] illustrates:
+
+Example 11-1
+
+. and/and.cc
+
+[_Code_] #include <iostream.h>
+
+[_Code_]
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     int i1, i2; // Two random integers
+
+[_Code_]
+[_Code_]     i1 = 4;
+
+[_Code_]     i2 = 2;     // Set values
+
+[_Code_]
+[_Code_]     // Nice way of writing the conditional
+
+[_Code_]     if ((i1 != 0) && (i2 != 0))
+
+[_Code_]         cout << "Both are not zero #1\n";
+
+[_Code_]
+[_Code_]     // Shorthand way of doing the same thing
+
+[_Code_]     // Correct C++ code, but rotten style
+
+[_Code_]     if (i1 && i2)
+
+[_Code_]         cout << "Both are not zero #2\n";
+
+[_Code_]
+[_Code_]     // Incorrect use of bitwise AND resulting in an error
+
+[_Code_]     if (i1 & i2)
+
+[_Code_]         cout << "Both are not zero #3\n";
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+Question: Why does test #3 fail to print Both are not zero #3?
+
+Answer: The operator & is a bitwise AND. The result of the bitwise
+AND is zero.
+
+i1=4
+
+00000100
+
+i2=2
+
+00000010
+
+&
+
+00000000
+
+The result of the bitwise AND is 0, and the conditional is false. If the
+programmer had used the first form:
+
+[_Code_]     if ((i1 != 0) && (i2 != 0))
+
+and made the mistake of using & instead of &&:
+
+[_Code_]     if ((i1 != 0) & (i2 != 0))
+
+the program would still have executed correctly.
+
+(i1 != 0)
+
+is true (result = 1)
+
+(i2 != 0)
+
+is true (result = 1)
+
+1 bitwise AND 1 is 1, so the expression is true.
+
+[_NOTE_]  Soon after discovering the bug illustrated by this
+program I told my office mate, "I now understand the
+difference between AND and AND AND), and he understood
+me. How we understand language has always fascinated me,
+and the fact that I could utter such a sentence and have
+someone understand it without trouble amazed me.
+
+You can use the bitwise AND operator to test whether a number is
+even or odd. In base 2, the last digit of all even numbers is zero
+and the last digit of all odd numbers is one. The following function
+uses the bitwise AND to pick off this last digit. If it is zero (an even
+number), the result of the function is true.
+
+[_Code_] inline int even(const int value)
+
+[_Code_] {
+
+[_Code_]     return ((value & 1) == 0);
+
+[_Code_] }
+
+Bitwise OR (|)
+
+The inclusive OR operator (also known as just the OR operator) compares its two
+operands. If one or the other bit is a 1, the result is 1. [_XREF Table 11-4_] lists
+the truth table for the OR operator.
+
+Table 11-4
+
+. Bitwise OR
+
+Bit1
+
+Bit2
+
+Bit1 | Bit2
+
+0
+
+0
+
+0
+
+0
+
+1
+
+1
+
+1
+
+0
+
+1
+
+1
+
+1
+
+1
+
+On a byte this would be:
+
+i1=0x47
+
+01000111
+
+i2=0x53
+
+01010011
+
+|
+
+57
+
+01010111
+
+The Bitwise Exclusive OR (^)
+
+The exclusive OR (also known as XOR) operator results in a 1 when either of its
+two operands is a 1, but not both. The truth table for the exclusive OR operator is
+listed in [_XREF Table 11-5_].
+
+Table 11-5
+
+. Exclusive OR
+
+Bit1
+
+Bit2
+
+Bit1 ^ Bit2
+
+0
+
+0
+
+0
+
+0
+
+1
+
+1
+
+1
+
+0
+
+1
+
+1
+
+1
+
+0
+
+On a byte this would be:
+
+i1=0x47
+
+01000111
+
+i2=0x53
+
+01010011
+
+^
+
+14
+
+00010100
+
+The Ones Complement Operator (NOT) (~)
+
+The NOT operator (also called the invert operator or bit flip) is a unary operator
+that returns the inverse of its operand, as shown in [_XREF Table 11-6_].
+
+Table 11-6
+
+. NOT Operator
+
+Bit
+
+~Bit
+
+0
+
+1
+
+1
+
+0
+
+On a byte this is:
+
+   c=
+
+0x45
+
+01000101
+
+~c=
+
+0xBA
+
+10111010
+
+The Left and Right Shift Operators (<<, >>)
+
+The left shift operator moves the data left a specified number of bits. Any bits that
+are shifted out the left side disappear. New bits coming in from the right are
+zeros. The right shift does the same thing in the other direction. For example:
+
+  c=0x1C
+
+00011100
+
+c << 1
+
+c=0x38
+
+00111000
+
+c >> 2
+
+c=0x07
+
+00000111
+
+Shifting left by one (x << 1) is the same as multiplying by 2 (x * 2). Shifting
+left by two (x << 2) is the same as multiplying by 4 (x * 4, or x * 22). You
+can see a pattern forming here. Shifting left by n places is the same as multiplying
+by 2n. Why shift instead of multiply? Shifting is faster than multiplication, so
+
+[_Code_] i = j << 3;     // Multiply j by 8 (2**3)
+
+is faster than:
+
+[_Code_] i  = j * 8;
+
+Or it would be faster if compilers weren't smart enough to turn "multiply by
+power of two" into "shift."
+
+Many clever programmers use this trick to speed up their programs at the cost of
+clarity. Don't you do it. The compiler is smart enough to perform the speedup
+automatically. This means that putting in a shift gains you nothing at the expense
+of clarity.
+
+The left shift operator multiplies; the right shift divides. So:
+
+[_Code_] q = i >> 2;
+
+is the same as:
+
+[_Code_] q = i / 4;
+
+Again, this clever trick should not be used in modern code.
+
+[_B_]  Right Shift Details
+
+Right shifts are particularly tricky. When a variable is shifted to the
+right, C++ needs to fill the space on the left side with something.
+For signed variables, C++ uses the value of the sign bit. For
+unsigned variables, C++ uses zero. [_XREF Table 11-7_] illustrates
+some typical right shifts.
+
+Table 11-7
+
+. Right Shift Examples
+
+Signed Character
+
+Signed Character
+
+Unsigned Character
+
+Expression
+
+9 >> 2
+
+-8 >> 2
+
+248 >> 2
+
+Binary value >> 2
+
+0000 10102 >> 2
+
+1111 10002 >> 2
+
+1111 10002 >> 2
+
+Result
+
+??00 00102
+
+??11 11102 >> 2
+
+??11 11102 >> 2
+
+Fill
+
+Sign bit (0)
+
+Sign bit (1)
+
+Zero
+
+Final result (binary)
+
+0000 00102
+
+1111 11102
+
+0011 11102
+
+Final result (short int)
+
+2
+
+-2
+
+62
+
+[_A_]  Setting, Clearing, and Testing Bits
+
+A character contains eight bits. Each of these can be treated as a
+separate flag. Bit operations can be used to pack eight single-bit
+values in a single byte. For example, suppose you are writing a low-
+level communications program. You are going to store the
+characters in an 8K buffer for later use. With each character you will
+also store a set of status flags. The flags are listed in [_XREF
+Table 11-8_].
+
+Table 11-8
+
+. Communications Status Values
+
+Name
+
+Description
+
+ERROR
+
+True if any error is set
+
+FRAMING_ERROR
+
+A framing error occurred for this character
+
+PARITY_ERROR
+
+Character had the wrong parity
+
+CARRIER_LOST
+
+The carrier signal went down
+
+CHANNEL_DOWN
+
+Power was lost on the communication device
+
+You could store each flag in its own character variable. That would
+mean that for each character buffered, you would need five bytes of
+status storage. For a large buffer, that adds up. By instead assigning
+each status flag its own bit within an eight-bit status character, you
+cut storage requirements down to 1/5 of the original need.
+
+You can assign the flags the bit numbers listed in [_XREF
+Table 11-9_].
+
+Table 11-9
+
+. Bit Assignments
+
+Bit
+
+Name
+
+0
+
+ERROR
+
+1
+
+FRAMING_ERROR
+
+2
+
+PARITY_ERROR
+
+3
+
+CARRIER_LOST
+
+4
+
+CHANNEL_DOWN
+
+Bits are numbered 76543210 by convention. The constants for each
+bit are defined in [_XREF Table 11-10_].
+
+Table 11-10
+
+. Bit Values
+
+Bit
+
+Binary Value
+
+Hex Constant
+
+7
+
+10000000
+
+0x80
+
+6
+
+01000000
+
+0x40
+
+5
+
+00100000
+
+0x20
+
+4
+
+00010000
+
+0x10
+
+3
+
+00001000
+
+0x08
+
+2
+
+00000100
+
+0x04
+
+1
+
+00000010
+
+0x02
+
+0
+
+00000001
+
+0x01
+
+The definitions could be:
+
+[_Code_] // True if any error is set
+
+[_Code_] const int ERROR = 0x01;
+
+[_Code_]
+
+[_Code_] // A framing error occurred for this character
+
+[_Code_] const int FRAMING_ERROR = 0x02;
+
+[_Code_]
+
+[_Code_] // Character had the wrong parity
+
+[_Code_] const int PARITY_ERROR = 0x04;
+
+[_Code_]
+
+[_Code_] // The carrier signal went down
+
+[_Code_] const int CARRIER_LOST = 0x08;
+
+[_Code_]
+
+[_Code_] // Power was lost on the communication device
+
+[_Code_] const int CHANNEL_DOWN = 0x10;
+
+This method of defining bits is somewhat confusing. Can you tell
+(without looking at the table) which bit number is represented by
+the constant 0x10? [_XREF Table 11-11_] shows how you can use
+the left shift operator (<<) to define bits.
+
+Table 11-11
+
+. The Left Shift Operator and Bit Definition
+
+C++ Representation
+
+Base 2 Equivalent
+
+Result (Base 2)
+
+Bit Number
+
+1 << 0
+
+000000012 << 0
+
+000000012
+
+Bit 0
+
+1 << 1
+
+000000012 << 1
+
+000000102
+
+Bit 1
+
+1 << 2
+
+000000012 << 2
+
+000001002
+
+Bit 2
+
+1 << 3
+
+000000012 << 3
+
+000010002
+
+Bit 3
+
+1 << 4
+
+000000012 << 4
+
+000100002
+
+Bit 4
+
+1 << 5
+
+000000012 << 5
+
+001000002
+
+Bit 5
+
+1 << 6
+
+000000012 << 6
+
+010000002
+
+Bit 6
+
+1 << 7
+
+000000012 << 7
+
+100000002
+
+Bit 7
+
+Although it is hard to tell what bit is represented by 0x10, it's easy
+to tell what bit is meant by 1 << 4.
+
+The flags can be defined as:
+
+[_Code_] // True if any error is set
+
+[_Code_] const int ERROR =           (1 << 0);
+
+[_Code_]
+
+[_Code_] // A framing error occurred for this character
+
+[_Code_] const int FRAMING_ERROR =   (1 << 1);
+
+[_Code_]
+
+[_Code_] // Character had the wrong parity
+
+[_Code_] const int PARITY_ERROR =    (1 << 2);
+
+[_Code_]
+
+[_Code_] // The carrier signal went down
+
+[_Code_] const int CARRIER_LOST =    (1 << 3);
+
+[_Code_]
+
+[_Code_] // Power was lost on the communication device
+
+[_Code_] const int CHANNEL_DOWN =    (1 << 4);
+
+Now that you have defined the bits, you can manipulate them. To
+set a bit, use the | operator. For example:
+
+[_Code_] char    flags = 0;  // Start all flags at 0
+
+[_Code_]
+
+[_Code_]     flags |= CHANNEL_DOWN; // Channel just died
+
+To test a bit, use the & operator to "mask out" the bits.
+
+[_Code_]     if ((flags & ERROR) != 0)
+
+[_Code_]         cerr << "Error flag is set\n";
+
+[_Code_]     else
+
+[_Code_]         cerr << "No error detected\n";
+
+Clearing a bit is a little harder. Suppose you want to clear the bit
+PARITY_ERROR. In binary this bit is 00000100. You want to create a
+mask that has all bits set except for the bit you want to clear
+(11111011). This is done with the NOT operator (~). The mask is
+then ANDed with the number to clear the bit.
+
+PARITY_ERROR
+
+00000100
+
+~PARITY_ERROR
+
+11111011
+
+flags
+
+00000101
+
+flags & ~PARITY_ERROR
+
+00000001
+
+In C++ this is:
+
+[_Code_]     flags &= ~PARITY_ERROR; // Who cares about parity
+
+Question 11-1: In the following program, the HIGH_SPEED flag works, but the
+DIRECT_CONNECT flag does not. Why?
+
+[_Code_] #include <iostream.h>
+
+[_Code_]
+
+[_Code_] const int HIGH_SPEED = (1<<7);    /* modem is running fast */
+
+[_Code_]                                  // we are using a hardwired connection
+
+[_Code_] const int DIRECT_CONNECT = (1<<8);
+
+[_Code_]
+
+[_Code_] char flags = 0;                  // start with nothing
+
+[_Code_]
+
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     flags |= HIGH_SPEED;         // we are running fast
+
+[_Code_]     flags |= DIRECT_CONNECT;     // because we are wired together
+
+[_Code_]
+
+[_Code_]     if ((flags & HIGH_SPEED) != 0)
+
+[_Code_]         cout <<"High speed set\n";
+
+[_Code_]
+
+[_Code_]     if ((flags & DIRECT_CONNECT) != 0)
+
+[_Code_]         cout <<"Direct connect set\n";
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+[_A_]  Bitmapped Graphics
+
+More and more computers now have graphics. For the PC, there are
+graphics devices like EGA and VGA cards. For UNIX, there is the X
+windowing system.
+
+In bitmapped graphics, each pixel on the screen is represented by a
+single bit in memory. For example, [_XREF Figure 11-1_] shows a 14-
+by-14 bitmap as it appears on the screen and enlarged so you can
+see the bits.
+
+Figure 11-1
+
+. Bitmap, actual size and enlarged
+
+Suppose we have a small graphic device-a 16-by-16 pixel
+monochrome display. We want to set the bit at 4, 7. The bitmap for
+this device is shown as an array of bits in [_XREF Figure 11-2_].
+
+Figure 11-2
+
+. Array of bits
+
+But we have a problem. There is no data type for an array of bits in
+C++. The closest we can come is an array of bytes. Our 16-by-16
+array of bits now becomes a 2-by-16 array of bytes, as shown in [_
+XREF Figure 11-3_].
+
+Figure 11-3
+
+. Array of bytes
+
+To set the pixel at bit number 4,7 we need to set the fourth bit of
+byte 0,7. To set this bit we would use the statement: bit_
+array[0][7] |= (0x80 >> (4));
+
+[_Code_]
+
+The constant 0x80 is the leftmost bit.
+
+We can generalize this process to produce a macro that turns on the
+bit (pixel) located at (x, y). We need to compute two values: the
+coordinate of the byte and the number of the bit within the byte.
+
+Our bit address is (x, y). Bytes are groups of eight bits, so that
+means that our byte address is (x/8, y).
+
+The bit within the byte is not so simple. We want to generate a
+mask consisting of the single bit we want to set. For the leftmost bit
+this should be 1000 00002, or 0x80. This occurs when (x%8) == 0.
+The next bit is 0100 00002, or (0x80 >> 1), and occurs when (x%8)
+== 1. So to generate our bit mask we use the expression (0x80 >>
+(x%8)).
+
+Now that we have the byte location and the bit mask, all we have
+to do is set the bit. The following function sets a given bit in a
+bitmapped graphics array named graphics.
+
+[_Code_] void inline set_bit(const int x,const int y)
+
+[_Code_] {
+
+[_Code_]     graphics[(x)/8][y] |= (0x80 >> ((x)%8))
+
+[_Code_] }
+
+Example 11-2 draws a diagonal line across the graphics array and
+then prints the array on the terminal.
+
+Example 11-2
+
+. graph/graph.cc
+
+[_Code_] #include <iostream.h>
+
+[_Code_]
+[_Code_] const int X_SIZE = 40; // Size of array in the X direction
+
+[_Code_] const int Y_SIZE = 60; // Size of array in the Y direction
+
+[_Code_] /*
+
+[_Code_]  * We use X_SIZE/8 since we pack 8 bits per byte
+
+[_Code_]  */
+
+[_Code_] char graphics[X_SIZE / 8][Y_SIZE];   // The graphics data
+
+[_Code_]
+[_Code_] /********************************************************
+
+[_Code_]  * set_bit -- set a bit in the graphics array           *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Parameters                                           *
+
+[_Code_]  *      x,y -- location of the bit                      *
+
+[_Code_]  ********************************************************/
+
+[_Code_] inline void set_bit(const int x,const int y)
+
+[_Code_] {
+
+[_Code_]     graphics[(x)/8][y] |= (0x80 >>((x)%8));
+
+[_Code_] }
+
+[_Code_]
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     int   loc;        // Current location we are setting
+
+[_Code_]     void  print_graphics(void); // Print the data
+
+[_Code_]
+[_Code_]     for (loc = 0; loc < X_SIZE; ++loc)
+
+[_Code_]         set_bit(loc, loc);
+
+[_Code_]
+[_Code_]     print_graphics();
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+[_Code_] /********************************************************
+
+[_Code_]  * print_graphics -- print the graphics bit array       *
+
+[_Code_]  *              as a set of X and .'s                   *
+
+[_Code_]  ********************************************************/
+
+[_Code_] void print_graphics(void)
+
+[_Code_] {
+
+[_Code_]     int x;     // Current x byte
+
+[_Code_]     int y;     // Current y location
+
+[_Code_]     int bit;   // Bit we are testing in the current byte
+
+[_Code_]
+[_Code_]     for (y = 0; y < Y_SIZE; ++y) {
+
+[_Code_]
+[_Code_]         // Loop for each byte in the array
+
+[_Code_]         for (x = 0; x < X_SIZE / 8; ++x) {
+
+[_Code_]
+[_Code_]             // Handle each bit
+
+[_Code_]             for (bit = 0x80; bit > 0; bit = (bit >> 1)) {
+
+[_Code_]                 if ((graphics[x][y] & bit) != 0)
+
+[_Code_]                     cout << 'X';
+
+[_Code_]                 else
+
+[_Code_]                     cout << '.';
+
+[_Code_]             }
+
+[_Code_]         }
+
+[_Code_]         cout << '\n';
+
+[_Code_]     }
+
+[_Code_] }
+
+The program defines a bitmapped graphics array:
+
+[_Code_] char graphics[X_SIZE / 8][Y_SIZE];   // The graphics data
+
+The constant X_SIZE/8 is used since we have X_SIZE bits across,
+which translates to X_SIZE/8 bytes.
+
+The main for loop:
+
+[_Code_] for (loc = 0; loc < X_SIZE; ++loc)
+
+[_Code_]         set_bit(loc, loc);
+
+draws a diagonal line across the graphics array.
+
+Since we do not have a bitmapped graphics device we will simulate
+it with the subroutine print_graphics.
+
+The loop:
+
+[_Code_] for (y = 0; y < Y_SIZE; ++y) {
+
+[_Code_]     ....
+
+prints each row. The loop:
+
+[_Code_]      for (x = 0; x < X_SIZE / 8; ++x) {
+
+[_Code_]          ...
+
+goes through every byte in the row. There are eight bits in each
+byte handled by the loop:
+
+[_Code_]          for (bit = 0x80; bit > 0; bit = (bit >> 1))
+
+which uses an unusual loop counter. This loop causes the variable
+bit to start with bit 7 (the leftmost bit). For each iteration of the
+loop, the bit is moved to the right one bit by bit = (bit >> 1).
+When we run out of bits, the loop exits.
+
+The loop counter cycles through.
+
+Finally, at the heart of the loops is the code:
+
+Binary
+
+Hex
+
+0000 0000 1000 0000
+
+0x80
+
+0000 0000 0100 0000
+
+0x40
+
+0000 0000 0010 0000
+
+0x20
+
+0000 0000 0001 0000
+
+0x10
+
+0000 0000 0000 1000
+
+0x08
+
+0000 0000 0000 0100
+
+0x04
+
+0000 0000 0000 0010
+
+0x02
+
+0000 0000 0000 0001
+
+0x01
+
+[_Code_]                 if ((graphics[x][y] & bit) != 0)
+
+[_Code_]                     cout <<"X";
+
+[_Code_]                 else
+
+[_Code_]                     cout << ".";
+
+This tests an individual bit and writes "X" if the bit is set or "." if the
+bit is not set.
+
+Question 11-2: [_XREF In the following program, the HIGH_SPEED flag works, but
+the DIRECT_CONNECT flag does not. Why?_]
+
+Example 11-3
+
+. high/high.cc
+
+[_Code_] #include <iostream.h>
+
+[_Code_]
+[_Code_] const int HIGH_SPEED = (1<<7);   /* modem is running fast */
+
+[_Code_]
+[_Code_] // we are using a hardwired connection
+
+[_Code_] const int DIRECT_CONNECT = (1<<8);
+
+[_Code_]
+[_Code_] char flags = 0;         // start with nothing
+
+[_Code_]
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     flags |=HIGH_SPEED;    // we are running fast
+
+[_Code_]     flags |=DIRECT_CONNECT;// because we are wired together
+
+[_Code_]
+[_Code_] if ((flags & HIGH_SPEED) != 0)
+
+[_Code_]     cout <<"High speed set\n";
+
+[_Code_]
+[_Code_] if ((flags & DIRECT_CONNECT) != 0)
+
+[_Code_]     cout <<"Direct connect set\n";
+
+[_Code_]
+[_Code_] return (0);
+
+[_Code_] }
+
+[_A_]  Programming Exercises
+
+Exercise 11-1: Write a set of inline functions, clear_bit and test_bit, to go
+with the set_bit operation defined in [_XREF Example 11-2_]. Write a main
+program to test these functions.
+
+Exercise 11-2: Write a program to draw a 10-by-10 bitmapped square.
+
+Exercise 11-3: Change [_XREF Example 11-1_] so it draws a white line across a
+black background.
+
+Exercise 11-4: Write a program that counts the number of bits set in an integer.
+For example, the number 5 (decimal), which is 0000000000000101 (binary), has
+two bits set.
+
+Exercise 11-5: Write a program that takes a 32-bit integer (long int) and splits it
+into eight 4-bit values. (Be careful of the sign bit.)
+
+Exercise 11-6: Write a program that will take all the bits in a number and shift
+them to the left end. For example, 01010110 (binary) would become 11110000
+(binary).
+
+[_A_]  Answers to Chapter Questions
+
+Answer 11-1: DIRECT_CONNECT is defined to be bit number 8 by the expression (1
+<< 8); however, the eight bits in a character variable are numbered 76543210.
+There is no bit number 8. A solution to this problem is to make flags a short
+integer with 16 bits.
+
+Answer 11-2: The problem is that ch is a character (8 bits). The value 0x80 repre-
+sented in 8 bits is 1000 00002. The first bit, the sign bit, is set. When a right shift
+is done on this variable, the sign bit is used for fill, so 1000 00002 >> 1 is 1100
+00002.
+
+The variable i works even though it is signed because it is 16 bits
+long. So 0x80 in 16 bits is 0000 0000 1000 00002. Notice that the
+bit we've got set is nowhere near the sign bit.
+
+The solution to the problem is to declare ch as an unsigned
+variable.

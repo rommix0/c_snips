@@ -1,0 +1,2904 @@
+Chapter 17Part IV: Advanced Programming Concepts
+
+In This Chapter:
+
+*  [_XREF Debugging_]
+
+*  [_XREF Divide and Conquer_]
+
+*  [_XREF Debug-Only Code_]
+
+*  [_XREF Debug Command-Line
+Switch_]
+
+*  [_XREF Interactive Debuggers_]
+
+*  [_XREF Debugging a Binary
+Search_]
+
+*  [_XREF Runtime Errors_]
+
+*  [_XREF The Confessional
+Method of Debugging_]
+
+*  How to Optimize
+
+*  Case Study
+
+*  Exercises
+
+*  Answers to Questions
+
+17	
+
+17: Debugging and Optimization
+
+Bloody instructions which, being
+learned, return to plague the inventor.
+
+---Shakespeare, on debugging
+
+[_A_]  Debugging
+
+The hardest part of a program is not the design and writing, but the
+debugging phase. It is here that you find out how your program
+really works (instead of how you think it works).
+
+To eradicate a bug, you need two things: a way of reproducing the
+bug and information from the program that lets you locate and
+correct the problem.
+
+In some cases, finding the bug is easy. You discover the bug
+yourself, the test department produces a clear and easy test that
+displays the bug, or the output always comes out bad.
+
+In some cases, especially with interactive programs, reproducing the
+bug may be 90 percent of the problem. This is especially true when
+dealing with bug reports sent in by users in the field. A typical call
+from a user might be:
+
+User:
+That database program you gave me is broken.
+
+Programmer:
+What's wrong?
+
+User:
+Sometimes when I'm doing a sort, it gets things in the wrong order.
+
+Programmer:
+What command were you using?
+
+User:
+The sort command.
+
+Programmer:
+Tell me exactly what you typed, keystroke by keystroke, to get it to fail.
+
+User:
+I don't remember it exactly. I was doing a lot of sorts.
+
+Programmer:
+If I come over can you show me the bug?
+
+User:
+Of course.
+
+Five minutes later the programmer is in the user's office and utters
+the fatal words, "Show me." The user types away and the program
+stubbornly works, no matter what the user does to it.
+
+The programmer gives up and goes back to his office only to find a
+message from the user: "It failed five minutes after you left."
+
+[_XREF Example 17-1_] is a short database lookup program. It asks
+the user for input and checks the input against a hard-coded list of
+names. Although it is very simple, the program's structure is typical
+of much larger and more complex interactive programs.
+
+Example 17-1
+
+.  base/base.cc
+
+[_Code_] /********************************************************
+
+[_Code_]  * Database -- a very simple database program to        *
+
+[_Code_]  *              look up names in a hard-coded list      *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Usage:                                               *
+
+[_Code_]  *      database                                        *
+
+[_Code_]  *              Program will ask you for a name.        *
+
+[_Code_]  *              Enter the name; it will tell you whether*
+
+[_Code_]  *              the name is in the list.                *
+
+[_Code_]  *                                                      *
+
+[_Code_]  *              A blank name terminates the program.    *
+
+[_Code_]  ********************************************************/
+
+[_Code_] const int STRING_LENGTH = 80;   /* Length of typical string */
+
+[_Code_] #include <iostream.h>
+
+[_Code_] #include <string.h>
+
+[_Code_]
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     char name[STRING_LENGTH];   // A name to look up
+
+[_Code_]
+[_Code_]     int lookup(char *);         // Look up a name
+
+[_Code_]
+[_Code_]     while (1) {
+
+[_Code_]         cout << "Enter name: ";
+
+[_Code_]         cin.getline(name, sizeof(name));
+
+[_Code_]
+[_Code_]         // Check for blank name
+
+[_Code_]         if (strlen(name) <= 0)
+
+[_Code_]             break;
+
+[_Code_]
+[_Code_]         if (lookup(name))
+
+[_Code_]             cout << name << " is in the list\n";
+
+[_Code_]         else
+
+[_Code_]             cout << name << " is not in the list\n";
+
+[_Code_]     }
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+[_Code_] /********************************************************
+
+[_Code_]  * Lookup -- look up a name in a list                   *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Parameters                                           *
+
+[_Code_]  *      name -- name to look up                         *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Returns                                              *
+
+[_Code_]  *      1 -- name in the list                           *
+
+[_Code_]  *      0 -- name not in the list                       *
+
+[_Code_]  ********************************************************/
+
+[_Code_] int lookup(char *name)
+
+[_Code_] {
+
+[_Code_]     // List of people in the database
+
+[_Code_]     // Note: Last name is a NULL for end-of-list
+
+[_Code_]     static char *list[] = {
+
+[_Code_]         "John",
+
+[_Code_]         "Jim",
+
+[_Code_]         "Jane",
+
+[_Code_]         "Clyde",
+
+[_Code_]         NULL
+
+[_Code_]     };
+
+[_Code_]
+[_Code_]     int index;          // Index into list
+
+[_Code_]
+[_Code_]     for (index = 0; list[index] != NULL; ++index) {
+
+[_Code_]         if (strcmp(list[index], name) == 0)
+
+[_Code_]             return (1);
+
+[_Code_]     }
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+[_Code_]
+[_Code_] A typical execution of this program is:
+
+[_Code_] Enter name: Sam
+
+[_Code_] Sam is not in the list
+
+[_Code_] Enter name: John
+
+[_Code_] John is in the list
+
+[_Code_] Enter name:
+
+When we release this program, the users immediately start
+complaining about mysterious problems that go away whenever the
+programmer is around. Wouldn't it be nice to have a little gremlin
+sitting on the user's shoulder copying down everything he or she
+types? Unfortunately, gremlins are unavailable; however, we can
+change this program so it produces a save file that contains every
+keystroke the user typed.
+
+Our program uses the statement:
+
+[_Code_] cin.getline(name, sizeof(name));
+
+to read the user data.
+
+Let's write a new routine, extended_getline, and use it instead
+of getline. It not only will get a line, but also will save the user's
+response in a save file.
+
+Example 17-2
+
+.  xgets/xgets.cc
+
+[_Code_] #include <iostream.h>
+
+[_Code_] #include <fstream.h>
+
+[_Code_] /*
+
+[_Code_]  * The main program will open this file if -S is on
+
+[_Code_]  * the command line.
+
+[_Code_]  */
+
+[_Code_] ofstream save_file;             // File to use for saving input
+
+[_Code_] int save_file_open = 0;         // Save file defaults to not open
+
+[_Code_] /********************************************************
+
+[_Code_]  * extended_getline -- get a line from the input file   *
+
+[_Code_]  *              and record it in a save file if needed  *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Parameters                                           *
+
+[_Code_]  *      line -- the line to read                        *
+
+[_Code_]  *      size -- sizeof(line) -- maximum number of       *
+
+[_Code_]  *                      characters to read              *
+
+[_Code_]  *      file -- file to read data from                  *
+
+[_Code_]  *              (normally stdin)                        *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Returns                                              *
+
+[_Code_]  *      NULL -- error or end-of-file in read            *
+
+[_Code_]  *      otherwise line (just like getline)              *
+
+[_Code_]  ********************************************************/
+
+[_Code_] istream &extended_getline(char *line, int size, ifstream &file)
+
+[_Code_] {
+
+[_Code_]     istream *result;            /* Result of gets */
+
+[_Code_]
+[_Code_]     result = &file.getline(line, size);
+
+[_Code_]
+[_Code_]     // Did someone ask for a save file?
+
+[_Code_]     if (save_file_open) {
+
+[_Code_]         save_file << line << '\n';
+
+[_Code_]     }
+
+[_Code_]
+[_Code_]     return (*result);
+
+[_Code_] }
+
+We also change our main program to handle a new option: "-Sfile"
+to specify a save file. (Typically uppercase letters are used for
+debugging and other less used options.) Our new main program is
+shown in [_XREF Example 17-3_]:
+
+Example 17-3
+
+.  base/base2.cc
+
+[_Code_] /********************************************************
+
+[_Code_]  * Data Base -- A very simple database program to       *
+
+[_Code_]  *              look up names in a hard-coded list      *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Usage:                                               *
+
+[_Code_]  *      database [-S<file>]                             *
+
+[_Code_]  *                                                      *
+
+[_Code_]  *      -S<file>        Specify save file for           *
+
+[_Code_]  *                      debugging purposes              *
+
+[_Code_]  *                                                      *
+
+[_Code_]  *              Program will ask you for a name.        *
+
+[_Code_]  *              Enter the name; it will tell you whether*
+
+[_Code_]  *              the name is in the list.                *
+
+[_Code_]  *                                                      *
+
+[_Code_]  *              A blank name terminates the program.    *
+
+[_Code_]  ********************************************************/
+
+[_Code_] #include <iostream.h>
+
+[_Code_] #include <fstream.h>
+
+[_Code_] #include <stdlib.h>
+
+[_Code_]
+[_Code_] ofstream save_file;     // Save file if any
+
+[_Code_] int save_file_open = 0; // Save file open flag
+
+[_Code_]
+[_Code_] char *extended_getline(char *line, int size, istream &file);
+
+[_Code_]
+[_Code_] main(int argc, char *argv[])
+
+[_Code_] {
+
+[_Code_]     char name[80];      // A name to look up
+
+[_Code_]     char *save_file_name;  // Name of the save file
+
+[_Code_]
+[_Code_]     int lookup(char *name);// look up a name
+
+[_Code_]
+[_Code_]     while ((argc > 1) && (argv[1][0] == '-')) {
+
+[_Code_]         switch (argv[1][1]) {
+
+[_Code_]             case 'S':
+
+[_Code_]                 save_file_name = &argv[1][2];
+
+[_Code_]                 save_file.open(save_file_name, ios::out);
+
+[_Code_]                 if (save_file.bad())
+
+[_Code_]                     cerr << "Warning: Unable to open save file " <<
+
+[_Code_]                             save_file_name << '\n';
+
+[_Code_]                 else
+
+[_Code_]                     save_file_open = 1;
+
+[_Code_]                 break;
+
+[_Code_]             default:
+
+[_Code_]                 cerr << "Bad option: " << argv[1] << '\n';
+
+[_Code_]                 exit (8);
+
+[_Code_]         }
+
+[_Code_]         --argc;
+
+[_Code_]         ++argv;
+
+[_Code_]     }
+
+[_Code_]
+[_Code_]
+[_Code_]     while (1) {
+
+[_Code_]         cout << "Enter name: ";
+
+[_Code_]         extended_getline(name, sizeof(name), cin);
+
+[_Code_]
+[_Code_]         /* ... rest of program ... */
+
+[_Code_]    }
+
+[_Code_]    return (0);
+
+[_Code_] }
+
+Now we have a complete record of what the user typed. Looking at
+the input, we see that he typed:
+
+[_Code_] Sam
+
+[_Code_]  John
+
+The second name begins with a space and, although "John" is in the
+list, "<space>John" is not. In this case we found the error by
+inspecting the input; however, more complex programs have much
+more complex input. We could type all that in when debugging, or
+we could add another feature to extended_getline that would
+add a playback file to it. When the playback file is enabled, input
+will not be taken from the keyboard, but instead will be taken from
+the file.
+
+Example 17-4
+
+.  xgets/xgets2.cc
+
+[_Code_] #include <iostream.h>
+
+[_Code_] #include <fstream.h>
+
+[_Code_] #
+
+[_Code_] ofstream save_file;     // Save input in this file
+
+[_Code_] int save_file_open = 0; // Save file has been opened
+
+[_Code_] ifstream playback_file; // Playback data from this file
+
+[_Code_] int playback_file_open = 0;// Playback file open flag
+
+[_Code_] /********************************************************
+
+[_Code_]  * extended_getline -- get a line from the input file   *
+
+[_Code_]  *              and record it in a save file if needed  *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Parameters                                           *
+
+[_Code_]  *      line -- the line to read                        *
+
+[_Code_]  *      size -- sizeof(line) -- maximum number of       *
+
+[_Code_]  *                      characters to read              *
+
+[_Code_]  *      file -- file to read data from                  *
+
+[_Code_]  *              (normally stdin)                        *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Returns                                              *
+
+[_Code_]  *      NULL -- error or end-of-file in read            *
+
+[_Code_]  *      otherwise line (just like getline)              *
+
+[_Code_]  ********************************************************/
+
+[_Code_] istream &extended_getline(char *line, int size, istream &file)
+
+[_Code_] {
+
+[_Code_]     istream *result;            // Rresult of getline
+
+[_Code_]
+[_Code_]     if (playback_file_open) {
+
+[_Code_]         result = &playback_file.getline(line, size);
+
+[_Code_]         if (file == cin)
+
+[_Code_]             // Echo the input to the standard out
+
+[_Code_]             // so the user sees it
+
+[_Code_]             cout << line << '\n';
+
+[_Code_]     } else
+
+[_Code_]         result = &file.getline(line, size);
+
+[_Code_]
+[_Code_]     // Did someone ask for a save file?
+
+[_Code_]     if (save_file_open)
+
+[_Code_]         save_file << line << '\n';
+
+[_Code_]
+[_Code_]     return (*result);
+
+[_Code_] }
+
+We also add a playback option to the command line, -Pfile.: This
+allows us to automatically "type" the commands that caused the
+error. Our main program now looks like Example 17-5.
+
+Example 17-5
+
+. base/base3.cc
+
+[_Code_]
+[_Code_] /********************************************************
+
+[_Code_]  * Database -- A very simple database program to        *
+
+[_Code_]  *              look up names in a hard-coded list      *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Usage:                                               *
+
+[_Code_]  *      database [-S<file>]                             *
+
+[_Code_]  *                                                      *
+
+[_Code_]  *      -S<file>        Specify save file for           *
+
+[_Code_]  *                      debugging purposes              *
+
+[_Code_]  *                                                      *
+
+[_Code_]  *      -P<file>        Specify playback file for       *
+
+[_Code_]  *                      debugging or demonstration      *
+
+[_Code_]  *                                                      *
+
+[_Code_]  *              Program will ask you for a name.        *
+
+[_Code_]  *              Enter the name; it will tell you whether*
+
+[_Code_]  *              the name is in the list.                *
+
+[_Code_]  *                                                      *
+
+[_Code_]  *              A blank name terminates the program.    *
+
+[_Code_]  ********************************************************/
+
+[_Code_] #include <iostream.h>
+
+[_Code_] #include <fstream.h>
+
+[_Code_] #include <stdlib.h>
+
+[_Code_]
+[_Code_] ifstream save_file;     // Save file if any
+
+[_Code_] int save_file_open = 0; // Save file open flag
+
+[_Code_] ofstream playback_file; // Playback data
+
+[_Code_] int playback_file_open = 0; // True if playback in progress
+
+[_Code_]
+[_Code_] char *extended_getline(char *line, int size, istream &file);
+
+[_Code_]
+[_Code_] main(int argc, char *argv[])
+
+[_Code_] {
+
+[_Code_]     char name[80];      // A name to look up
+
+[_Code_]     char *save_file_name; // Name of the save file
+
+[_Code_]     char *playback_file_name; // Name of the playback file
+
+[_Code_]
+[_Code_]     int lookup(char *name); // lookup a name
+
+[_Code_]
+[_Code_]     while ((argc > 1) && (argv[1][0] == '-')) {
+
+[_Code_]         switch (argv[1][1]) {
+
+[_Code_]             case 'S':
+
+[_Code_]                 save_file_name = &argv[1][2];
+
+[_Code_]                 save_file.open(save_file_name, ios::out);
+
+[_Code_]                 if (save_file.bad())
+
+[_Code_]                     cerr << "Warning: Unable to open save file " <<
+
+[_Code_]                             save_file_name << '\n';
+
+[_Code_]                 else
+
+[_Code_]                     save_file_open = 1;
+
+[_Code_]                 break;
+
+[_Code_]             case 'P':
+
+[_Code_]                 playback_file_name = &argv[1][2];
+
+[_Code_]                 playback_file.open(playback_file_name, ios::in);
+
+[_Code_]                 if (playback_file.bad()) {
+
+[_Code_]                    cerr <<
+
+[_Code_]                         "Error: Unable to open playback file " <<
+
+[_Code_]                         playback_file_name << '\n';
+
+[_Code_]                     exit (8);
+
+[_Code_]                 }
+
+[_Code_]                 playback_file_open = 1;
+
+[_Code_]                 break;
+
+[_Code_]             default:
+
+[_Code_]                 cerr << "Bad option: " << argv[1] << '\n';
+
+[_Code_]                 exit (8);
+
+[_Code_]         }
+
+[_Code_]         --argc;
+
+[_Code_]         ++argv;
+
+[_Code_]     }
+
+[_Code_]
+[_Code_]
+[_Code_]     while (1) {
+
+[_Code_]         cout << "Enter name: ";
+
+[_Code_]         extended_getline(name, sizeof(name), cin);
+
+[_Code_]
+[_Code_]         /* ... rest of program ... */
+
+[_Code_]    }
+
+[_Code_]    return (0);
+
+[_Code_] }
+
+Now when a user calls up with an error report, we can tell him,
+"Try it again with the save-file feature enabled, and then send me a
+copy of your files." The user then runs the program and saves the
+input into the file save.txt.
+
+[_Code_] % database -Ssave.txt
+
+[_Code_] Enter name: Sam
+
+[_Code_] Sam is not in the list
+
+[_Code_] Enter name:  John
+
+[_Code_] John is in the list
+
+[_Code_] Enter name:
+
+He sends us the file save.txt and we run the error with the playback
+option enabled.
+
+[_Code_] % database -Psave.txt
+
+[_Code_] Enter name: Sam
+
+[_Code_] Sam is not in the list
+
+[_Code_] Enter name:  John
+
+[_Code_] John is in the list
+
+[_Code_] Enter name:
+
+We now have a reliable way of reproducing the problem. In many
+cases that's half the battle. Once you can reproduce the problem
+you can proceed to the next steps: finding it and fixing it.
+
+[_SIDEBAR_]  Once a programmer asked a user to send the
+programmer a copy of his floppy. An express package arrived the
+next day containing a Xerox¿ photocopy of the floppy. But the
+user was not completely computer-illiterate: He knew it was a
+two-sided floppy, so he had photocopied both sides.
+
+[_A_]  Serial Debugging
+
+Before you start debugging, save the old, "working" copy of your
+program in a safe place. (If you are using a source control system
+such as SCCS, RCS, or PVCS, your last working version should be
+checked in.) Many times while you are searching for a problem,
+you may find it necessary to try out different solutions or to add
+temporary debugging code. Sometimes you will find you've been
+barking up the wrong tree and need to start over. That's when the
+last working copy becomes invaluable.
+
+Once you have reproduced the problem, you must determine what
+caused it to happen. There are several methods for doing this.
+
+[_A_]  Divide and Conquer
+
+The divide and conquer method has already been briefly discussed
+in Chapter 6, Decision and Control Statements. It consists of putting
+in cout statements where you know the data is good (to make sure
+it really is good), where the data is bad, and several points in
+between. This way you can start zeroing in on the section of code
+that contains the error. More cout statements can further reduce the
+scope of the error until the bug is finally located.
+
+[_A_]  Debug-Only Code
+
+The divide-and-conquer method uses temporary cout statements.
+They are put in as needed and taken out after they are used. The
+pre-processor conditional-compilation directives can be used to put
+in and take out debugging code. For example:
+
+[_Code_] #ifdef DEBUG
+
+[_Code_]     cout << "Width " << width << " Height " << height << '\n';
+
+[_Code_] #endif /* DEBUG */
+
+The program can be compiled with DEBUG undefined for normal
+use so you can define it when debugging is needed.
+
+[_A_]  Debug Command-Line Switch
+
+Rather than using a compile-time switch to create a special version
+of the program, you can permanently include the debugging code
+and add a special program switch that will turn on debugging
+output. For example:
+
+[_Code_] if (debug)
+
+[_Code_]     cout << "Width " << width << " Height " << height << '\n';
+
+where debug is a variable set if -D is present on the command line.
+
+This has the advantage that only a single version of the program
+exists. One of the problems with "debug-only" code is that unless
+the code is frequently used, it can easily become stale and out of
+date. Frequently a programmer tries to find a bug only to discover
+that the debug-only code is out of date and needs fixing.
+
+Another advantage of the debug command-line switch is that the
+user can turn on this switch in the field, save the output, and send it
+to you for analysis. The runtime switch should be used in all cases
+instead of conditional compilation, unless there is some reason you
+do not want the customer to be able to get at the debugging
+information.
+
+Some programs use the concept of a debug level. Level 0 outputs
+only minimal debugging information, level 1 more information, and
+on up to level 9, which outputs everything.
+
+Another debugging technique can be seen in the Ghostscript
+program by Aladdin Enterprises. This program implements the idea
+of debugging letters. The command option -Zxxx sets the
+debugging flags for each type of diagnostic output wanted. For
+example, f is the code for the fill algorithm and p is the code for
+the path tracer. If I wanted to trace both these sections, I would
+specify -Zfp.
+
+The option is implemented by the following code:
+
+[_Code_] /*
+
+[_Code_]  * Even though we only put 1 zero, C++ will fill in the
+
+[_Code_]  * rest of the arrays with zeros
+
+[_Code_]  */
+
+[_Code_] char debug[128] = {0};    // The debugging flags
+
+[_Code_]
+
+[_Code_] main(argc, argv)
+
+[_Code_] int argc;
+
+[_Code_] char *argv[];
+
+[_Code_] {
+
+[_Code_]     while ((argc > 1) && (argv[1][0] == '-')) {
+
+[_Code_]         switch (argv[1][1]) {
+
+[_Code_]             /* .... normal switch .... */
+
+[_Code_]
+
+[_Code_]             // Debug switch
+
+[_Code_]             case 'Z':
+
+[_Code_]                 debug_ptr = &argv[1][2]
+
+[_Code_]                 // Loop for each letter
+
+[_Code_]                 while (*debug_ptr != '\0') {
+
+[_Code_]                     debug[*debug_ptr] = 1;
+
+[_Code_]                     ++debug_ptr;
+
+[_Code_]                 }
+
+[_Code_]                 break;
+
+[_Code_]         }
+
+[_Code_]         --argc;
+
+[_Code_]         ++argv;
+
+[_Code_]     }
+
+[_Code_]
+
+[_Code_]     /* Rest of program */
+
+[_Code_] }
+
+This is used inside the program by:
+
+[_Code_]     if (debug['p'])
+
+[_Code_]         cout << "Starting new path\n";
+
+Ghostscript is a large program (some 25,000 lines) and rather
+difficult to debug. This form of debugging allows the user to get a
+great deal of information easily.
+
+[_A_]  Going Through the Output
+
+Enabling debug printout is a nice way of getting information, but
+many times there is so much data that the information you want can
+easily get lost.
+
+C++ allows you to redirect what would normally go to the screen to
+a file through the use of the ">file" option. For example:
+
+[_Code_] buggy -D9 >tmp.out
+
+will run the program buggy with a high level of debug set and send
+the output to the file tmp.out.
+
+The text editor on your system also makes a good file browser. You
+can use its search capabilities to look for the information you want
+to find.
+
+[_A_]  Interactive Debuggers
+
+Most compiler manufacturers provide an interactive debugger. They
+give you the ability to stop the program at any point, examine and
+change variables, and "single-step" through the program. Because
+each debugger is different, a detailed discussion is not possible.
+
+However, we are going to discuss one debugger gdb. This program
+is available for many UNIX machines from the Free Software
+Foundation. Turbo-C++ has its own built-in debugger. Although the
+exact syntax used by your debugger may be different, the principles
+shown here will work for all debuggers.
+
+Basic GDB commands are:
+
+run
+Start execution of a program.
+
+break line-number
+Insert a breakpoint at the given line number. When a running program
+reaches a breakpoint, execution stops and control returns to the debugger.
+
+break function-name
+Insert a breakpoint at the first line of the named function. Commonly, the
+command break in main is used to stop execution at the beginning of the
+program.
+
+cont
+Continue execution after a breakpoint.
+
+print expression
+Display the value of an expression.
+
+step
+Execute a single line in the program. If the current statement calls a function,
+the function is single stepped.
+
+next
+Execute a single line in the program, but treat function calls as a single line.
+This command is used to skip over function calls.
+
+list
+List the source program.
+
+where
+Print the list of currently active functions.
+
+status
+Print a list of breakpoints.
+
+delete
+Remove a breakpoint.
+
+We have a program that should count the number of threes and
+sevens in a series of numbers. The problem is it keeps getting the
+wrong answer for the number of sevens. Our program is shown in
+Example 17-6.
+
+Example 17-6
+
+.  seven/count.cc
+
+[_Code_]  1 #include <iostream.h>
+
+[_Code_]  2 int seven_count;    /* Number of seven's in the data */
+
+[_Code_]  3 int data[5];        /* The data to count 3 and 7 in */
+
+[_Code_]  4 int three_count;    /* Number of threes in the data */
+
+[_Code_]  5
+
+[_Code_]  6 main() {
+
+[_Code_]  7     int index;  /* Index into the data */
+
+[_Code_]  8     void get_data(int data[]);
+
+[_Code_]  9
+
+[_Code_] 10     seven_count = 0;
+
+[_Code_] 11     three_count = 0;
+
+[_Code_] 12     get_data(data);
+
+[_Code_] 13
+
+[_Code_] 14     for (index = 1; index <= 5; ++index) {
+
+[_Code_] 15         if (data[index] == 3)
+
+[_Code_] 16             ++three_count;
+
+[_Code_] 17         if (data[index] == 7)
+
+[_Code_] 18          ++seven_count;
+
+[_Code_] 19     }
+
+[_Code_] 20     cout << "Threes " << three_count <<
+
+[_Code_] 21          " Sevens " << seven_count << '\n';
+
+[_Code_] 22     return (0);
+
+[_Code_] 23 }
+
+[_Code_] 24 /********************************************************
+
+[_Code_] 25  * get_data -- get 5 numbers from the command line   *
+
+[_Code_] 26  ********************************************************/
+
+[_Code_] 27 void get_data(int data[])
+
+[_Code_] 28 {
+
+[_Code_] 29     cout << "Enter 5 numbers\n";
+
+[_Code_] 30     cin >> data[1] >> data[2] >> data[3] >> data[4] >> data[5];
+
+[_Code_] 31 }
+
+When we run this program with the data 3 7 3 0 2 the results are:
+
+[_Code_] Threes 3 Sevens 3
+
+We start by invoking the debugger (GDB) with the name of the
+program we are going to debug (count). The debugger initializes,
+outputs the prompt (gdb), and waits for a command.
+
+[_Code_] % gdb count
+
+[_Code_] GDB is free software and you are welcome to distribute copies of it
+
+[_Code_] under certain conditions; type "show copying" to see the conditions.
+
+[_Code_] There is absolutely no warranty for GDB; type "show warranty" for detail
+s.
+
+[_Code_] GDB 4.12 (m68k-sun-sunos4.0.3),
+
+[_Code_] Copyright 1994 Free Software Foundation, Inc...
+
+[_Code_] (gdb)
+
+We don't know where the variable is getting changed, so we'll start
+at the beginning and work our way through until we get an error.
+At every step we'll display the variable seven_count just to make
+sure it's okay.
+
+We need to stop the program at the beginning so we can single-
+step through it. The command break main tells GDB to set a
+breakpoint at the first instruction of the function main. The
+command run tells GDBb to start the program, which will run until
+it hits the first breakpoint.
+
+[_Code_] (gdb) break main
+
+[_Code_] Breakpoint 1 at 0x22c2: file count.cc, line 10.
+
+[_Code_] (gdb)
+
+The number 1 is used by GDB to identify the breakpoint. Now we
+need to start the program:
+
+[_Code_] (gdb) run
+
+[_Code_] Starting program: /usr/sdo/count/count
+
+[_Code_]
+
+[_Code_] Breakpoint 1, main () at count.cc:10
+
+[_Code_] 10          seven_count = 0;
+
+[_Code_] (gdb)
+
+The message Breakpoint 1, main... indicates that the program
+encountered a breakpoint and has now turned control over to
+debug.
+
+We have reached the point where seven_count is initialized. The
+command next will execute a single statement, treating function
+calls as one statement. (The names of the command for your
+debugger may be different.) We go past the initialization and check
+to see whether it worked:
+
+[_Code_] (gdb) next
+
+[_Code_] 11          three_count = 0;
+
+[_Code_] (gdb) print seven_count
+
+[_Code_] $1 = 0
+
+[_Code_] (gdb)
+
+It did. We try the next few lines, checking all the time:
+
+[_Code_] (gdb) next
+
+[_Code_] 12          get_data(data);
+
+[_Code_] (gdb) print seven_count
+
+[_Code_] $2 = 0
+
+[_Code_] (gdb) next
+
+[_Code_] Enter 5 numbers
+
+[_Code_] 3 7 3 0 2
+
+[_Code_] 14          for (index = 1; index <= 5; ++index) {
+
+[_Code_] (gdb) print seven_count
+
+[_Code_] $3 = 2
+
+[_Code_] (gdb)
+
+seven_count somehow changed the value to 2. The last statement
+we executed was get_data(data); so something is going on in
+that function. We add a breakpoint at the beginning of get_data,
+get rid of the one at main, and start the program over with the run
+command:
+
+[_Code_] (gdb) break get_data
+
+[_Code_] Breakpoint 2 at 0x23b2: file count.cc, line 29.
+
+[_Code_] (gdb) info breakpoints
+
+[_Code_] Num Type           Disp Enb Address    What
+
+[_Code_] 1   breakpoint     keep y   0x000022c2 in main at count.cc:10
+
+[_Code_] 2   breakpoint     keep y   0x000023b2 in get_data(int *) at count.cc:29
+
+[_Code_] (gdb) delete 1
+
+[_Code_] (gdb) run
+
+[_Code_] The program being debugged has been started already.
+
+[_Code_] Start it from the beginning? (y or n) Y
+
+[_Code_] Starting program: /usr/sdo/count/count
+
+[_Code_] Breakpoint 2, get_data (data=0x208f8) at count.cc:29
+
+[_Code_] (gdb)
+
+We now start single-stepping again until we find the error:
+
+[_Code_] Breakpoint 2, get_data (data=0x208f8) at count.cc:29
+
+[_Code_] 29          cout << "Enter 5 numbers\n";
+
+[_Code_] (gdb) print seven_count
+
+[_Code_] $5 = 0
+
+[_Code_] (gdb) next
+
+[_Code_] 30          cin >> data[1] >> data[2] >> data[3] >> data[4] >> data[5];
+
+[_Code_] (gdb) print seven_count
+
+[_Code_] $6 = 0
+
+[_Code_] (gdb) next
+
+[_Code_] Enter 5 numbers
+
+[_Code_] 3 7 3 0 2
+
+[_Code_] 31      }
+
+[_Code_] (gdb) print seven_count
+
+[_Code_] $7 = 2
+
+[_Code_] (gdb) list 22
+
+[_Code_] 22          return (0);
+
+[_Code_] 23      }
+
+[_Code_] 24      /********************************************************
+
+[_Code_] 25       * get_data -- get 5 numbers from the command line      *
+
+[_Code_] 26       ********************************************************/
+
+[_Code_] 27      void get_data(int data[])
+
+[_Code_] 28      {
+
+[_Code_] 29          cout << "Enter 5 numbers\n";
+
+[_Code_] 30          cin >> data[1] >> data[2] >> data[3] >> data[4] >> data[5];
+
+[_Code_] 31      }
+
+At line 30 the data was good, but when we reached line 31, the
+data was bad, so the error is located at line 30 of the program, the
+cin. We've narrowed the problem down to one statement. By
+inspection we can see that we are using data[5], an illegal
+member of the array data.
+
+But why does seven_count go bad? Since data is only five
+elements long, there is no data[5]. However, the cin >>
+data[5] has to put the data someplace, so it decided to put it in a
+random memory location, in this case seven_count.
+
+[_A_]  Debugging a Binary Search
+
+The binary search algorithm is fairly simple. You want to see
+whether a given number is in an ordered list. Check your number
+against the one in the middle of the list. If it is the number, you
+were lucky - stop. If your number was bigger, then you might find
+it in the top half of the list. Try the middle of the top half. If it was
+smaller, try the bottom half. Keep trying and dividing the list in half
+until you find the number or the list gets down to a single number.
+
+[_XREF Example 17-7_] uses a binary search to see whether a
+number can be found in the file numbers.dat.
+
+Example 17-7
+
+.  search/search0.cc
+
+[_Code_] /********************************************************
+
+[_Code_]  * Search -- search a set of numbers                    *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Usage:                                               *
+
+[_Code_]  *      search                                          *
+
+[_Code_]  *              You will be asked numbers to look up    *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Files:                                               *
+
+[_Code_]  *      numbers.dat -- numbers 1 per line to search     *
+
+[_Code_]  *             (numbers must be ordered)                *
+
+[_Code_]  *******************************************************/
+
+[_Code_] #include <iostream.h>
+
+[_Code_] #include <fstream.h>
+
+[_Code_] #include <stdlib.h>
+
+[_Code_] #include <stdio.h>
+
+[_Code_]
+[_Code_] const int MAX_NUMBERS = 1000;   // Max numbers in file
+
+[_Code_] const char *const DATA_FILE = "numbers.dat"; // File with numbers
+
+[_Code_]
+[_Code_] int data[MAX_NUMBERS];  // Array of numbers to search
+
+[_Code_] int max_count;          // Number of valid elements in data
+
+[_Code_] #
+
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     ifstream in_file;   // Input file
+
+[_Code_]     int middle;         // Middle of our search range
+
+[_Code_]     int low, high;      // Upper/lower bound
+
+[_Code_]     int search;         // Number to search for
+
+[_Code_]
+[_Code_]     in_file.open(DATA_FILE, ios::in);
+
+[_Code_]     if (in_file.bad()) {
+
+[_Code_]         cerr << "Error: Unable to open " << DATA_FILE << '\n';
+
+[_Code_]         exit (8);
+
+[_Code_]     }
+
+[_Code_]
+[_Code_]     /*
+
+[_Code_]      * Read in data
+
+[_Code_]      */
+
+[_Code_]
+[_Code_]     max_count = 0;
+
+[_Code_]     while (1) {
+
+[_Code_]         char line[30];  // Line from the input file
+
+[_Code_]
+[_Code_]         if (in_file.eof())
+
+[_Code_]             break;
+
+[_Code_]
+[_Code_]         in_file.getline(line, sizeof(line));
+
+[_Code_]
+[_Code_]         sscanf(line, "%d", data[max_count]);
+
+[_Code_]         if (data[max_count] == -1)
+
+[_Code_]             break;
+
+[_Code_]
+[_Code_]         ++max_count;
+
+[_Code_]     }
+
+[_Code_]
+[_Code_]     while (1) {
+
+[_Code_]         cout << "Enter number to search for or -1 to quit:" ;
+
+[_Code_]         cin >> search;
+
+[_Code_]
+[_Code_]         if (search == -1)
+
+[_Code_]             break;
+
+[_Code_]
+[_Code_]         low = 0;
+
+[_Code_]         high = max_count;
+
+[_Code_]
+[_Code_]         while (1) {
+
+[_Code_]             middle = (low + high) / 2;
+
+[_Code_]
+[_Code_]             if (data[middle] == search) {
+
+[_Code_]                 cout << "Found at index " << middle << '\n';
+
+[_Code_]             }
+
+[_Code_]
+[_Code_]             if (low == high) {
+
+[_Code_]                 cout << "Not found\n";
+
+[_Code_]                 break;
+
+[_Code_]             }
+
+[_Code_]
+[_Code_]             if (data[middle] < search)
+
+[_Code_]                 low = middle;
+
+[_Code_]             else
+
+[_Code_]                 high = middle;
+
+[_Code_]         }
+
+[_Code_]    }
+
+[_Code_]    return (0);
+
+[_Code_] }
+
+Our data file is:
+
+numbers.dat
+
+[_Code_] 4
+
+[_Code_] 6
+
+[_Code_] 14
+
+[_Code_] 16
+
+[_Code_] 17
+
+[_Code_] -1
+
+When we run this program in UNIX, the results are:
+
+[_Code_] % search
+
+[_Code_] Segmentation fault (core dumped)
+
+When we run this program on MS-DOS, the system locks up and
+we have to hit the reset switch. If the program is run in Windows
+we get an application error (if we're lucky).
+
+Either way this is not good. It means something went wrong in our
+program and the program tried to read memory that wasn't there.
+The debugger GDB can read this file and help us determine what
+happened.
+
+[_Code_] % gdb search
+
+[_Code_] GDB is free software and you are welcome to distribute copies of it
+
+[_Code_] under certain conditions; type "show copying" to see the conditions.
+
+[_Code_] There is absolutely no warranty for GDB; type "show warranty" for detail
+s.
+
+[_Code_] GDB 4.12 (m68k-sun-sunos4.0.3),
+
+[_Code_] Copyright 1994 Free Software Foundation, Inc...
+
+[_Code_] (gdb) run
+
+[_Code_] Starting program: /usr/sdo/search/search
+
+[_Code_]
+
+[_Code_] Program received signal SIGSEGV, Segmentation fault.
+
+[_Code_] 0xec46320 in number ()
+
+[_Code_] (gdb)
+
+The debugger tells us we have been killed by a segmentation fault
+generated from the procedure. But we don't have a procedure
+number! The routine must belong to the C++ library.
+
+We now use the where command to find out which function called
+which function (also known as a stack trace):
+
+[_Code_] (gdb) where
+
+[_Code_] #0  0xec46320 in number ()
+
+[_Code_] #1  0xec45cc2 in _doscan ()
+
+[_Code_] #2  0xec45b34 in sscanf ()
+
+[_Code_] #3  0x2400 in main () at search.cc:48
+
+[_Code_] (gdb)
+
+The current function is printed first, then the function that called it,
+and so on until we reach the outer function main. From this we see
+that number was called by _doscan, which was called by sscanf.
+We recognize sscanf as a library routine. The other functions must
+be subroutines called by sscanf. The last function that had control
+was the call of sscanf, which was made from line 48 of main.
+
+Now we use the list command to take a look at the source for
+this line:
+
+[_Code_] (gdb) list 48
+
+[_Code_] 43              if (in_file.eof())
+
+[_Code_] 44                  break;
+
+[_Code_] 45
+
+[_Code_] 46              in_file.getline(line, sizeof(line));
+
+[_Code_] 47
+
+[_Code_] 48              sscanf(line, "%d", data[max_count]);
+
+[_Code_] 49              if (data[max_count] == -1)
+
+[_Code_] 50                  break;
+
+[_Code_] 51
+
+[_Code_] 52              ++max_count;
+
+[_Code_] (gdb) quit
+
+[_Code_] The program is running.  Quit anyway (and kill it)? (y or n) Y
+
+This is the line that caused the problem.
+
+Another way of finding the problem is to single-step through the
+program until the error occurs. First list a section of the program to
+find a convenient place to put the breakpoint, and then start the
+execution and single-step process.
+
+[_Code_] Script started on Mon Oct 31 10:07:19 1994
+
+[_Code_] % gdb search
+
+[_Code_] GDB is free software and you are welcome to distribute copies of it
+
+[_Code_] under certain conditions; type "show copying" to see the conditions.
+
+[_Code_] There is absolutely no warranty for GDB; type "show warranty" for detail
+s.
+
+[_Code_] GDB 4.12 (m68k-sun-sunos4.0.3),
+
+[_Code_] Copyright 1994 Free Software Foundation, Inc...
+
+[_Code_] (gdb) list main
+
+[_Code_] 18      const char *const DATA_FILE = "numbers.dat";
+// File with numbers
+
+[_Code_] 19
+
+[_Code_] 20      int data[MAX_NUMBERS];  // Array of numbers to search
+
+[_Code_] 21      int max_count;          // Number of valid elements in data
+
+[_Code_] 22      main()
+
+[_Code_] 23      {
+
+[_Code_] 24          ifstream in_file;   // Input file
+
+[_Code_] 25          int middle;         // Middle of our search range
+
+[_Code_] 26          int low, high;      // Upper/lower bound
+
+[_Code_] 27          int search;         // Number to search for
+
+[_Code_] (gdb) break main
+
+[_Code_] Breakpoint 1 at 0x2318: file search.cc, line 24.
+
+[_Code_] (gdb) run
+
+[_Code_] Starting program: /usr/sdo/search/search
+
+[_Code_]
+
+[_Code_] Breakpoint 1, main () at search.cc:24
+
+[_Code_] 24          ifstream in_file;   // Input file
+
+[_Code_] (gdb) step
+
+[_Code_] 29          in_file.open(DATA_FILE, ios::in);
+
+[_Code_] (gdb) step
+
+[_Code_] 30          if (in_file.bad()) {
+
+[_Code_] (gdb) step
+
+[_Code_] 39          max_count = 0;
+
+[_Code_] (gdb) step
+
+[_Code_] 43              if (in_file.eof())
+
+[_Code_] (gdb) step
+
+[_Code_] 46              in_file.getline(line, sizeof(line));
+
+[_Code_] (gdb) step
+
+[_Code_] 48              sscanf(line, "%d", data[max_count]);
+
+[_Code_] (gdb) step
+
+[_Code_]
+
+[_Code_] Program received signal SIGSEGV, Segmentation fault.
+
+[_Code_] 0xec46320 in number ()
+
+[_Code_] (gdb) quit
+
+[_Code_] The program is running.  Quit anyway (and kill it)? (y or n) y
+
+This method, too, points at line 48 as the culprit. On inspection we
+notice that we forgot to put an ampersand (&) in front of the
+variable for sscanf. So we change line 48 from:
+
+[_Code_]            sscanf(line, "%d", data[max_count]);
+
+to:
+
+[_Code_]            sscanf(line, "%d", &data[max_count]);
+
+and try again.
+
+[_NOTE_]  You might wonder why we use the function
+sscanf when the line:
+
+[_Code_]     in_file >> data[max_data];
+
+[_NOTE_]  performs the same function.
+
+[_NOTE_]  The answer is simple. We used sscanf to cause
+problems. Without the pointer error we would have nothing
+to debug. The in_file statement is more reliable, and
+reliable code has no place in a chapter on debugging.
+
+The first number in our list is 4, so we try it. This time our output
+looks like:
+
+[_Code_] Enter number to search for or -1 to quit: 4
+
+[_Code_] Found at index 0
+
+[_Code_] Found at index 0
+
+[_Code_] Not found
+
+[_Code_] Enter number to search for or -1 to quit: ^C
+
+The program should find the number, let us know it's at index 0,
+and then ask for another number. Instead we get two found
+messages and one not found message. We know that everything
+is running smoothly up to the time we get the first found message.
+After that things go downhill.
+
+Getting back into the debugger, we use the list command to
+locate the found message and put a breakpoint there.
+
+[_Code_] % gdb search
+
+[_Code_] GDB is free software and you are welcome to distribute copies of it
+
+[_Code_] under certain conditions; type "show copying" to see the conditions.
+
+[_Code_] There is absolutely no warranty for GDB; type "show warranty" for detail
+s.
+
+[_Code_] GDB 4.12 (m68k-sun-sunos4.0.3),
+
+[_Code_] Copyright 1994 Free Software Foundation, Inc...
+
+[_Code_] (gdb) list 66,77
+
+[_Code_] 66              while (1) {
+
+[_Code_] 67                  middle = (low + high) / 2;
+
+[_Code_] 68
+
+[_Code_] 69                  if (data[middle] == search) {
+
+[_Code_] 70                      cout << "Found at index " << middle << '\n';
+
+[_Code_] 71                  }
+
+[_Code_] 72
+
+[_Code_] 73                  if (low == high) {
+
+[_Code_] 74                      cout << "Not found\n";
+
+[_Code_] 75                      break;
+
+[_Code_] 76                  }
+
+[_Code_] 77
+
+[_Code_] (gdb) break 70
+
+[_Code_] Breakpoint 1 at 0x249e: file search.cc, line 70.
+
+[_Code_] (gdb) run
+
+[_Code_] Starting program: /usr/sdo/search/search
+
+[_Code_] Enter number to search for or -1 to quit: 4
+
+[_Code_]
+
+[_Code_] Breakpoint 1, main () at search.cc:70
+
+[_Code_] 70                      cout << "Found at index " << middle << '\n';
+
+[_Code_] (gdb) step
+
+[_Code_] Found at index 0
+
+[_Code_] 73                  if (low == high) {
+
+[_Code_] (gdb) step
+
+[_Code_] 78                  if (data[middle] < search)
+
+[_Code_] (gdb) step
+
+[_Code_] 81                      high = middle;
+
+[_Code_] (gdb) step
+
+[_Code_] 67                  middle = (low + high) / 2;
+
+[_Code_] (gdb) step
+
+[_Code_] 69                  if (data[middle] == search) {
+
+[_Code_] (gdb) step
+
+[_Code_] 70                      cout << "Found at index " << middle << '\n';
+
+[_Code_] (gdb) step
+
+[_Code_] Found at index 0
+
+[_Code_] 73                  if (low == high) {
+
+[_Code_] (gdb) quit
+
+[_Code_] The program is running.  Quit anyway (and kill it)? (y or n) y
+
+The program doesn't exit the loop. Instead it continues with the
+search. Because the number has already been found, this search
+results in strange behavior. We are missing a break after the cout.
+
+We need to change:
+
+[_Code_]     if (data[middle] == search) {
+
+[_Code_]         cout << "Found at index " << middle << '\n';
+
+[_Code_]     }
+
+to:
+
+[_Code_]     if (data[middle] == search) {
+
+[_Code_]         cout << "Found at index " << middle << '\n';
+
+[_Code_]         break;
+
+[_Code_]     }
+
+Making this fix, we try the program again:
+
+[_Code_] % search
+
+[_Code_] Enter number to search for or -1 to quit: 4
+
+[_Code_] Found at index 0
+
+[_Code_] Enter number to search for or -1 to quit: 6
+
+[_Code_] Found at index 1
+
+[_Code_] Enter number to search for or -1 to quit: 3
+
+[_Code_] Not found
+
+[_Code_] Enter number to search for or -1 to quit: 5
+
+[_Code_] program runs forever (or until we abort it)
+
+We have a runaway program. This time instead of setting a
+breakpoint we just start running the program. After a few seconds
+pass and we believe that we are stuck in the infinite loop, we stop
+the program with a control-C (^C). Normally this would abort the
+program and return us to the shell prompt. Since we are running
+with the debugger, it returns control to GDB.
+
+[_Code_] % gdb search
+
+[_Code_] GDB is free software and you are welcome to distribute copies of it
+
+[_Code_] under certain conditions; type "show copying" to see the conditions.
+
+[_Code_] There is absolutely no warranty for GDB; type "show warranty" for detail
+s.
+
+[_Code_] GDB 4.12 (m68k-sun-sunos4.0.3),
+
+[_Code_] Copyright 1994 Free Software Foundation, Inc...
+
+[_Code_] (gdb) run
+
+[_Code_] Starting program: /usr/sdo/search/search
+
+[_Code_] Enter number to search for or -1 to quit: 5
+
+[_Code_] ^C
+
+[_Code_] Program received signal SIGINT, Interrupt.
+
+[_Code_] 0x2500 in main () at search.cc:79
+
+[_Code_] 79                  if (data[middle] < search)
+
+Now we can use the single-step command to step through the
+infinite loop, looking at key values along the way.
+
+[_Code_] 79                  if (data[middle] < search)
+
+[_Code_] (gdb) print middle
+
+[_Code_] $1 = 0
+
+[_Code_] (gdb) print data[middle]
+
+[_Code_] $2 = 4
+
+[_Code_] (gdb) print search
+
+[_Code_] $3 = 5
+
+[_Code_] (gdb) step
+
+[_Code_] 80                      low = middle;
+
+[_Code_] (gdb) step
+
+[_Code_] 67                  middle = (low + high) / 2;
+
+[_Code_] (gdb) step
+
+[_Code_] 69                  if (data[middle] == search) {
+
+[_Code_] (gdb) step
+
+[_Code_] 74                  if (low == high) {
+
+[_Code_] (gdb) step
+
+[_Code_] 79                  if (data[middle] < search)
+
+[_Code_] (gdb) step
+
+[_Code_] 80                      low = middle;
+
+[_Code_] (gdb) step
+
+[_Code_] 67                  middle = (low + high) / 2;
+
+[_Code_] (gdb) step
+
+[_Code_] 69                  if (data[middle] == search) {
+
+[_Code_] (gdb) step
+
+[_Code_] 74                  if (low == high) {
+
+[_Code_] (gdb) step
+
+[_Code_] 79                  if (data[middle] < search)
+
+[_Code_] (gdb) step
+
+[_Code_] 80                      low = middle;
+
+[_Code_] (gdb) step
+
+[_Code_] 67                  middle = (low + high) / 2;
+
+[_Code_] (gdb) step
+
+[_Code_] 69                  if (data[middle] == search) {
+
+[_Code_] (gdb) step
+
+[_Code_] 74                  if (low == high) {
+
+[_Code_] (gdb) step
+
+[_Code_] 79                  if (data[middle] < search)
+
+[_Code_] (gdb) step
+
+[_Code_] 80                      low = middle;
+
+[_Code_] (gdb) step
+
+[_Code_] 67                  middle = (low + high) / 2;
+
+[_Code_] (gdb) step
+
+[_Code_] 69                  if (data[middle] == search) {
+
+[_Code_] (gdb) print low
+
+[_Code_] $5 = 0
+
+[_Code_] (gdb) print middle
+
+[_Code_] $6 = 0
+
+[_Code_] (gdb) print high
+
+[_Code_] $7 = 1
+
+[_Code_] (gdb) print search
+
+[_Code_] $8 = 5
+
+[_Code_] (gdb) print data[0]
+
+[_Code_] $9 = 4
+
+[_Code_] (gdb) print data[1]
+
+[_Code_] $10 = 6
+
+[_Code_] (gdb) quit
+
+[_Code_] The program is running.  Quit anyway (and kill it)? (y or n) y
+
+The problem is that we have reached a point where:
+
+[_Code_] low = 0  middle = 0  high = 1
+
+The item we are searching for falls exactly between elements 0 and
+1. Our algorithm has an off-by-one error. Obviously the middle
+element does not match. If it did we'd exit with a found at
+message. So there is no point including the middle element in our
+new search range. Our code to adjust the interval is:
+
+[_Code_]             if (data[middle] < search)
+
+[_Code_]                 low = middle;
+
+[_Code_]             else
+
+[_Code_]                 high = middle;
+
+It should be:
+
+[_Code_]             if (data[middle] < search)
+
+[_Code_]                 low = middle + 1;
+
+[_Code_]             else
+
+[_Code_]                 high = middle - 1;
+
+The full version of the corrected program is shown in Example 17-8.
+
+Example 17-8
+
+.  search/search4.cc
+
+[_Code_] /********************************************************
+
+[_Code_]  * Search -- search a set of numbers                   *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Usage:                                               *
+
+[_Code_]  *      search                                          *
+
+[_Code_]  *              You will be asked numbers to look up    *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Files:                                               *
+
+[_Code_]  *      numbers.dat -- numbers 1 per line to search     *
+
+[_Code_]  *                      (numbers must be ordered)       *
+
+[_Code_]  ********************************************************/
+
+[_Code_] #include <iostream.h>
+
+[_Code_] #include <fstream.h>
+
+[_Code_] #include <stdlib.h>
+
+[_Code_] #include <stdio.h>
+
+[_Code_]
+[_Code_] const int MAX_NUMBERS = 1000;   // Max numbers in file
+
+[_Code_] const char *const DATA_FILE = "numbers.dat"; // File with numbers
+
+[_Code_]
+[_Code_] int data[MAX_NUMBERS];  // Array of numbers to search
+
+[_Code_] int max_count;          // Number of valid elements in data
+
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     ifstream in_file;   // Input file
+
+[_Code_]     int middle;         // Middle of our search range
+
+[_Code_]     int low, high;      // Upper/lower bound
+
+[_Code_]     int search;         // Number to search for
+
+[_Code_]
+[_Code_]     in_file.open(DATA_FILE, ios::in);
+
+[_Code_]     if (in_file.bad()) {
+
+[_Code_]         cerr << "Error: Unable to open " << DATA_FILE << '\n';
+
+[_Code_]         exit (8);
+
+[_Code_]     }
+
+[_Code_]
+[_Code_]     /*
+
+[_Code_]      * Read in data
+
+[_Code_]      */
+
+[_Code_]
+[_Code_]     max_count = 0;
+
+[_Code_]
+[_Code_]     while (1) {
+
+[_Code_]         char line[30];  // Line from the input file
+
+[_Code_]
+[_Code_]         if (in_file.eof())
+
+[_Code_]             break;
+
+[_Code_]
+[_Code_]         in_file.getline(line, sizeof(line));
+
+[_Code_]
+[_Code_]         sscanf(line, "%d", &data[max_count]);
+
+[_Code_]         if (data[max_count] == -1)
+
+[_Code_]             break;
+
+[_Code_]
+[_Code_]         ++max_count;
+
+[_Code_]     }
+
+[_Code_]
+[_Code_]     while (1) {
+
+[_Code_]         cout << "Enter number to search for or -1 to quit:" ;
+
+[_Code_]         cin >> search;
+
+[_Code_]
+[_Code_]         if (search == -1)
+
+[_Code_]             break;
+
+[_Code_]
+[_Code_]         low = 0;
+
+[_Code_]         high = max_count;
+
+[_Code_]
+[_Code_]         while (1) {
+
+[_Code_]             if (low >= high) {
+
+[_Code_]                 cout << "Not found\n";
+
+[_Code_]                 break;
+
+[_Code_]             }
+
+[_Code_]             middle = (low + high) / 2;
+
+[_Code_]
+[_Code_]             if (data[middle] == search) {
+
+[_Code_]                 cout << "Found at index " << middle << '\n';
+
+[_Code_]                 break;
+
+[_Code_]             }
+
+[_Code_]
+[_Code_]             if (data[middle] < search)
+
+[_Code_]                 low = middle + 1;
+
+[_Code_]             else
+
+[_Code_]                 high = middle - 1;
+
+[_Code_]         }
+
+[_Code_]    }
+
+[_Code_]    return (0);
+
+[_Code_] }
+
+Interactive debuggers work well for most programs. Sometimes they
+need a little help. Consider [_XREF Example 17-9_]. We try to debug
+it and find it fails when point_number is 735. We want to put a
+breakpoint before the calculation is made. When the debugger
+inserts a breakpoint into a program, the program will execute
+normally until it hits the breakpoint, and then control will return to
+the debugger. This allows the user to examine and change variables
+as well as perform other debugging commands. When a cont
+command is typed, the program will continue execution as though
+nothing happened. The problem is that there are 734 points before
+the one we want, and we don't want to stop for each of them.
+
+Example 17-9
+
+.  debug/cstop.cc
+
+[_Code_] float point_color(int point_number)
+
+[_Code_] {
+
+[_Code_]     float correction;           // color correction factor
+
+[_Code_]     extern float red, green, blue;// Current colors
+
+[_Code_]
+[_Code_]     // Lookup color correction
+
+[_Code_]     extern lookup(int point_number);
+
+[_Code_]
+[_Code_]     correction = lookup(point_number);
+
+[_Code_]     return (red*correction * 100.0 +
+
+[_Code_]             blue*correction * 10.0 +
+
+[_Code_]             green*correction);
+
+[_Code_] }
+
+How do we force the debugger to stop only when point_
+number == 735? We can do this by adding the following temporary
+code:
+
+[_Code_] 48:    if (point_number == 735)  /* ### Temp code ### */
+
+[_Code_] 49:        point_number = point_number;   /* ### Line to stop on ### */
+
+Line 49 does nothing useful except serve as a line that the debugger
+can stop on. We can put a breakpoint on that line with the
+command break 49. The program will process the first 734 points,
+and then execute line 49, hitting the breakpoint. (Some debuggers
+have a conditional breakpoint. The advanced GDB command
+break 49 if part_number == 735 would also work, however,
+your debugger may not have such advanced features.)
+
+[_A_]  Runtime Errors
+
+Runtime errors are usually the easiest to fix. Some types of runtime
+errors are segmentation violation, stack overflow, and divide by 0.
+
+Segmentation violation
+This error indicates that the program tried to de-reference a pointer
+containing a bad value.
+
+Stack overflow
+The program tried to use too many temporary variables. Sometimes this
+means the program is too big or using too many big temporary arrays, but
+most of the time this is due to infinite recursion problems. Almost all UNIX
+systems automatically check for this error. Turbo-C++ will check for stack
+overflow only if the compile time option -N is used.
+
+Divide by 0
+Divide by 0 is an obvious error. UNIX masks the problem by reporting an
+integer divide by zero with the error message Floating exception (core
+dumped).
+
+In all cases, program execution will be stopped. In UNIX, an image
+of the running program, called a core file, is written out. This file
+can be analyzed by the debugger to determine why the program
+died. Our first run of [_XREF Example 17-7_] resulted in a core
+dump. (One of the problems with core dumps is that the core files
+are very big and can fill up a disk quickly.)
+
+One problem with runtime errors is that when they occur, program
+execution stops immediately. The buffers for buffered files are not
+flushed. This can lead to some unexpected surprises. Consider
+Example 17-10.
+
+Example 17-10
+
+.  debug/flush.cc
+
+[_Code_] #include <iostream.h>
+
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     int i, j;    /* Two random integers */
+
+[_Code_]
+[_Code_]     i = 1;
+
+[_Code_]     j = 0;
+
+[_Code_]     cout << "Starting\n";
+
+[_Code_]     cout << "Before divide...";
+
+[_Code_]     i = i / j;  // Divide-by-zero error
+
+[_Code_]     cout << "After\n";
+
+[_Code_]     return(0);
+
+[_Code_] }
+
+When run, this program outputs:
+
+[_Code_] Starting
+
+[_Code_] Floating exception (core dumped)
+
+This might lead you to think the divide had never started, when in
+fact it had. What happened to the message "Before divide..."? The
+cout statement executed, and put the message in a buffer, and then
+the program died. The buffer never got a chance to be emptied.
+
+By putting explicit flush-buffer commands inside the code, we get a
+truer picture of what is happening, as shown in [_XREF
+Example 17-11_].
+
+Example 17-11
+
+.  debug/flush2.cc
+
+[_Code_] #include <iostream.h>
+
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     int i, j;    /* Two random integers */
+
+[_Code_]
+[_Code_]     i = 1;
+
+[_Code_]     j = 0;
+
+[_Code_]     cout << "Starting\n";
+
+[_Code_]     cout.flush();
+
+[_Code_]     cout << "Before divide...";
+
+[_Code_]     cout.flush();
+
+[_Code_]     i = i / j;  // Divide-by-zero error
+
+[_Code_]     cout << "After\n";
+
+[_Code_]     cout.flush();
+
+[_Code_]     return(0);
+
+[_Code_] }
+
+The flush statement makes the I/O less efficient, but more current.
+
+[_A_]  The Confessional Method of Debugging
+
+The confessional method of debugging is one by which the
+programmer explains his program to someone: an interested party,
+an uninterested party, a wall-it doesn't matter whom he explains it
+to as long he talks about it.
+
+A typical confessional session goes like this:
+
+"Hey, Bill, could you take a look at this? My program has a bug in
+it. The output should be 8.0 and I'm getting -8.0. The output is
+computed using this formula - and I've checked out the payment
+value and rate and the date must be correct, unless there is
+something wrong with the leap-year code, which-Thank you Bill,
+you've found my problem."
+
+Bill never said a word.
+
+This type of debugging is also called a walkthrough. Getting other
+people involved brings a fresh point of view to the process, and
+frequently other people can spot problems you have overlooked.
+
+[_A_]  Optimization
+
+And now a word on optimization: Don't. Most programs do not
+need to be optimized. They run fast enough. Who cares whether an
+interactive program takes 0.5 seconds to start up instead of 0.2?
+
+To be fair, there are a lot of slow programs out there that can be
+sped up. This is usually done not by the simple optimization steps
+shown in this chapter, but by replacing poorly designed core
+algorithms with more efficient ones.
+
+For a well-written program, the simplest way to get your program to
+run faster is to get a faster computer. Many times it is cheaper to
+buy a more powerful machine than it is to optimize a program,
+because you may introduce new errors into your code. Don't expect
+miracles from optimization. Usually most programs can only be
+sped up 10 percent to 20 percent.
+
+[_XREF Example 17-12_] initializes a matrix (two-dimensional array).
+
+Example 17-12
+
+.  matrix/matrix1.cc
+
+[_Code_] const int X_SIZE = 60;
+
+[_Code_] const int Y_SIZE = 30;
+
+[_Code_]
+[_Code_] int matrix[X_SIZE][Y_SIZE];
+
+[_Code_]
+[_Code_] void init_matrix(void)
+
+[_Code_] {
+
+[_Code_]     int x, y;    // Current element to initialize
+
+[_Code_]
+[_Code_]     for (x = 0; x < X_SIZE; ++x) {
+
+[_Code_]         for (y = 0; y < Y_SIZE; ++y) {
+
+[_Code_]             matrix[x][y] = -1;
+
+[_Code_]         }
+
+[_Code_]     }
+
+[_Code_] }
+
+How can this function be optimized? First we notice we are using
+two local variables. By using the qualifier register on these
+variables, we tell the compiler that they are frequently used and
+should be placed in fast registers instead of relatively slow main
+memory. The number of registers varies from computer to
+computer. Slow machines like the PC have 2, most UNIX systems
+have about 11, and supercomputers can have as many as 128. It is
+possible to declare more register variables than you have registers.
+C++ will put the extra variables in main memory.
+
+The program now looks like Example 17-13.
+
+Example 17-13
+
+.  matrix/matrix2.cc
+
+[_Code_] const int X_SIZE = 60;
+
+[_Code_] const int Y_SIZE = 30;
+
+[_Code_]
+[_Code_] int matrix[X_SIZE][Y_SIZE];
+
+[_Code_]
+[_Code_] void init_matrix(void)
+
+[_Code_] {
+
+[_Code_]     register int x, y;    // Current element to initialize
+
+[_Code_]
+[_Code_]     for (x = 0; x < X_SIZE; ++x) {
+
+[_Code_]         for (y = 0; y < Y_SIZE; ++y) {
+
+[_Code_]             matrix[x][y] = -1;
+
+[_Code_]         }
+
+[_Code_]     }
+
+[_Code_] }
+
+The outer loop is executed 60 times. This means the overhead
+associated with starting the inner loop is executed 60 times. If we
+reverse the order of the loops, we will have to deal with the inner
+loop only 30 times.
+
+In general, loops should be ordered so the innermost loop is the
+most complex and the outermost loop is the simplest. [_XREF
+Example 17-14_] contains the init_matrix function with the loops
+reordered.
+
+Example 17-14
+
+.  matrix/matrix3.cc
+
+[_Code_] const int X_SIZE = 60;
+
+[_Code_] const int Y_SIZE = 30;
+
+[_Code_]
+[_Code_] int matrix[X_SIZE][Y_SIZE];
+
+[_Code_]
+[_Code_] void init_matrix(void)
+
+[_Code_] {
+
+[_Code_]     register int x, y;    // Current element to initialize
+
+[_Code_]
+[_Code_]     for (y = 0; y < Y_SIZE; ++y) {
+
+[_Code_]         for (x = 0; x < X_SIZE; ++x) {
+
+[_Code_]             matrix[x][y] = -1;
+
+[_Code_]         }
+
+[_Code_]     }
+
+[_Code_] }
+
+[_A_]  The Power of Powers of 2
+
+Indexing an array requires a multiply. For example, to execute the
+line:
+
+[_Code_]         matrix[x][y] = -1;
+
+the program must compute the location where we want to put the -
+1. To do this, the program must perform the following steps:
+
+1.  Get the address of the matrix.
+
+2.  Compute x * Y_SIZE.
+
+3.  Compute y.
+
+4.  Add up all three parts to form the address. In C++ this code
+looks like:
+
+[_Code_]         *(matrix + (x * Y_SIZE) + y) = -1;
+
+However you typically won't write matrix accesses this way because
+C++ handles the details. But being aware of the details can help you
+generate more efficient code.
+
+Almost all C++ compilers will convert multiplies by a power of two
+(2, 4, 8, ...) into shifts, thus taking an expensive operation (multiply)
+and changing it into an inexpensive operation (shift).
+
+For example:
+
+[_Code_]       i = 32 * j;
+
+is compiled as:
+
+[_Code_]     i = j << 5; /* 2**5 == 32 */
+
+Y_SIZE is 30, which is not a power of two. By increasing Y_SIZE to
+32 we waste some memory but get a faster program.
+
+[_XREF Example 17-15_] shows how we can take advantage of a
+power of two.
+
+Example 17-15
+
+.  matrix/matrix4.cc
+
+[_Code_] const int X_SIZE = 60;
+
+[_Code_] const int Y_SIZE = 32;
+
+[_Code_]
+[_Code_] int matrix[X_SIZE][Y_SIZE];
+
+[_Code_]
+[_Code_] void init_matrix(void)
+
+[_Code_] {
+
+[_Code_]     register int x, y;    // Current element to initialize
+
+[_Code_]
+[_Code_]     for (y = 0; y < Y_SIZE; ++y) {
+
+[_Code_]         for (x = 0; x < X_SIZE; ++x) {
+
+[_Code_]             matrix[x][y] = -1;
+
+[_Code_]         }
+
+[_Code_]     }
+
+[_Code_] }
+
+Since we are initializing consecutive memory locations, we can
+initialize the matrix by starting at the first location and storing a -1
+in the next X_SIZE *- Y_SIZE elements. Using this method, we
+cut the number of loops down to one. The indexing of the matrix
+has changed from a standard index (matrix[x][y]), requiring a
+shift and add, into a pointer de-referent (*matrix_ptr) and an
+increment (++matrix_ptr). In [_XREF Example 17-16_] we've
+turned our arrays into pointers.But why have both a loop counter
+and a matrix_ptr? Couldn't we combine the two? In fact we can.
+In [_XREF Example 17-17_] we've successfully eliminated the loop
+counter by combining it with the array pointer.
+
+Example 17-16
+
+.  matrix/matrix5.cc
+
+[_Code_] const int X_SIZE = 60;
+
+[_Code_] const int Y_SIZE = 30;
+
+[_Code_]
+[_Code_] int matrix[X_SIZE][Y_SIZE];
+
+[_Code_]
+[_Code_] void init_matrix(void)
+
+[_Code_] {
+
+[_Code_]     register int index;         // Element counter
+
+[_Code_]     register int *matrix_ptr;   // Current element
+
+[_Code_]
+[_Code_]     matrix_ptr = &matrix[0][0];
+
+[_Code_]     for (index = 0; index < X_SIZE * Y_SIZE; ++index) {
+
+[_Code_]         *matrix_ptr = -1;
+
+[_Code_]         ++matrix_ptr;
+
+[_Code_]     }
+
+[_Code_] }
+
+Example 17-17
+
+.  matrix/matrix6.cc
+
+[_Code_] const int X_SIZE = 60;
+
+[_Code_] const int Y_SIZE = 30;
+
+[_Code_]
+[_Code_] int matrix[X_SIZE][Y_SIZE];
+
+[_Code_]
+[_Code_] void init_matrix(void)
+
+[_Code_] {
+
+[_Code_]     register int *matrix_ptr;   // Current element
+
+[_Code_]
+[_Code_]     for (matrix_ptr = &matrix[0][0];
+
+[_Code_]              matrix_ptr <= &matrix[X_SIZE - 1][Y_SIZE - 1];
+
+[_Code_]              ++matrix_ptr) {
+
+[_Code_]
+[_Code_]         *matrix_ptr = -1;
+
+[_Code_]     }
+
+[_Code_] }
+
+The function is now well optimized. The only way we could make
+it better is to manually code it into assembly language. This might
+make it faster; however, assembly language is highly nonportable
+and very error-prone.
+
+The library routine memset can be used to fill a matrix or array with
+a single character value. We can use it to initialize the matrix in this
+program. Frequently used library subroutines such as memset are
+often coded into assembly language and may make use of special
+processor-dependent tricks to do the job faster than could be done
+in C++. In [_XREF Example 17-18_] we let the function memset do
+the work.
+
+Example 17-18
+
+.  matrix/matrix7.cc
+
+[_Code_] #include <string.h>
+
+[_Code_]
+[_Code_] const int X_SIZE = 60;
+
+[_Code_] const int Y_SIZE = 30;
+
+[_Code_]
+[_Code_] int matrix[X_SIZE][Y_SIZE];
+
+[_Code_]
+[_Code_] void init_matrix(void)
+
+[_Code_] {
+
+[_Code_]     memset(matrix, -1, sizeof(matrix));
+
+[_Code_] }
+
+Now our function consists of only a single function call. It seems a
+shame to have to call a function just to call another function. We
+have to pay for the overhead of two function calls. It would be
+better if we called memset from the main function. Why don't we
+rewrite the code using memset instead of init_matrix? Because it
+has several hundred init_matrix calls and we don't want to do all
+that editing.
+
+So how do we get rid of the overhead of a function call? By making
+the function inline.Our final version of the function uses inline to
+eliminate all the call overhead and can be seen in [_XREF
+Example 17-19_].
+
+Example 17-19
+
+.  matrix/matrix8.cc
+
+[_Code_] #include <string.h>
+
+[_Code_]
+[_Code_] const int X_SIZE = 60;
+
+[_Code_] const int Y_SIZE = 30;
+
+[_Code_]
+[_Code_] int matrix[X_SIZE][Y_SIZE];
+
+[_Code_]
+[_Code_] inline void init_matrix(void)
+
+[_Code_] {
+
+[_Code_]     memset(matrix, -1, sizeof(matrix));
+
+[_Code_] }
+
+Question 17-1: Why does memset successfully initialize the matrix to -1, but- when
+we try to use it to set every element to 1, we fail?
+
+[_Code_] #include <string.h>
+
+[_Code_]
+
+[_Code_] const int X_SIZE = 60;
+
+[_Code_] const int Y_SIZE = 30;
+
+[_Code_]
+
+[_Code_] int matrix[X_SIZE][Y_SIZE];
+
+[_Code_]
+
+[_Code_] inline void init_matrix(void) {
+
+[_Code_]     memset(matrix, 1, sizeof(matrix));
+
+[_Code_] }
+
+[_A_]  How to Optimize
+
+Our matrix initialization function illustrates several optimizing
+strategies. These are:
+
+Removing invariant code
+Code that does not need to be put inside a loop should be put outside the
+loop. For example:
+
+[_Code_] for (i = 0; i < 10; ++i)
+
+[_Code_]      matrix[i] = i + j * 10;
+
+can be written as:
+
+[_Code_] j_times_10 = j * 10;
+
+[_Code_] for (i = 0; i < 10; ++i)
+
+[_Code_]     matrix[i] = i + j_times_10;
+
+Most good optimizing compilers will do this work for you if possible.
+
+Loop ordering
+Nested loops should be ordered with the simplest loop outermost and the
+most complex loops innermost.
+
+Reduction in strength
+This is a fancy way of saying use cheap operations instead of expensive ones.
+Table 17-1 lists the relative cost of common operations.
+
+Table 17-1
+
+.  Relative Cost of Operations
+
+Operation
+
+Relative Cost
+
+File input and output (<< and >>), including the C functions printf and scanf.
+
+1,000
+
+new and delete
+
+800
+
+Trigonometric functions (sin, cos, ...)
+
+500
+
+Floating point (any operation)
+
+100
+
+Integer divide
+
+30
+
+Integer multiply
+
+20
+
+Function call
+
+10
+
+Simple array index
+
+6
+
+Shifts
+
+5
+
+Add/subtract
+
+5
+
+Pointer de-reference
+
+2
+
+Bitwise AND, OR, NOT
+
+1
+
+Logical AND, OR, NOT
+
+1
+
+[_NOTE_]  C formatting functions called using scanf,
+printf, and sscanf are extremely costly because they have
+to go through the format string one character at a time
+looking for a format conversion character (%). They then
+have to do a costly conversion between a character string
+and a number. These functions should be avoided in time-
+critical sections of code.
+
+Reference parameters
+Use constant reference parameters (const type &) instead of constant
+parameters for structures, unions, and classes.
+
+Powers of 2
+Use a power of 2 when doing integer multiply or divide. Most compilers will
+substitute a shift for the operation.
+
+Pointers
+Pointers are faster than indexing an array. They are also more tricky to use.
+
+Inline functions
+Using inline functions eliminates the overhead associated with a function call.
+It also can make the code bigger and a little more difficult to debug. (See
+case history below.)
+
+[_A_]  Case Study: Inline Functions Versus Normal Functions
+
+I once worked on writing a word-processing program for a large
+computer manufacturer. We had a function next_char that was
+used to get the next character from the current file. It was used in
+thousands of places throughout the program. When we first tested
+the program with next_char written as a function, the program
+was unacceptably slow. Analyzing our program we found that 90
+percent of the time was spent in next_char. So we changed it to
+an inline function. The speed doubled; however, our code size
+went up 40 percent and required a memory expansion card to
+work. So the speed was all right, but the size was unacceptable. We
+finally had to write the routine as a function in hand-optimized
+assembly language to get both the size and the speed to acceptable
+levels.
+
+[_A_]  Case Study: Optimizing a Color-Rendering Algorithm
+
+I once was asked to optimize a program that did color rendering for
+a large picture. The problem was that the program took eight hours
+to process a single picture. This limited us to doing one picture a
+day.
+
+The first thing I did was run the program on a machine with a
+floating-point accelerator. This brought the time down to about six
+hours. Next I got permission to use a high-speed RISC computer
+that belonged to another project but was currently sitting idle. That
+reduced the time to two hours.
+
+I saved six hours solely by using faster machines. No code had
+changed yet.
+
+Two fairly simple functions were being called only once from the
+innermost loop. Rewriting these functions as macros saved about 15
+minutes.
+
+Next I changed all the floating-point operations I could from
+floating-point to integer. The savings amounted to 30 minutes out of
+a 1:45 run.
+
+Then I noticed the program was spending about 5 minutes reading
+an ASCII file containing a long list of floating-point numbers used in
+the conversion process. Knowing that scanf is an extremely
+expensive function, I cut the initialization process down to almost
+nothing by making the file binary. Total runtime was now down to
+1:10.
+
+By carefully inspecting the code and using every trick I knew, I
+saved another 5 minutes, leaving me 5 minutes short of my goal of
+an hour per run. At this point my project was refocused and the
+program put in mothballs for use at some future date.
+
+[_A_]  Programming Exercises
+
+Exercise 17-1: Take one of your previous programs and run it using the interactive
+debugger to examine several intermediate values.
+
+Exercise 17-2: Write a matrix-multiply function. Create a test program that not
+only tests the function, but times it as well. Optimize the program using pointers
+and determine the time savings.
+
+Exercise 17-3: Write a program to sum the elements in an array. Optimize it.
+
+Exercise 17-4: Write a program that counts the number of bits in a character array.
+Optimize it through the use of register-integer variables. Time it on several
+different arrays of different sizes. How much time do you save?
+
+Exercise 17-5: Write your own version of the library function memcpy. Optimize it.
+Most implementations of memcpy are written in assembly language and take
+advantage of all the quirks and tricks of the processor. How does your memcpy
+compare with theirs?
+
+[_A_]  Answers to Chapter Questions
+
+Answer 17-1: The problem is that memset is a character fill routine. An integer
+consists of 2 or 4 bytes (characters). Each byte is assigned the value 1. So a 2-byte
+integer will receive the value:
+
+[_Code_]     integer = 0x0101;
+
+The 1-byte hex value for -1 is 0xFF. The 2-byte hex value of -1 is
+0xFFFF. So we can take two single byte -1 values, put them together
+and come out with - 1. This works for zero also. Any other number
+will produce the wrong answer. For example, 1 is 0x01. Two bytes
+of this is 0x0101, or 257.

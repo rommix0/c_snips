@@ -1,0 +1,1103 @@
+Chapter 5(BOOK TITLE)
+
+5
+
+5: Glossary
+
+^ 	Symbol for the bitwise exclusive OR operator.
+
+~ 	Symbol for the bitwise complement operator.
+Inverts all bits.
+
+! 	Symbol for the logical NOT operator.
+
+!= 	Not-equal relational operator.
+
+{} 	See curly braces.
+
+| 	Symbol for the bitwise OR operator.
+
+|| 	Symbol for the logical OR operator.
+
+% 	Symbol for the modulus operator.
+
+& 	
+
+1.  Symbol for the bitwise AND operator.
+
+2.  A symbol used to precede a variable name (as in &x). Means
+the address of the named variable (address of x). Used to
+assign a value to a pointer variable.
+
+Used to declare a reference variable.
+
+&& 	Symbol for the logical AND operator (used in comparison operations).
+
+* 	
+
+1.  Symbol for the multiply operator.
+
+2.  Symbol used to precede a pointer variable name that means
+get the value stored at the address pointed to by the pointer
+variable. (*x means get the value stored at x.) Sometimes
+known as the de-referencing operator or indirect operator.
+
++ 	Symbol for the add operator.
+
+++ 	Symbol for the incrementation operator.
+
+- 	Symbol for the subtract operator.
+
+-- 	Symbol for the decrementation operator.
+
+->	Used to obtain a member from a class or structure pointer.
+
+->*	Indicates the item pointed to by a "pointer to member."
+
+/ 	Symbol for the divide operator.
+
+< 	Less-than relational operator.
+
+<< 	
+
+1.  Symbol for the left shift operator.
+
+2.  Used by the iostream package for output.
+
+::	Scope operator. Used to indicate which class a particular identifier belongs to.
+
+::*	 Used to declare a pointer to a class member.
+
+<= 	Less-than-or-equal-to relational operator.
+
+== 	Equal relational operator.
+
+> 	Greater-than relational operator.
+
+>= 	Greater-than-or-equal-to relational operator.
+
+>> 	
+
+1.  Symbol for the right shift operator.
+
+2.  Used by the iostream package for input.
+
+'\0'
+End-of-string character (the NULL character).
+
+#define
+A C++ preprocessor directive that defines a substitute text for a name.
+
+#endif
+The closing bracket to a preprocessor macro section that began with an
+#ifdef directive.
+
+#ifdef
+Preprocessor directive that checks to see whether a macro name is defined. If
+defined, the code following it is included in the source.
+
+#ifndef
+Preprocessor directive that checks to see whether a macro name is undefined.
+If it is currently undefined, the code following is included in the macro
+expansion.
+
+#include
+A preprocessor directive that causes the named file to be inserted in place of
+the #include.
+
+#undef
+A preprocessor directive that cancels a #define.
+
+_ptr
+A convention used in this book. All pointer variables end with the extension _
+ptr.
+
+abstract class
+A class containing one or more pure virtual functions.
+
+accuracy
+A quantitative measurement of the error inherent in the representation of a
+real number.
+
+address
+A value that identifies a storage location in memory.
+
+AND
+A Boolean operation that yields 0 if either operand is 0 and 1 if both oper-
+ands are 1.
+
+ANSI C
+Any version of C that conforms to the specifications of the American National
+Standards Institute Committee X3J.
+
+ANSI C++
+Any version of C++ that conforms to the specifications of the American
+National Standards Institute. At the time of this writing, the standards exist
+only in draft form and there are still a lot of details to be worked out.
+
+array
+A collection of data elements arranged to be indexed in one or more dimen-
+sions. In C++, arrays are stored in contiguous memory.
+
+ASCII
+American Standard Code for Information Interchange. A code to represent
+characters.
+
+assignment statement
+An operation that stores a value in a variable.
+
+auto
+A C++ keyword used to create temporary variables.
+
+automatic variable
+See temporary variable.
+
+base class
+A class that is used as the base for a derived class.
+
+bit
+Binary digit; either of the digits 0 or 1.
+
+bit field
+A group of contiguous bits taken together as a unit. This C++ language
+feature allows the access of individual bits.
+
+bit flip
+The inversion of all bits in an operand. See also complement.
+
+bit operator
+See bitwise operator.
+
+bitmapped graphics
+Computer graphics where each pixel in the graphic output device is
+controlled by a single bit or a group of bits.
+
+bitwise operator
+An operator that performs Boolean operations on two operands, treating each
+bit in an operand as individual bits and performing the operation bit by bit on
+corresponding bits.
+
+block
+A section of code enclosed in curly braces.
+
+Borland C++
+A version of the C++ language for personal computers developed by Borland.
+This is the high-end version of Borland's Turbo-C++ product.
+
+boxing (a comment)
+The technique of using a combination of asterisks, vertical and horizontal
+rules, and other typographic characters to draw a box around a comment in
+order to set it off from the code.
+
+break
+A statement that terminates the innermost execution of for, while,
+switch, and do/while statements.
+
+breakpoint
+A location in a program where normal execution is suspended and control is
+turned over to the debugger.
+
+buffered I/O
+Input/output where intermediate storage (a buffer) is used between the
+source and destination of an I/O stream.
+
+byte
+A group of eight bits.
+
+C
+A general-purpose computer programming language developed in 1974 at
+Bell Laboratories by Dennis Ritchie. C is considered to be a medium- to high-
+level language.
+
+C++
+A language based on C invented in 1980 by Bjarne Stroustrup. First called "C
+with classes," it has evolved into its own language.
+
+C++ code
+Computer instructions written in the C++ language.
+
+C++ compiler
+Software that translates C++ source code into machine code.
+
+C++ syntax
+See syntax.
+
+call by reference
+A parameter-passing mechanism where the actual parameter is not passed to
+a function, but instead a pointer is used to point to it. (See also call by value.)
+
+call by value
+A procedure call where the parameters are passed by passing the values of
+the parameters. (See also call by reference.)
+
+case
+Acts as a label for one of the alternatives in a switch statement.
+
+cast
+To convert a variable from one type to another type by explicitly indicating
+the type conversion.
+
+cerr
+Standard error stream for C++. (Corresponds to C's stderr.)
+
+CFront
+A program to translate C++ code into C code. This program was the basis for
+the first C++ compilers. Currently not used for most compilers, as many native
+C++ compilers now exist.
+
+CGA
+Color graphics adapter. A common color graphics card for the IBM PC.
+
+char
+A C++ keyword used to declare variables that represent characters or small
+integers.
+
+cin
+Character in. Standard input stream for C++. (Corresponds to C's stdin.)
+
+class
+A data structure consisting of different data types, protections for the
+members, and functions to manipulate them.
+
+class (of a variable)
+See storage class.
+
+clear a bit
+The operation of setting an individual bit to zero. This is not a defined opera-
+tion in C++.
+
+clog
+Standard log file for C++.
+
+code design
+A document that describes in general terms how the program is to perform its
+function.
+
+coding
+The act of writing a program in a computer language.
+
+command-line options
+Options to direct the course of a program, such as a compiler, that are
+entered from the computer console.
+
+comment
+Text included in a computer program for the sole purpose of providing infor-
+mation about the program. Comments are a programmer's notes to himself
+and future programmers. The text is ignored by the compiler.
+
+comment block
+A group of related comments that convey general information about a
+program or a section of program.
+
+compilation
+The translation of source code into machine code.
+
+compiler
+A system program that does compilation.
+
+compiling
+See compilation.
+
+complement
+An arithmetic or logical operation. A logical complement is the same as an
+invert or NOT operation.
+
+computer language
+See programming language.
+
+conditional compilation
+The ability to selectively compile parts of a program based on the truth of
+conditions tested in conditional directives that surround the code.
+
+continue
+A flow control statement that causes the next execution of a loop to begin.
+
+control statement
+A statement that determines which statement is to be executed next based on
+a conditional test.
+
+control variable
+A variable that is systematically changed during the execution of the loop.
+When the variable reaches a predetermined value, the loop is terminated.
+
+conversion specification
+A C string used by the printf family of functions that specifies how a vari-
+able is to be printed.
+
+cout
+Standard output for C++ programs. (Corresponds to C's stdout.)
+
+curly braces
+One of the characters { or }. They are used in C++ to delimit groups of
+elements to treat them as a unit.
+
+debugging
+The process of finding and removing errors from a program.
+
+decision statement
+A statement that tests a condition created by a program and changes the flow
+of the program based on that decision.
+
+declaration
+A specification of the type and name of a variable to be used in a program.
+
+default
+Serves as a case label if no case value match is found within the scope of a
+switch.
+
+define statement
+See #define.
+
+delete
+A directive that returns a class or variable created by new to the heap.
+
+de-referencing operator
+The operator that indicates access to the value pointed to by a pointer vari-
+able or an addressing expression. See also *.
+
+derived class
+A class built on top of another, base class.
+
+directive
+A command to the preprocessor (as opposed to a statement to produce
+machine code).
+
+double
+A C++ language keyword to declare a variable that contains a real number.
+The number usually requires twice as much storage as type float.
+
+double linked list
+A linked list with both forward and backward pointers. See also linked list.
+
+double quotation mark
+ASCII character 34. Used in C++ to delimit character strings.
+
+EGA
+Enhanced graphics adapter. A common graphics card for the IBM PC.
+
+else
+A clause in an if statement specifying the action to take in the event that the
+statement following the if conditional is false.
+
+enum
+A C++ keyword that defines an enumerated data type.
+
+enumerated data type
+A data type consisting of a named set of values. The C++ compiler assigns an
+integer to each member of the set.
+
+EOF
+End-of-file character defined in stdio.h.
+
+escape character
+A special character used to change the meaning of the character(s) that
+follow. This is represented in C++ by the backslash character, \.
+
+exclusive OR
+A Boolean operation that yields 0 if both operands are the same and 1 if they
+are different.
+
+executable file
+A file containing machine code that has been linked and is ready to be run
+on a computer.
+
+exponent
+The component of a floating-point number that represents the integer power
+to which the number base is raised in order to determine the represented
+number.
+
+exponent overflow
+A condition resulting from a floating-point operation where the result is an
+exponent too large to fit within the bit field allotted to the exponent.
+
+exponent underflow
+A condition resulting from a floating-point operation where the result is an
+exponent too large in negative value to fit within the bit field allotted to the
+exponent.
+
+extern
+C++ keyword used to indicate that a variable or function is defined outside
+the current file.
+
+fast prototyping
+A top-down programming technique that consists of writing the smallest
+portion of a specification that can be implemented that will still do something.
+
+fclose
+A function that closes a file. From the old C-style I/O package stdio.
+
+fflush
+A routine to force the flushing of a buffer. From the old C-style I/O package
+stdio.
+
+fgetc
+A function that reads a single character. From the old C-style I/O package
+stdio.
+
+fgets
+A stream input library function that reads a single line. From the old C-style
+I/O package stdio.
+
+FILE
+A macro definition in stdio that declares a file variable. From the old C-style
+I/O package stdio.
+
+file
+A group of related records treated as a unit.
+
+float
+A C++ keyword to declare a variable that can hold a real number.
+
+floating point
+A numbering system represented by a fraction and an exponent. The system
+handles very large and very small numbers.
+
+floating-point exception (core dumped)
+An error caused by a divide-by-0 or other illegal arithmetic operation. It is a
+somewhat misleading error because it is caused by integer as well as floating-
+point errors.
+
+floating-point hardware
+Circuitry that can perform floating-point operations directly without resorting
+to software. In personal computers, it is found in the math coprocessor. More
+advanced processors such as the 80486 have floating-point units built in.
+
+fopen
+A function that opens a file for stream I/O. From the old C-style I/O package
+stdio.
+
+fprintf
+A function to convert binary data to character data and write it to a file. From
+the old C-style I/O package stdio.
+
+fputc
+A function that writes a single character. From the old C-style I/O package
+stdio.
+
+fputs
+A function that writes a single line. From the old C-style I/O package stdio.
+
+fread
+A binary I/O input function. From the old C-style I/O package stdio.
+
+free
+A C function that returns data to the memory pool. Obsolete in C++. This has
+been replaced by the C++ delete operator See also malloc.
+
+Free Software Foundation
+A group of programmers who create and distribute high-quality software for
+free. Among their products are the editor emacs and the C++ compiler g++.
+Their address is: Free Software Foundation, Inc., 675 Massachusetts Ave.,
+Cambridge, MA 02139, (617) 876-3296.
+
+friend
+A function that although not a member of a class is able to access the private
+members of that class.
+
+fscanf
+An input routine similar to scanf. From the old C-style I/O package stdio.
+
+fstream.h
+The C++ package for file I/O.
+
+function
+A procedure that returns a value.
+
+fwrite
+A binary I/O output function. From the old C-style I/O package stdio.
+
+generic pointer
+A pointer that can point to any variable without restriction as to type of vari-
+able. A pointer to storage without regard to content.
+
+Ghostscript
+A Postscript(tm)-like interpreter that is freely available from the Free Software
+Foundation.
+
+global variables
+Variables that are known throughout an entire program.
+
+guard digit
+An extra digit of precision used in floating-point calculations to ensure against
+loss of accuracy.
+
+header file
+See include file.
+
+heap
+A portion of memory used by new to get space for the structures and classes
+returned by new. Space is returned to this pool by using the delete
+operator.
+
+hexadecimal number
+A base-16 number.
+
+high-level language
+A level of computer language that is between machine language and natural
+(human) language.
+
+I/O manipulators
+Functions that when "output" or "input" cause no I/O, but set various conver-
+sion flags or parameters.
+
+IEEE floating-point standard
+IEEE standard 754, which standardizes floating-point format, precision, and
+certain non-numerical values.
+
+if
+A statement that allows selective execution of parts of a program based on
+the truth of a condition.
+
+implementation dependence
+The situation where the result obtained from the operation of computer or
+software is not standardized because of variability among computer systems.
+A particular operation may yield different results when run on another system.
+
+include file
+A file that is merged with source code by invocation of the preprocessor direc-
+tive #include. Also called a header file.
+
+Inclusive OR
+See OR.
+
+index
+A value, variable, or expression that selects a particular element of an array.
+
+indirect operator
+See de-referencing operator.
+
+information hiding
+A code design system that tries to minimize the amount of information passed
+between modules. The idea is to keep as much information as possible
+hidden inside the modules and make information public only if absolutely
+necessary.
+
+instruction
+A group of bits or characters that defines an operation to be performed by the
+computer.
+
+int
+C++ keyword for declaring an integer.
+
+integer
+A whole number.
+
+interactive debugger
+A program that aids in the debugging of programs.
+
+invert operator
+A logical operator that performs a NOT.
+
+iostream.h
+Standard C++ I/O package.
+
+left shift
+The operation of moving the bits in a bit field left by a specified amount and
+filling the vacated positions with zeros.
+
+library
+A collection of files.
+
+linked list
+A collection of data nodes. Each node consists of a value and a pointer to the
+next item in the list.
+
+local include files
+Files from a private library that can be inserted by the preprocessor at the
+directive #include "filename".
+
+local variable
+A variable whose scope is limited to the block in which it is declared.
+
+logical AND
+A Boolean operation that returns true if its two arguments are both true.
+When used on integers, each bit is operated on separately.
+
+logical operator
+A C++ operator that performs a logical operation on its two operands and
+returns a true or a false value.
+
+logical OR
+A Boolean operation that returns true if any one of its two arguments is true.
+When used on integers, each bit is operated on separately.
+
+long
+A qualifier to specify a data type with longer than normal accuracy.
+
+machine code
+Machine instructions in a binary format that can be recognized directly by the
+machine without further translation.
+
+machine language
+See machine code.
+
+macro
+A short piece of text, or text template, that can be expanded into a longer text.
+
+macro processor
+A program that generates code by replacing values into positions in a defined
+template.
+
+magnitude (of a number)
+The value of a number without regard to sign.
+
+maintenance (of a program)
+Modification of a program because of changing conditions external to the
+computer system.
+
+make
+A utility of both UNIX and MS-DOS/Windows that manages the compilation
+of programs.
+
+Makefile
+The file that contains the commands for the utility make.
+
+malloc
+A C procedure that manages a memory heap. This function is now obsolete.
+The C++ operator new supersedes this function.
+
+mask
+A pattern of bits for controlling the retention or elimination of another group
+of bits.
+
+member
+An element of a class or structure.
+
+module
+One logical part of a program.
+
+MS-DOS
+An operating system for IBM personal computers developed by Microsoft.
+
+new
+C++ operator to get a new variable from the heap.
+
+new-line character
+A character that causes an output device to go to the beginning of a new line.
+
+nonsignificant digits
+Leading digits that do not affect the value of a number (0s for a positive
+number, 1s for a negative number in complement form).
+
+normalization
+The shifting of a floating-point fraction (and adjustment of the exponent) so
+there are no leading nonsignificant digits in the fraction.
+
+NOT
+A Boolean operation that yields the logical inverse of the operand. NOT 1
+yields a 0 and NOT 0 yields a 1.
+
+not a number
+A special value defined in IEEE 754 to signal an invalid result from a floating-
+point operation.
+
+NULL
+A constant of value 0 that points to nothing.
+
+null pointer
+A pointer whose bit pattern is all zeros. This indicates that the pointer does
+not point to valid data.
+
+object-oriented design
+A design methodology where the programmer bases his or her design on data
+objects (classes) and the connections between them.
+
+octal number
+A base-eight number.
+
+ones complement
+An operation that flips all the bits in a integer. Ones become zeros and zeros
+become ones.
+
+operator
+A symbol that represents an action to be performed.
+
+OR
+A Boolean operation that yields a 1 if either of the operands is a 1 or yields a
+zero if both of the operands are 0.
+
+overflow error
+An arithmetic error caused by the result of an arithmetic operation being
+greater than the space the computer provides to store the result.
+
+packed structure
+A data-structure technique whereby bit fields are only as large as needed,
+regardless of word boundaries.
+
+pad byte
+A byte added to a structure whose sole purpose is to ensure memory
+alignment.
+
+parameter
+A data item to which a value may be assigned. Often means the arguments
+that are passed between a caller and a called procedure.
+
+parameterized macro
+A macro consisting of a template with insertion points for the introduction of
+parameters.
+
+parameters of a macro
+The values to be inserted into the parameter positions in the definition of a
+macro. The insertion occurs during the expansion of the macro.
+
+permanent variable
+A variable that is created before the program starts, is initialized before the
+program starts, and retains its memory during the entire execution of the
+program.
+
+pixel
+The smallest element of a display that can be individually assigned intensity
+and color. From Picture Element.
+
+pointer
+A data type that holds the address of a location in memory.
+
+pointer arithmetic
+C++ allows three arithmetic operations on pointers:
+
+1.  A numeric value can be added to a pointer.
+
+2.  A numeric value can be subtracted from a pointer.
+
+3.  One pointer can be subtracted from another pointer.
+
+pointer variable
+See pointer.
+
+Portable C compiler
+A C compiler written by Stephen Johnson making it relatively easy to adapt
+the compiler to different computer architectures.
+
+precision
+A measure of the ability to distinguish between nearly equal values.
+
+preprocessor
+A program that performs preliminary processing with the purpose of
+expanding macro code templates to produce C++ code.
+
+preprocessor directive
+A command to the preprocessor.
+
+printf
+A C library routine that produces formatted output. From the old C-style I/O
+package stdio.
+
+private
+A C++ keyword indicating that the members that follow are to be accessible
+only from inside the class or by friends of the class.
+
+procedure
+A program segment that can be invoked from different parts of a program or
+programs. It does not return a value (function of type void).
+
+program
+A group of instructions that cause a computer to perform a sequence of
+operations.
+
+program header
+The comment block at the beginning of a program.
+
+program specification
+A written document that states what a program is to do.
+
+programmer
+An individual who writes programs for a computer.
+
+programming (a computer)
+The process of expressing the solution to a problem in a language that repre-
+sents instructions for a computer.
+
+programming language
+A scheme of formal notation used to prepare computer programs.
+
+protected
+A C++ keyword indicating that the members that follow are accessible inside
+the class, inside the class's friends, or inside any derived classes, but are not
+accessible to the outside world.
+
+pseudocode
+A coding technique where precise descriptions of procedures are written in
+easy-to-read language constructs without the bother of precise attention to the
+syntax rules of a computer language.
+
+public
+A C++ keyword indicating that the members to follow are accessible outside
+the class.
+
+pure virtual function
+A virtual function that does not have a default body. The class containing a
+pure virtual function cannot be used directly but must be the base for another
+class. (See also derived classes and abstract classes.)
+
+qualifier
+A word used to modify the meaning of a data declaration.
+
+radix
+The positive integer by which the weight of the digit place is multiplied to
+obtain the weight of the next higher digit in the base of the numbering
+system.
+
+real number
+A number that may be represented by a finite or infinite numeral in a fixed-
+radix numbering system.
+
+recursion
+Recursion occurs when a function calls itself directly or indirectly. (For a recur-
+sive definition, see recursion.)
+
+redirect
+The command-line option >file allows the user to direct the output of a
+program into a file instead of to the screen. A similar option, <file, exists
+for taking input from a file instead of the keyboard.
+
+reduction in strength
+The process of substituting cheap operations for expensive ones.
+
+relational operator
+An operator that compares two operands and reports either true or false
+based on whether the relationship is true or false.
+
+release
+The completion of a programming project to the point where it is ready for
+general use.
+
+replay file
+A file that is used instead of the standard input for keyboard data.
+
+return statement
+A statement that signals the completion of a function and causes control to
+return to the caller.
+
+revision
+The addition of significant changes to the program.
+
+right shift
+The operation of moving the bits in a bit field right by a specified amount.
+
+round
+To delete or omit one or more of the least significant digits in a positional
+representation and adjust the part retained in accordance with some specific
+rule, e.g., minimize the error.
+
+rounding error
+An error due to truncation in rounding.
+
+save file
+A debugging tool where all the keystrokes typed by the user are saved in a
+file for future use. See also replay file.
+
+scanf
+A library input function that reads numbers directly from the keyboard. Hard
+to use. In most cases an fgets/sscanf combination is used. From the old C-
+style I/O package stdio.
+
+scope
+The scope of a variable is the portion of a program where the name of the
+variable is known.
+
+segmentation violation
+An error caused by a program trying to access memory outside its address
+space. Caused by de-referencing a bad pointer.
+
+set a bit
+The operation of setting a specified bit to 1. This is not a defined operation in
+C++.
+
+setw
+An I/O manipulator to set the width of the next output.
+
+shift
+The operation of moving the bits in a bit field either left or right.
+
+short
+An arithmetic data type that is the same size as, or smaller than, an integer.
+
+side effect
+An operation performed in addition to the main operation of a statement such
+as incrementing a variable in an assignment statement: result = begin++
+- end;.
+
+significand
+The most significant digit of a floating-point number without regard to place-
+ment of the radix point.
+
+significant digit
+A digit that must be kept to preserve a given accuracy.
+
+single quotation mark
+ASCII character 39. Used in C++ to delimit a single character.
+
+sizeof
+Operator that returns the size, in bytes, of a data type of variable.
+
+source code
+Symbolic coding in its original form before it is translated by a computer.
+
+source file
+A file containing source code.
+
+specification
+A document that describes what a program does.
+
+sprintf
+Similar to fprintf except it uses a string output. From the old C-style I/O
+package stdio.
+
+sscanf
+A library input routine. From the old C-style I/O package stdio.
+
+stack
+An area of memory used to hold a list of data and instructions on a temporary
+basis.
+
+stack overflow
+An error caused by a program using too much temporary space (stack space)
+for its variables. Caused by a big program or by infinite recursion.
+
+stack variable
+See temporary variable.
+
+static
+A storage class attribute. Inside a set of curly braces, it indicates a permanent
+variable. Outside a set of curly braces, it indicates a file-local variable. For
+class members it denotes a variable or function that is instance independent.
+See Table 14-1 for a complete list of uses.
+
+stderr
+Predefined standard error file. From the old C-style I/O package stdio.
+
+stdin
+Predefined input source. From the old C-style I/O package stdio.
+
+stdio.h
+The old C-style I/O package.
+
+stdout
+Predefined standard output. From the old C-style I/O package stdio.
+
+storage class
+An attribute of a variable definition that controls how the variable will be
+stored in memory.
+
+string
+A sequence of characters or an array of characters.
+
+struct
+A C++ keyword that identifies a structure data type.
+
+structure
+A hierarchical set of names that refers to an aggregate of data items that may
+have different attributes.
+
+style sheet
+A document that describes the style of programming used by a particular
+company or institution.
+
+Sunview
+A graphics and windowing system available on SUN workstations.
+
+switch
+A multiway branch that transfers control to one of several case statements
+based on the value of an index expression.
+
+syntax
+Rules that govern the construction of statements.
+
+syntax error
+An error in the proper construction of a C++ expression.
+
+temporary variable
+A variable whose storage is allocated from the stack. The variable is initialized
+each time the block in which it is defined is entered. It exists only during the
+execution of that block.
+
+test a bit
+The operation of determining whether a particular bit is set. This is not a
+defined operation in C++.
+
+test plan
+A specification of the tests that a program must undergo.
+
+text editor
+Software used to create or alter text files.
+
+translation
+Creation of a new program in an alternate language logically equivalent to an
+existing program in a source language.
+
+tree
+A hierarchical data structure.
+
+truncation
+An operation on a real number whereby any fractional part is discarded.
+
+Turbo-C++
+A version of the C++ language for personal computers developed by Borland.
+
+typecast
+See cast.
+
+typedef
+A operator used to create new types from existing types.
+
+typing statement
+A statement that establishes the characteristics of a variable.
+
+unbuffered I/O
+I/O in which each read or write results in a system call.
+
+union
+A data type that allows different data names and data types to be assigned to
+the same storage location.
+
+UNIX
+A popular multiuser operating system first developed by Ken Thompson and
+Dennis Ritchie of the Bell Telephone Laboratories.
+
+unsigned
+A qualifier for specifying int and char variables that do not contain nega-
+tive numbers.
+
+upgrading (of a program)
+Modification of a program to provide improved performance or new features.
+
+value
+A quantity assigned to a constant.
+
+variable
+A name that refers to a value. The data represented by the variable name can,
+at different times during the execution of a program, assume different values.
+
+variable name
+The symbolic name given to a section of memory used to store a variable.
+
+version
+A term used to identify a particular edition of software. A customary practice
+is to include a version number. Whole numbers indicate major rewrites. Frac-
+tions indicate minor rewrites or corrections of problems.
+
+virtual
+A C++ keyword indicating that a member function can be overridden by a
+function in a derived class.
+
+void
+A data type in C++. When used as a parameter in a function call, it indicates
+there is no return value. void * indicates that a generic pointer value is
+returned. When used in casts, it indicates that a given value is to be discarded.
+
+volatile
+A C++ keyword that indicates that the value of a variable or constant can be
+changed at any time. This attribute is used for memory-mapped I/O, shared
+memory applications, and other advanced programming.
+
+while
+An iterative statement that repeats a statement as long as a given condition is
+true.
+
+X Window System
+A graphics and windowing system, available from the X Consortium, that is
+currently running on many computing systems.
+
+zero-based counting
+A system of counting where the first object is given the count zero rather than
+one.

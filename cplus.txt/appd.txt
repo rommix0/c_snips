@@ -1,0 +1,511 @@
+Chapter 4Part VI: Appendixes
+
+4	
+
+4: Computing sine Using a Power Series
+
+This program is designed to compute the sine function using a
+power series. A very limited floating-point format is used to
+demonstrate some of the problems that can occur when using
+floating point.
+
+The program computes each term in the power series and displays
+the result. It continues computing terms until the last term is so
+small that it doesn't contribute to the final result. For comparison
+purposes, the result of the library function sin is displayed as well
+as the computed sine.
+
+The program is invoked by:
+
+[_Code_] sine value
+
+where value is an angle in radians. For example, to compute sin(0)
+we use the command:
+
+[_Code_] % sine 0
+
+[_Code_] x**1     0.000E+00
+
+[_Code_] 1!       1.000E+00
+
+[_Code_] x**1/1! 0.000E+00
+
+[_Code_] 1 term computed
+
+[_Code_] sin(0.000E+00)=
+
+[_Code_]   0.000E+00
+
+[_Code_] Actual sin(0)=0
+
+And to compute sin(p) we use the command:
+
+[_Code_] % sine 3.141
+
+[_Code_] x**1     3.141E+00
+
+[_Code_] 1!       1.000E+00
+
+[_Code_] x**1/1! 3.141E+00
+
+[_Code_]   total   3.141E+00
+
+[_Code_]
+
+[_Code_] x**3     3.099E+01
+
+[_Code_] 3!       6.000E+00
+
+[_Code_] x**3/3! 5.165E+00
+
+[_Code_]   total   -2.024E+00
+
+[_Code_]
+
+[_Code_] x**5     3.057E+02
+
+[_Code_] 5!       1.200E+02
+
+[_Code_] x**5/5! 2.548E+00
+
+[_Code_]   total   5.239E-01
+
+[_Code_]
+
+[_Code_] x**7     3.016E+03
+
+[_Code_] 7!       5.040E+03
+
+[_Code_] x**7/7! 5.985E-01
+
+[_Code_]   total   -7.457E-02
+
+[_Code_]
+
+[_Code_] x**9     2.976E+04
+
+[_Code_] 9!       3.629E+05
+
+[_Code_] x**9/9! 8.201E-02
+
+[_Code_]   total   7.438E-03
+
+[_Code_]
+
+[_Code_] x**11     2.936E+05
+
+[_Code_] 11!       3.992E+07
+
+[_Code_] x**11/11! 7.355E-03
+
+[_Code_]   total   8.300E-05
+
+[_Code_]
+
+[_Code_] x**13     2.897E+06
+
+[_Code_] 13!       6.227E+09
+
+[_Code_] x**13/13! 4.652E-04
+
+[_Code_]   total   5.482E-04
+
+[_Code_]
+
+[_Code_] x**15     2.858E+07
+
+[_Code_] 15!       1.308E+12
+
+[_Code_] x**15/15! 2.185E-05
+
+[_Code_]   total   5.263E-04
+
+[_Code_]
+
+[_Code_] x**17     2.819E+08
+
+[_Code_] 17!       3.557E+14
+
+[_Code_] x**17/17! 7.927E-07
+
+[_Code_]   total   5.271E-04
+
+[_Code_]
+
+[_Code_] x**19     2.782E+09
+
+[_Code_] 19!       1.217E+17
+
+[_Code_] x**19/19! 2.287E-08
+
+[_Code_]   total   5.271E-04
+
+[_Code_]
+
+[_Code_] x**21     2.744E+10
+
+[_Code_] 21!       5.109E+19
+
+[_Code_] x**21/21! 5.371E-10
+
+[_Code_] 11 term computed
+
+[_Code_] sin(3.141E+00)=
+
+[_Code_]   5.271E-04
+
+[_Code_] Actual sin(3.141)=0.000592654
+
+[_A_]  Makefile
+
+Makefile for UNIX
+
+Example D-1
+
+. sin/Makefile
+
+[_Code_] sine: sine.cc
+
+[_Code_]         g++ -g -Wall -o sine sine.cc -lm
+
+[_Code_]
+[_Code_] clean:
+
+[_Code_]         rm sine
+
+[_Code_] Makefile for Turbo-C++
+
+[_Code_] [File: sin/Makefile.dos]
+
+[_Code_] #
+
+[_Code_] # Makefile for Borland's Turbo-C++ compiler
+
+[_Code_] #
+
+[_Code_] CC = tcc
+
+[_Code_] #
+
+[_Code_] # Flags
+
+[_Code_] #       -N  -- Check for stack overflow
+
+[_Code_] #       -v  -- Enable debugging
+
+[_Code_] #       -w  -- Turn on all warnings
+
+[_Code_] #       -ml -- Large model
+
+[_Code_] #       -A  -- Force ANSI compliance
+
+[_Code_] #
+
+[_Code_] CFLAGS = -N -v -w -ml -A
+
+[_Code_] #
+
+[_Code_] sine.exe: sine.c
+
+[_Code_]         $(CC) $(CFLAGS) -esine sine.c
+
+[_A_]  Program: sine.cc
+
+Example D-2
+
+. sine/sine.cc
+
+[_Code_] /********************************************************
+
+[_Code_]  * sine -- compute sine using very simple floating      *
+
+[_Code_]  *      arithmetic                                      *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Usage:                                               *
+
+[_Code_]  *      sine <value>                                    *
+
+[_Code_]  *                                                      *
+
+[_Code_]  *      <value> is an angle in radians                  *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Format used in f.fffe+X                              *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * f.fff is a 4-digit fraction                          *
+
+[_Code_]  *      + is a sign (+ or -)                            *
+
+[_Code_]  *      X is a single-digit exponent                    *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * sin(x) = x  - x**3 + x**5 - x**7                     *
+
+[_Code_]  *              -----   ----   ---- . . . .             *
+
+[_Code_]  *                3!     5!     7!                      *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Warning: This program is intended to show some of    *
+
+[_Code_]  *      problems with floating point.  It is not        *
+
+[_Code_]  *      intended to be used to produce exact values for *
+
+[_Code_]  *      the sine function.                              *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Note: Even though we specify only one digit for the  *
+
+[_Code_]  *       exponent, two are used for some calculations.  *
+
+[_Code_]  *       This is due to the fact that printf has no     *
+
+[_Code_]  *       format for a single-digit exponent.            *
+
+[_Code_]  ********************************************************/
+
+[_Code_] #include <iostream.h>
+
+[_Code_] #include <stdlib.h>
+
+[_Code_] #include <math.h>
+
+[_Code_] #include <stdio.h>
+
+[_Code_]
+[_Code_] main(int argc, char *argv[])
+
+[_Code_] {
+
+[_Code_]     float   total;  // Total of series so far
+
+[_Code_]     float   new_total;// Newer version of total
+
+[_Code_]     float   term_top;// Top part of term
+
+[_Code_]     float   term_bottom;// Bottom of current term
+
+[_Code_]     float   term;   // Current term
+
+[_Code_]     float   exp;    // Exponent of current term
+
+[_Code_]     float   sign;   // +1 or -1 (changes on each term)
+
+[_Code_]     float   value;  // Value of the argument to sin
+
+[_Code_]     int     index;  // Index for counting terms
+
+[_Code_]
+[_Code_]     char    *float_2_ascii(float number);  // Turn floating point to ASCII
+
+[_Code_]     float   fix_float(float number);       // Round to correct digits
+
+[_Code_]     float   factorial(float number);       // Compute n!
+
+[_Code_]
+[_Code_]     if (argc != 2) {
+
+[_Code_]         cerr << "Usage is:\n";
+
+[_Code_]         cerr << "  sine <value>\n";
+
+[_Code_]         exit (8);
+
+[_Code_]     }
+
+[_Code_]
+[_Code_]     value = fix_float(atof(&argv[1][0]));
+
+[_Code_]
+[_Code_]     total = 0.0;
+
+[_Code_]     exp = 1.0;
+
+[_Code_]     sign = 1.0;
+
+[_Code_]
+[_Code_]     for (index = 0; /* Take care of below */ ; ++index) {
+
+[_Code_]         term_top = fix_float(pow(value, exp));
+
+[_Code_]         term_bottom = fix_float(factorial(exp));
+
+[_Code_]         term = fix_float(term_top / term_bottom);
+
+[_Code_]         cout << "x**" << int(exp) << "     " <<
+
+[_Code_]                 float_2_ascii(term_top) << '\n';
+
+[_Code_]         cout << exp << "!       " << float_2_ascii(term_bottom) << '\n';
+
+[_Code_]         cout << "x**" << int(exp) << "/" << int(exp) << "! " <<
+
+[_Code_]                 float_2_ascii(term) << "\n";
+
+[_Code_]
+[_Code_]         new_total = fix_float(total + sign * term);
+
+[_Code_]         if (new_total == total)
+
+[_Code_]                 break;
+
+[_Code_]
+[_Code_]         total = new_total;
+
+[_Code_]         sign = -sign;
+
+[_Code_]         exp = exp + 2.0;
+
+[_Code_]         cout <<"  total   " << float_2_ascii(total) << '\n';
+
+[_Code_]         cout <<'\n';
+
+[_Code_]     }
+
+[_Code_]     cout << index +1 << " term computed\n";
+
+[_Code_]     cout << "sin(" << float_2_ascii(value) << ")=\n";
+
+[_Code_]     cout << "  " << float_2_ascii(total) << '\n';
+
+[_Code_]     cout << "Actual sin(" << atof(&argv[1][0]) << ")=" <<
+
+[_Code_]             sin(atof(&argv[1][0])) << '\n';
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+[_Code_] /********************************************************
+
+[_Code_]  * float_2_ascii -- turn a floating point string        *
+
+[_Code_]  *      into ASCII                                      *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Parameters                                           *
+
+[_Code_]  *      number -- number to turn into ASCII             *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Returns                                              *
+
+[_Code_]  *      pointer to the string containing the number     *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Warning: Uses static storage, so later calls         *
+
+[_Code_]  *              overwrite earlier entries               *
+
+[_Code_]  ********************************************************/
+
+[_Code_] char *float_2_ascii(float number)
+
+[_Code_] {
+
+[_Code_]     static char result[10];     // Place to put the number
+
+[_Code_]
+[_Code_]     sprintf(result, "%8.3E", number);
+
+[_Code_]     return (result);
+
+[_Code_] }
+
+[_Code_] /********************************************************
+
+[_Code_]  * fix_float -- turn high-precision numbers into        *
+
+[_Code_]  *              low-precision numbers to simulate a     *
+
+[_Code_]  *              very dumb floating-point structure     *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Parameters                                           *
+
+[_Code_]  *      number -- number to take care of                *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Returns                                              *
+
+[_Code_]  *      number accurate to 5 places only                *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Note: This works by changing a number into ASCII and *
+
+[_Code_]  *       back.  Very slow, but it works.                *
+
+[_Code_]  ********************************************************/
+
+[_Code_] float fix_float(float number)
+
+[_Code_] {
+
+[_Code_]     float   result;     // Result of the conversion
+
+[_Code_]     char    ascii[10];  // ASCII version of number
+
+[_Code_]
+[_Code_]     (void)sprintf(ascii, "%8.4e", number);
+
+[_Code_]     (void)sscanf(ascii, "%e", &result);
+
+[_Code_]     return (result);
+
+[_Code_] }
+
+[_Code_] /********************************************************
+
+[_Code_]  * factorial -- compute the factorial of a number       *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Parameters                                           *
+
+[_Code_]  *      number -- number to use for factorial           *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Returns                                              *
+
+[_Code_]  *      factorial(number) or number!                    *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Note: Even though this is a floating-point routine,  *
+
+[_Code_]  *       using numbers that are not whole numbers       *
+
+[_Code_]  *       does not make sense                            *
+
+[_Code_]  ********************************************************/
+
+[_Code_] float factorial(float number)
+
+[_Code_] {
+
+[_Code_]     if (number <= 1.0)
+
+[_Code_]         return (number);
+
+[_Code_]     else
+
+[_Code_]         return (number *factorial(number - 1.0));
+
+[_Code_] }
+

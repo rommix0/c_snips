@@ -1,0 +1,400 @@
+Chapter 25Part V: Other Language Features
+
+In This Chapter:
+
+*  [_XREF Modularity_]
+
+*  [_XREF Word Size_]
+
+*  [_XREF Byte-Order Problem_]
+
+*  [_XREF Alignment Problem_]
+
+*  [_XREF NULL-Pointer Problem_
+]
+
+*  [_XREF Filename Problems_]
+
+*  [_XREF File Types_]
+
+*  [_XREF Summary_]
+
+*  [_XREF Answers to Chapter
+Questions_]
+
+25	
+
+25: Portability Problems
+
+Wherein I spake of most disastrous
+changes,
+Of moving accidents by flood and
+field,
+Of hair-breadth 'scapes i' the
+imminent deadly breadth...
+
+---Shakespeare on program porting
+
+Othello, Act 1, Scene 3
+
+You've just completed work on your great masterpiece, a ray-tracing
+program that renders complex three-dimensional shaded graphics
+on a Cray supercomputer using 30MB of memory and 5GB of disk
+space. What do you do when someone comes in and asks you to
+port this program to an IBM PC with 640K of memory and 100MB
+of disk space? Killing him is out. Not only is it illegal, but it also is
+considered unprofessional. Your only choice is to whimper and start
+the port. It is during this process that you will find that your nice,
+working program exhibits all sorts of strange and mysterious
+problems.
+
+C++ programs are supposed to be portable. However, C++ contains
+many machine-dependent features. Also, because of the vast
+difference between UNIX and MS-DOS/Windows, system
+dependencies can frequently be found in many programs. This
+chapter discusses some of the problems associated with writing
+truly portable programs as well as some of the traps you might
+encounter.
+
+[_A_]  Modularity
+
+One of the tricks to writing portable programs is to put all the
+nonportable code into a separate module. For example, screen
+handling differs greatly in MS-DOS/Windows and UNIX. To design a
+portable program, you'd have to write machine-specific screen-
+update modules.
+
+For example, the HP-98752A terminal has a set of function keys
+labeled F1-F8. The PC also has a function-key set. The problem is
+that these keys don't send out the same set of codes. The HP sends
+"<esc>p<return>" for F1 and the PC sends "<null>". In this case, you
+would want to write a get_code routine that gets a character (or
+function key string) from the keyboard and translates function keys.
+Because the translation is different for both machines, a machine-
+dependent module is needed for each one. For the HP machine,
+you would put together the program with main.cc and hp-tty.cc,
+while for the PC you would use main.cc and pc-tty.cc.
+
+[_A_]  Word Size
+
+A long int is 32 bits, a short int is 16 bits, and a normal int
+can be 16 or 32 bits depending on the machine. This can lead to
+unexpected problems. For example, the following code works on a
+32-bit UNIX system, but fails when ported to MS-DOS/Windows:
+
+[_Code_] int zip;
+
+[_Code_]
+
+[_Code_] zip = 92126;
+
+[_Code_] cout << "Zip code " << zip << '\n';
+
+The problem is that on MS-DOS/Windows, zip is only 16 bits - too
+small for 92126. To fix the problem, we declare zip as a 32-bit
+integer:
+
+[_Code_] long int zip;
+
+[_Code_]
+
+[_Code_] zip = 92126;
+
+[_Code_] cout << Zip code " << zip << '\n';
+
+Now zip is 32 bits and can hold 92126.
+
+[_A_]  Byte-Order Problem
+
+A short int consists of two bytes. Consider the number 0x1234.
+The two bytes have the value 0x12 and 0x34. Which value is stored
+in the first byte? The answer is machine dependent.
+
+This can cause considerable trouble when you try to write portable
+binary files. Motorola 68000-series machines use one type of byte
+order (ABCD), while Intel and Digital Equipment Corporation
+machines use another (BADC).
+
+One solution to the problem of portable binary files is to avoid
+them. Put an option in your program to read and write ASCII files.
+ASCII offers the twin advantages of being far more portable as well
+as human readable.
+
+The disadvantage is that text files are larger. Some files may be too
+big for ASCII. In that case, the magic number at the beginning of a
+file may be useful. Suppose the magic number is 0x11223344 (a bad
+magic number, but a good example). When the program reads the
+magic number, it can check against the correct number as well as
+the byte-swapped version (0x22114433). The program can
+automatically fix the file problem:
+
+[_Code_] const int MAGIC      = 0x11223344; // File identification number
+
+[_Code_] const int SWAP_MAGIC = 0x22114433; // Magic number byte swapped
+
+[_Code_]
+
+[_Code_] ifstream in_file;  // File containing binary data
+
+[_Code_] long int magic;    // Magic number from file
+
+[_Code_]
+
+[_Code_] in_file.open("data");
+
+[_Code_]
+
+[_Code_] in.file.read((char *)&magic, sizeof(magic));
+
+[_Code_]
+
+[_Code_] switch (magic) {
+
+[_Code_]     case MAGIC:
+
+[_Code_]         // No problem
+
+[_Code_]         break;
+
+[_Code_]     case SWAP_MAGIC:
+
+[_Code_]         cout <<"Converting file, please wait\n";
+
+[_Code_]         convert_file(in_file);
+
+[_Code_]         break;
+
+[_Code_]     default:
+
+[_Code_]         cerr << "Error: Bad magic number " << magic << '\n';
+
+[_Code_]         exit (8);
+
+[_Code_] }
+
+[_A_]  Alignment Problem
+
+Some computers limit the addresses that can be used for integers
+and other types of data. For example, the 68000 series requires that
+all integers start on a two-byte boundary. If you attempt to access
+an integer using an odd address, you generate an error. Some
+processors have no alignment rules, while some are even more
+restrictive, requiring integers to be aligned on a four-byte boundary.
+
+Alignment restrictions are not limited to integers. Floating point
+numbers and pointers also must be aligned correctly.
+
+C++ hides the alignment restrictions from you. For example, if you
+declare the following structure on a 68000:
+
+[_Code_] struct funny {
+
+[_Code_]     char    flag;   // Type of data following
+
+[_Code_]     long int value; // Value of the parameter
+
+[_Code_] };
+
+C++ allocates storage for this structure as shown on the left in [_
+XREF Figure 25-1_].
+
+Figure 25-1
+
+. Structure on 68000 and 8086 architectures
+
+On an 8086-class machine with no alignment restrictions, this is
+allocated as shown on the right in [_XREF Figure 25-1_].
+
+The problem is that the size of the structure changes from machine
+to machine. On a 68000, the structure size is six bytes and on the
+8086, it is five. So if you write a binary file containing 100 records
+on a 68000, it will be 600 bytes long, while on an 8086 it will be
+only 500 bytes long. Obviously the file is not written the same way
+on both machines.
+
+One way around this problem is to use ASCII files. As we have said
+before, there are many problems with binary files. Another solution
+is to explicitly declare a pad byte:
+
+[_Code_] struct new_funny {
+
+[_Code_]         char    flag;   // Type of data following
+
+[_Code_]         char    pad;    // Not used
+
+[_Code_]         long int value; // Value of the parameter
+
+[_Code_] };
+
+The pad character makes the field value align correctly on a 68000
+machine while making the structure the correct size on an 8086-
+class machine.
+
+Using pad characters is difficult and error-prone. For example,
+although new_funny is portable between machines with one- and
+two-byte alignment for 32-bit integers, it is not portable to any
+machine with a four-byte integer alignment.
+
+[_A_]  NULL-Pointer Problem
+
+Many programs and utilities were written using UNIX on VAX
+computers. On this computer, the first byte of any program is 0.
+Many programs written on this computer contain a bug: They use
+the null pointer as a string.
+
+Example:
+
+[_Code_] #define NULL 0
+
+[_Code_]
+
+[_Code_] char *string;
+
+[_Code_]
+
+[_Code_] string = NULL;
+
+[_Code_] cout << "String is '" << str "'\n";
+
+This is actually an illegal use of string. Null pointers should never be derefer-
+enced. On the VAX, this error causes no problems. Because byte zero of the
+program is zero, string points to a null string. This is due to luck, not design.
+
+On a VAX, this will print:
+
+[_Code_] String is ''
+
+On an old Celerity, the first byte of the program is a "Q." When this program is
+run on a Celerity, it will print:
+
+[_Code_] String is 'Q'
+
+On other computers, this type of code can generate unexpected
+results. Many of the utilities ported from a VAX to a Celerity
+exhibited the "Q" bug.
+
+Filename Problems
+
+UNIX specifies files as /root/sub/file while MS-DOS/Windows uses
+\root\sub\file. When porting from UNIX to MS-DOS/Windows, file
+names must be changed. For example:
+
+[_Code_] #ifndef __MSDOS__
+
+[_Code_] #include <sys/stat.h> /* UNIX version of the file */
+
+[_Code_] #else __MSDOS__
+
+[_Code_] #include <sys\stat.h> /* DOS version of the file */
+
+[_Code_] #endif __MSDOS__
+
+Question 25-1: Why does Example 25-1 work on UNIX, but when we run it in MS-
+DOS/Windows we get the message:
+
+oot
+
+    ew      able:   file not found
+
+Example 25-1
+
+. ifstream in_file
+
+[_Code_] #ifndef __MSDOS__
+
+[_Code_] #define NAME "/root/new/table"
+
+[_Code_] #else __MSDOS__
+
+[_Code_] #define NAME "\root\new\table"
+
+[_Code_] #endif __MSDOS__
+
+[_Code_]
+[_Code_] in_file.open(NAME);
+
+[_Code_] if (in_file.bad()) {
+
+[_Code_]     cout << NAME << ": file not found\n";
+
+[_Code_]     exit(8);
+
+[_Code_] }
+
+[_A_]  File Types
+
+In UNIX there is only one file type. In MS-DOS/Windows there are
+two, text and binary. The flags O_BINARY and O_TEXT are used in
+MS-DOS/Windows to indicate file type. Older versions of UNIX have
+no such flags.
+
+One way of handling this problem is to write different open calls
+for each system:
+
+[_Code_] #ifndef __MSDOS__
+
+[_Code_] file_descriptor = open("file", O_RDONLY);
+
+[_Code_] #else __MSDOS__
+
+[_Code_] file_descriptor = open("file", O_RDONLY|O_BINARY);
+
+[_Code_] #endif __MSDOS__
+
+This is messy. A far better way is to define dummy O_BINARY and
+O_TEXT flags:
+
+[_Code_] #ifndef O_BINARY  /* Do we have an O_BINARY? */
+
+[_Code_] #define O_BINARY 0  /* If not define one (BINARY and TEXT)*/
+
+[_Code_] #define O_TEXT 0    /*  so they don't get in the way */
+
+[_Code_] #endif O_BINARY
+
+[_Code_]
+
+[_Code_] . . .
+
+[_Code_] file_descriptor = open("file", O_RDONLY|O_BINARY);
+
+[_A_]  Summary
+
+It is possible to write portable programs in C++. Because C++ runs
+on many different types of machines that use different operating
+systems, it is not easy. However, if you keep portability in mind
+when creating the code, you can minimize the problems.
+
+Porting four-letter words
+
+Portability problems are not limited to programming. When Practical C Pro-
+gramming was translated to Japanese, the translator had a problem with one
+exercise: "Write a program that removes four-latter words from a file and re-
+places them with more acceptable equivalents."
+
+The problem was, in Japanese, everything is a one-letter word. When the trans-
+lator came to a phrase he couldn't directly translate, he did his best and also
+put in the English. But for the four-letter words, he decided to include the En-
+glish as well as some additional help (Stars added. I don't use words like that.):
+
+[_A_]  Answers to Chapter Questions
+
+Answer 25-1:  The problem is that C++ uses the backslash (\) as an escape char-
+acter. The character \r is <return>, \n is <new line>, and \t is <tab>. What we
+really have for a name is:
+
+[_Code_] <return>oot<new line>ew<tab>able
+
+The name should be specified as:
+
+[_Code_] #define NAME "\\root\\new\\table"
+
+[_NOTE_]  The #include uses a filename, not a C++ string.
+While you must use double backslashes (\\) in a C++ string,
+you use single backslashes in an #include. The following two
+lines are both correct:
+
+[_Code_] #define NAME "\\root\\new\\table"
+
+[_Code_] #include "\root\new\defs.h"
+

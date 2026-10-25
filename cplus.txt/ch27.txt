@@ -1,0 +1,405 @@
+Chapter 27Part V: Other Language Features
+
+In This Chapter:
+
+*  [_XREF Overview_]
+
+*  [_XREF K&R-Style Functions_]
+
+*  [_XREF struct_]
+
+*  [_XREF malloc and free_]
+
+*  [_XREF Turning Structures into
+Classes_]
+
+*  [_XREF setjmp and longjmp_]
+
+*  [_XREF Summary_]
+
+*  [_XREF Programming
+Exercise_]
+
+27	
+
+27: From C to C++
+
+No distinction so little excites envy as
+that which is derived from ancestors
+by a long descent.
+
+---François De Saliganc De La Mothe
+Fénelon
+
+[_A_]  Overview
+
+C++ was built on the older language C, and there's a lot of C code
+still around. That's both a blessing and a curse. It's a curse because
+it means you'll probably have to deal with a lot of ancient code. On
+the other hand, there will always be work for you. This chapter
+describes some of the differences between C and C++ as well as
+how to migrate from one to the other.
+
+[_A_]  K&R-Style Functions
+
+Classic C (also called K&R C after its authors, Brian Kernighan and
+Dennis Ritchie) uses a function header that's different from the one
+used in C++. In C++ the parameter types and names are included
+inside the (  ) defining the function. In Classic C, only the names
+appear. Type information comes later:
+
+[_Code_] int do_it(char *name, int function)   // C++ function definition
+
+[_Code_] {
+
+[_Code_]     // Body of the fucnction
+
+[_Code_]
+
+[_Code_] int do_it(name, function)             // Classic C definition
+
+[_Code_] char *name;
+
+[_Code_] int function;
+
+[_Code_] {
+
+[_Code_]     // Body of the function
+
+When C++ came along, the ANSI C committee decided it would be a
+good idea if C used the new function definitions. However, because
+there was a lot of code out there using the old method, C++ accepts
+both types of functions.
+
+Classic C does not require prototypes. In many cases, prototypes are
+missing from C programs. A function that does not have a prototype
+has an implied prototype of:
+
+[_Code_] int funct(...);    // Default prototype for Classic C functions
+
+Also, Classic C prototypes have no parameter lists. They merely
+consist of "(  )," such as
+
+[_Code_] int do_it();    // Classic C function prototype
+
+This tells C that do_it returns an int and takes any number of
+parameters. C does not type-check parameters, so the following are
+legal calls to do_it:
+
+[_Code_] i = do_it();
+
+[_Code_] i = do_it(1, 2, 3);
+
+[_Code_] i = do_it("Test", 'a');
+
+C++ requires function prototypes, so you have to put them in.
+There are tools out there such as the GNU prototize utility that help
+you by reading your code and generating function prototypes.
+Otherwise, you will have to do it manually.
+
+[_A_]  struct
+
+In C++, when you declare a struct, you can use the structure as a
+type name. For example:
+
+[_Code_] struct sample {
+
+[_Code_]     int i, j;    // Data for the sample
+
+[_Code_] };
+
+[_Code_] sample sample_var;  // Last sample seen
+
+C is more strict. You must put the keyword struct before each
+variable declaration:
+
+[_Code_] struct sample sample_var;  // Legal in C
+
+[_Code_] sample sample_var;          // Illegal in C
+
+[_A_]  malloc and free
+
+In C++, you use the new operator to get memory from the heap and
+use delete to return the memory. C has no built-in memory-
+handling operations. Instead, it makes use of two library routines:
+malloc and free.
+
+The function malloc takes a single parameter-the number of bytes
+to allocate- and returns a pointer to them (as a char * or void
+*). But how do we know how big a structure is? That's where the
+sizeof operator comes in. It returns the number of bytes in the
+structure. So to allocate a new variable of type struct foo we use
+the code:
+
+[_Code_] foo_var = (struct foo *)malloc(sizeof(struct foo));
+
+Note that we must use a cast to turn the pointer returned by
+malloc into something useful. The C++ syntax for the same
+operator is much cleaner:
+
+[_Code_] foo_var = new foo;
+
+Suppose we want to allocate an array of three structures. Then we
+need to multiply our allocation size by 3, resulting in:
+
+[_Code_] foo_var = (struct foo *)malloc(sizeof(struct foo) * 3);
+
+The C++ equivalent is:
+
+[_Code_] foo_var = new foo[3];
+
+The function calloc is similar to malloc except that it takes two
+parameters: the number of elements in the array of objects and the
+size of a single element. Using our array of three foos example, we
+get:
+
+[_Code_] foo_var = (struct foo*)calloc(3, sizeof(foo));
+
+The other difference is that calloc initializes the structure to zero.
+Thus the C++ equivalent is:
+
+[_Code_] foo_var = new foo[3];
+
+[_Code_] memset(foo_var, '\0', sizeof(foo) * 3);
+
+Programs can freely mix C-style mallocs and C++ new calls. The C
+memory allocators are messy, however, and should be converted to
+C++ whenever possible.
+
+There are a number of traps concerning C-style memory allocation.
+Suppose we take our structure foo and turn it into a class. We can
+but shouldn't use the C memory routines to allocate space for the
+class:
+
+[_Code_] class foo {...};
+
+[_Code_] foo_var = (struct foo *)malloc(sizeof(struct foo)); // Don't code like
+this
+
+Because C++ treats struct as a special form of class most
+compilers won't complain about this code. The problem is that our
+malloc statement allocates space for foo and that's all. No
+constructor is called, so it's quite possible that the class will not get
+set up correctly.
+
+C uses the function free to return memory to the heap. The
+function free takes a single character pointer as a parameter (thus
+making a lot of casting necessary):
+
+[_Code_] free((char *)foo_var);
+
+[_Code_] foo_var = NULL;
+
+In C++ this would be:
+
+[_Code_] delete foo_var;
+
+[_Code_] foo_var = NULL;
+
+for a simple variable and:
+
+[_Code_] delete []foo_array;
+
+[_Code_] foo_array = NULL;
+
+when foo_array points to an array.
+
+Again, you must be careful when turning foo into a class. The free
+function just returns the memory to the heap. It does not call the
+destructor for foo.
+
+C-style memory allocation is messy and risky. When converting to
+C++ you probably should get rid of all malloc, calloc, and free
+calls whenever possible.
+
+[_WARNING_]  According to the ANSI C draft standard,
+memory allocated by malloc must be deallocated by free.
+Similarly, memory allocated by new must be deallocated by
+delete. However, most of the compilers I've seen
+implement new as a call to malloc and delete as a call to
+free. In other words, mixing new/free or malloc/free
+calls will usually work. To avoid errors, you should follow
+the rules and avoid mixing C and C++ operations.
+
+[_A_]  Turning Structures into Classes
+
+Frequently when examining C code you may find a number of
+struct statements that look like they should be classes. Actually,
+a structure is really just a data-only class with all the members
+public.
+
+C programmers frequently take advantage of the fact that a structure
+only contains data. One example of this is reading and writing a
+structure to a binary file. For example:
+
+[_Code_] a_struct struct_var;	   // A structure variable
+
+[_Code_]
+
+[_Code_] // Perform a raw read to read in the structure
+
+[_Code_] read_size = read(fd, (char *)&struct_var, sizeof(struct_var));
+
+[_Code_]
+
+[_Code_] // Perform a raw write to send the data to a file
+
+[_Code_] write_size = write(fd, (char *)&struct_var, sizeof(struct_var));
+
+Turning this structure into a class can cause problems. C++ keeps
+extra information, such as virtual function pointers, in a class. When
+you write the class to disk using a raw write, you are outputting all
+that information. What's worse, when you read the class in you
+overwrite this bookkeeping data.
+
+For example, suppose we have the class:
+
+[_Code_] class sample {
+
+[_Code_]     public:
+
+[_Code_]         const int sample_size;     // Number of samples
+
+[_Code_]         int cur_sample;            // Current sample number
+
+[_Code_]         sample(void) : sample_size(100) {} // Set up class
+
+[_Code_]         virtual void get_sample(); // Routine to get a sample
+
+[_Code_] };
+
+Internally, this class consists of three member variables: a constant,
+sample_size (which C++ won't allow you to change); a simple
+variable, cur_sample; and a pointer to the real function to be used
+when get_sample is called. All three of these are written to disk by
+the call:
+
+[_Code_] sample a_sample;
+
+[_Code_] // ...
+
+[_Code_] write_size = write(fd, (char *)&a_sample, sizeof(a_sample));
+
+When this class is read, all three members are changed. That
+includes the constant (which we aren't supposed to change) and the
+function pointer (which now probably points to something strange).
+
+C programmers also make use of the memset function to set all the
+members of a structure to zero. For example:
+
+[_Code_] struct a_struct { ... }
+
+[_Code_] a_struct struct_var;
+
+[_Code_] // ...
+
+[_Code_] memset(&struct_var, '\0', sizeof(struct_var));
+
+Again, be careful when turning a structure into a class. If we had
+used the class a_sample instead of the structure struct_var, we
+would have zeroed the constant sample_size as well as the virtual
+function pointer. The result would probably be a crash if we ever
+tried to call get_sample.
+
+[_A_]  setjmp and longjmp
+
+C has its own way of handling exceptions through the use of
+setjmp and longjmp. The setjmp function marks a place in a
+program. The longjmp function jumps to the place marked by
+setjmp.
+
+Normally setjmp returns a zero. This tells the program to execute
+normal code. When an exception occurs, the longjmp call returns
+to the location of the setjmp function. The only difference the
+program can see between a real setjmp call and a fake setjmp call
+caused by a longjmp is that a normally setjmp returns a zero.
+When setjmp is "called" by longjmp, the return value is
+controlled by a parameter to longjmp.
+
+The definition of the setjmp function is:
+
+[_Code_] #include <setjmp.h>
+
+[_Code_]
+
+[_Code_] int setjmp(jmp_buf env);
+
+where:
+
+env
+is the place where setjmp saves the current environment for later use by
+longjmp
+
+Returns
+
+0
+Normal call
+
+Nonzero
+Non-zero return codes are the result of a longjmp call.
+
+The definition of the longjmp call is:
+
+[_Code_] void longjmp(jmp_buf env, int return_code);
+
+where:
+
+env
+is the environment initialized by a previous setjmp call
+
+return_code
+is the return code that will be returned by the setjmp call
+
+[_XREF Figure 27-1_] illustrates the control flow when using setjmp
+and longjmp
+
+Figure 27-1
+
+.
+
+. setjmp/longjmp control flow
+
+There is one problem here, however. The longjmp call returns
+control to the corresponding setjmp. It does not call the destructors
+of any classes that are "destroyed" in the process.
+
+In [_XREF Figure 27-1_] we can see that in the subroutine we
+define a class named a_list. Normally we would call the
+destructor for a_list at the end of the function or at a return
+statement. However, in this case we use longjmp to exit the
+function. Since longjmp is a C function it knows nothing about
+classes and destructors and does not call the destructor for a_list.
+So we now have a situation where a variable has disappeared but
+the destructor has not been called. The technical name for this
+situation is a "foul-up."
+
+When converting C to C++, change all setjmp/longjmp
+combinations into exceptions.
+
+[_A_]  Summary
+
+What you must do to get C to compile with a C++ compiler:
+
+1.  Change K&R-style function headers into standard C++ headers.
+
+2.  Add prototypes.
+
+3.  Change setjmp/longjmp calls into catch/throw operations.
+
+Following these two steps you have a C+ program. It works, but
+it's really a C program in C++'s clothing. To convert it to a real C++
+program you need to do the following:
+
+4.  Change malloc into new.
+
+5.  Change free into delete or delete [] calls.
+
+6.  Turn printf and scanf calls into cout and cin.
+
+7.  When turning struct declarations into class variables, be
+careful of read, write, and memset functions that use the
+entire structure or class.
+
+[_A_]  Programming Exercise
+
+Exercise 27-1: There are a lot of C programs out there. Turn one into C++.

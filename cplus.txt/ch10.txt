@@ -1,0 +1,987 @@
+Chapter 10Part II: Simple Programming
+
+In This Chapter:
+
+*  [_XREF #define Statement_]
+
+*  [_XREF Conditional
+Compilation_]
+
+*  [_XREF #include Files_]
+
+*  [_XREF Parameterized Macros_
+]
+
+*  [_XREF Advanced Features_]
+
+*  [_XREF Summary_]
+
+*  [_XREF Programming
+Exercises_]
+
+*  [_XREF Answers to Chapter
+Questions_]
+
+10	
+
+10: The C++ Preprocessor
+
+The speech of man is like
+embroidered tapestries, since like
+them this has to be extended in order
+to display its patterns, but when it is
+rolled up it conceals and distorts
+them.
+
+---Themistocles
+
+The first C compilers had no constants or inline functions. When C
+was still being developed, it soon became apparent that C needed a
+facility for handling named constants, macros, and include files. The
+solution was to create a preprocessor that is run on the programs
+before they are passed to the C compiler. The pre-processor is
+nothing more than a specialized text editor. Its syntax is completely
+different from C's and it has no understanding of C constructs. It is
+merely a dumb text editor.
+
+The preprocessor was very useful and soon it was merged into the
+main C compiler. The C++ compiler kept this pre-processor. On
+some systems, like UNIX, it is still a separate program, automatically
+executed by the compiler wrapper cc. Some of the newer
+compilers, like Turbo-C++, have the pre-processor built in.
+
+[_A_]  #define Statement
+
+The #define statement can be used to define a constant. For
+example, the following two lines perform similar functions:
+
+[_Code_] #define SIZE 20       // The array size is 20
+
+[_Code_] const int SIZE = 20;  // The array size is 20
+
+Actually the line #define SIZE 20 acts as a command to the
+preprocessor to globally change SIZE to 20. This takes the drudgery
+and guesswork out of making changes.
+
+All preprocessor commands begin with a hash mark (#) in column
+1. C++ is free format. Language elements can be placed anywhere
+on a line, and the end-of-line is treated just like a space. The
+preprocessor is not free format. It depends on the hash mark (#)
+being in the first column. As you will see, the preprocessor knows
+nothing about C++ and can be (and is) used to edit things other
+than C++ programs.
+
+[_WARNING_]  The preprocessor is not part of the C++
+compiler. It uses an entirely different syntax and requires an
+entirely different mind-set to use it well. Most problems you
+will see occur when the preprocessor is treated like C++.
+
+Preprocessor directives terminate at the end of the line. In C++ a
+semicolon (;) ends a statement. The preprocessor directives do not
+end in a semicolon, and putting one in can lead to unexpected
+results. A preprocessor directive can be continued by putting a
+backslash (\) at the end of the line. The simplest use of the
+preprocessor is to define a replacement macro. For example, the
+command:
+
+[_Code_] #define FOO bar
+
+causes the preprocessor to replace the word "FOO" with the word
+"bar" everywhere "FOO" occurs. It is common programming
+practice to use all uppercase letters for macro names. This makes it
+very easy to tell the difference between a variable (all lowercase)
+and a macro (all uppercase).
+
+The general form of a simple define statement is:
+
+[_Code_] #define Name Substitute-Text
+
+Name can be any valid C++ identifier. Substitute-Text can be
+anything as long as it fits on a single line. The Substitute-Text can
+include spaces, operators, and other characters.
+
+It is possible to use the following definition:
+
+[_Code_] #define FOR_ALL for (i = 0; i < ARRAY_SIZE; ++i)
+
+and use it like:
+
+[_Code_] /*
+
+[_Code_]  * Clear the array
+
+[_Code_]  */
+
+[_Code_] FOR_ALL {
+
+[_Code_]     data[i] = 0;
+
+[_Code_] }
+
+It is considered bad programming practice to define macros in this
+manner. They tend to obscure the basic control flow of the
+program. In this example, if the programmer wants to know what
+the loop does, he must search the beginning of the program for the
+definition of FOR_ALL.
+
+It is even worse to define macros that do large-scale replacement of
+basic C++ programming constructs. For example, you can define the
+following:
+
+[_Code_] #define BEGIN {
+
+[_Code_] #define END }
+
+[_Code_]
+
+[_Code_] . . .
+
+[_Code_]
+
+[_Code_]     if (index == 0)
+
+[_Code_]     BEGIN
+
+[_Code_]         cout << "Starting\n";
+
+[_Code_]     END
+
+The problem is that you are no longer programming in C++, but in
+a half-C++ half-PASCAL mongrel.
+
+The preprocessor can cause unexpected problems because it does
+not check for correct C++ syntax. For example, [_XREF
+Example 10-1_] generates an error on line 11.
+
+Example 10-1
+
+. big/big.cc
+
+[_Code_]  1 #define BIG_NUMBER 10 ** 10
+
+[_Code_]  2
+
+[_Code_]  3 main()
+
+[_Code_]  4 {
+
+[_Code_]  5     // Index for our calculations
+
+[_Code_]  6     int   index;
+
+[_Code_]  7
+
+[_Code_]  8     index = 0;
+
+[_Code_]  9
+
+[_Code_] 10     // Syntax error on next line
+
+[_Code_] 11     while (index < BIG_NUMBER) {
+
+[_Code_] 12         index = index * 8;
+
+[_Code_] 13     }
+
+[_Code_] 14     return (0);
+
+[_Code_] 15 }
+
+The problem is in the #define statement on line 1, but the error
+message points to line 11. The definition in line 1 causes the pre-
+processor to expand line 11 to look like:
+
+[_Code_] while (index < 10 ** 10)
+
+Because ** is an illegal operator, this generates a syntax error.
+
+Question 10-1: The following program generates the answer 47 instead of the
+expected answer 144. Why? (Hint below.)
+
+Example 10-2
+
+. first/first.cc
+
+[_Code_] #include <iostream.h>
+
+[_Code_]
+[_Code_] #define FIRST_PART      7
+
+[_Code_] #define LAST_PART       5
+
+[_Code_] #define ALL_PARTS       FIRST_PART + LAST_PART
+
+[_Code_]
+[_Code_] main() {
+
+[_Code_]     cout << "The square of all the parts is " <<
+
+[_Code_]         ALL_PARTS * ALL_PARTS << '\n';
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+Hint:
+
+[_Code_] CC -E prog.cc
+
+sends the output of the preprocessor to the standard output.
+
+In MS-DOS/Windows, the command:
+
+[_Code_] cpp prog.cpp
+
+creates a file called prog.i containing the output of the preprocessor.
+
+Running the program for [_XREF Example 10-1_] through the preprocessor gives
+you:
+
+Example 10-3
+
+. first/first-ed.out
+
+[_Code_] # 1 "first.cc"
+
+[_Code_] # 1 "/usr/local/lib/g++-include/iostream.h" 1 3
+
+[_Code_]
+
+[_Code_] // About 900 lines of #include stuff omitted
+
+[_Code_]
+[_Code_] inline ios& oct(ios& i)
+
+[_Code_] { i.setf(ios::oct, ios::dec|ios::hex|ios::oct); return i; }
+
+[_Code_]
+[_Code_] # 1 "first.cc" 2
+
+[_Code_]
+[_Code_] main() {
+
+[_Code_]     cout << "The square of all the parts is " <<
+
+[_Code_]                    7 + 5 * 7 + 5 << '\n';
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+[_NOTE_]  The output of the C++ preprocessor contains a lot
+of information, most of which can easily be ignored. In this
+case, you need to scan the output till you reach the cout
+line. Examining this line will give you an idea of what
+caused the error.
+
+Question 10-2: [_XREF Example 10-2_] generates a warning that counter is used
+before it is set. This is a surprise because the for loop should set it. You also get a
+very strange warning, "null effect," for line 11.
+
+Example 10-4
+
+. max/max.cc
+
+[_Code_]  1 // Warning, spacing is VERY important
+
+[_Code_]  2
+
+[_Code_]  3 #include <iostream.h>
+
+[_Code_]  4
+
+[_Code_]  5 #define MAX=10
+
+[_Code_]  6
+
+[_Code_]  7 main()
+
+[_Code_]  8 {
+
+[_Code_]  9     int  counter;
+
+[_Code_] 10
+
+[_Code_] 11     for (counter = MAX; counter > 0;
+
+[_Code_] 12       --counter)
+
+[_Code_] 13         cout << "Hi there\n";
+
+[_Code_] 14
+
+[_Code_] 15     return (0);
+
+[_Code_] 16 }
+
+Hint: Take a look at the preprocessor output.
+
+Question 10-3: [_XREF Example 10-3_] computes the wrong value for size. Why?
+
+Example 10-5
+
+. size/size.cc
+
+[_Code_] #include <iostream.h>
+
+[_Code_]
+[_Code_] #define SIZE    10;
+
+[_Code_] #define FUDGE   SIZE -2;
+
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     int size; // Size to really use
+
+[_Code_]
+
+[_Code_]     size = FUDGE;
+
+[_Code_]     cout << "Size is " << size << '\n';
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+Question 10-4: The following program is supposed to print the message "Fatal
+Error: Abort" and exit when it receives bad data. But when it gets good data, it
+exits. Why?
+
+Example 10-6
+
+. dis/die.cc
+
+[_Code_]  1 #include <iostream.h>
+
+[_Code_]  2 #include <stdlib.h>  /* ANSI Standard only */
+
+[_Code_]  3
+
+[_Code_]  4 #define DIE \
+
+[_Code_]  5   cerr << "Fatal Error: Abort\n"; exit(8);
+
+[_Code_]  6
+
+[_Code_]  7 main() {
+
+[_Code_]  8     // A random value for testing
+
+[_Code_]  9     int value;
+
+[_Code_] 10
+
+[_Code_] 11     value = 1;
+
+[_Code_] 12     if (value < 0)
+
+[_Code_] 13         DIE;
+
+[_Code_] 14
+
+[_Code_] 15     cerr << "We did not die\n";
+
+[_Code_] 16     return (0);
+
+[_Code_] 17 }
+
+[_B_]  #define versus const
+
+The const keyword is relatively new. Before const, #define
+was the only way to define constants, so most older code uses
+#define directives. However, the use of const is preferred over
+#define for several reasons. First of all, C++ checks the syntax of
+const statements immediately. The #define directive is not
+checked until the macro is used. Also, const uses C++ syntax,
+while #define has a syntax all its own. Finally, const follows
+normal C++ scope rules, whereas constants defined by a #define
+directive continue on forever.
+
+In most cases a const statement is preferred over #define. Here
+are two ways of defining the same constant.
+
+[_Code_] #define MAX 10 // Define a value using the pre-processor
+
+[_Code_]                // (This can easily cause problems)
+
+[_Code_]
+
+[_Code_] const int MAX = 10; // Define a C++ constant integer
+
+[_Code_]                     // (Safer)
+
+The #define directive is limited to defining simple constants. The
+const statement can define almost any type of C++ constant
+including things such as structure classes. For example:
+
+[_Code_] struct box {
+
+[_Code_]     int width, height;   // Dimensions of the box in pixels
+
+[_Code_] };
+
+[_Code_]
+
+[_Code_] // Size of a pink box to be used for input
+
+[_Code_] const box pink_box(1.0, 4.5);
+
+The #define directive is, however, essential for things such as
+conditional compilation and other specialized uses.
+
+[_A_]  Conditional Compilation
+
+One problem programmers have is writing code that can work on
+many different machines. In theory, C++ code is portable; in actual
+practice many machines have little quirks that must be accounted
+for. For example, this book covers UNIX, MS-DOS, and Windows
+compilers. Although they are almost the same, there are some
+differences, as you will see in Chapter 25, Portability Problems.
+
+The preprocessor allows you great flexibility in changing the way
+code is generated through the use of conditional compilation.
+Suppose you want to put debugging code in the program while you
+are working on it and then remove the debugging code in the
+production version. You could do this by including the code in an
+#ifdef-#endif section.
+
+[_Code_] #ifdef DEBUG
+
+[_Code_]     cout << "In compute_hash, value " << value << " hash " << hash << "\
+n";
+
+[_Code_] #endif /* DEBUG */
+
+[_NOTE_]  You do not have to put the /* DEBUG */ after
+the #endif, but it is very useful as a comment.
+
+If the beginning of the program contains the directive:
+
+[_Code_] #define DEBUG       /* Turn debugging on */
+
+the cout is included. If the program contains the directive:
+
+[_Code_] #undef DEBUG        /* Turn debugging off */
+
+the cout is omitted.
+
+Strictly speaking the #undef DEBUG is unnecessary. If there is no
+#define DEBUG statement, then DEBUG is undefined. The #undef
+DEBUG statement is used to indicate explicitly to anyone reading the
+code that DEBUG is used for conditional compilation and is now
+turned off.
+
+The directive #ifndef will cause the code to be compiled if the
+symbol is not defined.
+
+#else reverses the sense of the conditional. For example:
+
+[_Code_] #ifdef DEBUG
+
+[_Code_]     cout << "Test version. Debugging is on\n";
+
+[_Code_] #else /* DEBUG */
+
+[_Code_]     cout << "Production version\n";
+
+[_Code_] #endif /* DEBUG  */
+
+A programmer may wish to temporarily remove a section of code. A
+common method of doing this is to comment out the code by
+enclosing it in /* */. This can cause problems, as shown by the
+following example:
+
+[_Code_] /***** Comment out this section
+
+[_Code_]     section_report();
+
+[_Code_]     /* Handle the end-of-section stuff */
+
+[_Code_]     dump_table();
+
+[_Code_] **** End of commented out section */
+
+This generates a syntax error for the fifth line. Why?
+
+A better method is to use the #ifdef construct to remove the code.
+
+[_Code_] #ifdef UNDEF
+
+[_Code_]     section_report();
+
+[_Code_]     /* Handle the end-of-section stuff */
+
+[_Code_]     dump_table();
+
+[_Code_] #endif /* UNDEF */
+
+(Of course the code will be included if anyone defines the symbol
+UNDEF; however, anyone who does should be shot.)
+
+The compiler switch -Dsymbol allows symbols to be defined on the
+command line. For example, the command:
+
+[_Code_] CC -DDEBUG -g -o prog prog.cc
+
+compiles the program prog.c and includes all the code in #ifdef
+DEBUG/#endif /* DEBUG */ pairs even though there is no
+#define DEBUG in the program. The Turbo-C++ equivalent is:
+
+[_Code_] tcc -DDEBUG -g -N -eprog.exe prog.c
+
+The general form of the option is -Dsymbol or -Dsymbol=value. For
+example, the following sets MAX to 10:
+
+[_Code_] CC -DMAX=10 -o prog prog.c
+
+Most C++ compilers automatically define some system-dependent
+symbols. For example, Turbo-C++ defines the symbol _ _TURBOC_ _
+and MS-DOS defines _ _MSDOS_ _. The ANSI standard compiler C
+defines the symbol _ _STDC_ _. C++ compilers define the symbol _ _
+cplusplus. Most UNIX compilers define a name for the system
+(e.g., Sun, VAX, celerity, etc.); however, they are rarely
+documented. The symbol unix is always defined for all UNIX
+machines
+
+[_NOTE_]  Command-line options specify the initial value of
+a symbol only. Any #define and #undef directives in the
+program can change the symbol's value. For example, the
+directive:
+
+[_Code_]         #undef DEBUG
+
+[_NOTE_]  results in DEBUG being undefined whether or not
+you use -DDEBUG.
+
+.
+
+[_A_]  #include Files
+
+The #include directive allows the program to use source code
+from another file.
+
+For example, you have been using the directive:
+
+[_Code_] #include <iostream.h>
+
+in your programs. This tells the preprocessor to take the file
+iostream.h and insert it in the current program. Files that are
+included in other programs are called header files. (Most #include
+directives come at the head of the program.) The angle brackets
+indicate that the file is a standard header file. In UNIX, these files
+are usually located in /usr/include. In MS-DOS/Windows, they
+are located in the Turbo-C++ directory (installation dependent).
+
+Standard include files are used for defining data structures and
+macros used by library routines. For example, cout is a standard
+class that (as you know by now) prints data on the standard output.
+The ostream class definition used by cout and its related routines
+is defined in iostream.h.
+
+Sometimes you may want to write your own set of include files.
+Local include files are particularly useful for storing constants and
+data structures when a program spans several files. They are
+especially useful for information sharing when a team of
+programmers is working on a single project. (See Chapter 23,
+Modular Programming.)
+
+Local include files may be specified by using double quotation
+marks (") around the filename.
+
+[_Code_] #include "defs.h"
+
+The filename ("defs.h") can be any valid filename. This can be a
+simple file, "defs.h"; a relative path, called "../../data.h"; or
+an absolute path, called  "/root/include/const.h". (In MS-
+DOS/Windows you should use backslash (\) instead of slash (/) as
+a directory separator.)
+
+Include files may be nested. This can cause problems. Suppose you
+define several useful constants in the file const.h. If the files data.h
+and io.h both include const.h and you put the following in your
+program:
+
+[_Code_] #include "data.h"
+
+[_Code_] #include "io.h"
+
+you generate errors because the preprocessor sets the definitions in
+const.h twice. Defining a constant twice is not a fatal error;
+however, defining a data structure or union twice is an error and
+must be avoided.
+
+One way around this problem is to have const.h check to see
+whether it has already been included and not define any symbols
+that have already been defined.
+
+Look at the following code:
+
+[_Code_] #ifndef _CONST_H_INCLUDED_
+
+[_Code_]
+
+[_Code_] /* Define constants */
+
+[_Code_]
+
+[_Code_] #define _CONST_H_INCLUDED_
+
+[_Code_] #endif  /* _CONST_H_INCLUDED_ */
+
+When const.h is included, it defines the symbol _CONST_H_
+INCLUDED_. If that symbol is already defined (because the file was
+included earlier), the #ifdef conditional hides all the other defines
+so they don't cause trouble.
+
+[_NOTE_]  It is possible to put code in a header file. This is
+considered poor programming practice. By convention, code
+goes in .cc files and definitions, declarations, macros, and
+inline functions go in the .h files.
+
+[_A_]  Parameterized Macros
+
+So far we have discussed only simple #defines or macros. Macros
+can take parameters. The following macro computes the square of a
+number:
+
+[_Code_] #define SQR(x)  ((x) * (x))     /* Square a number */
+
+When used, the macro replaces x by the text of its argument.
+SQR(5) expands to ((5) * (5)). It is a good rule always to put
+parentheses around the parameters of a macro. Example 10-7
+illustrates the problems that can occur if this rule is not followed:
+
+Example 10-7
+
+. sqr/sqr.cc
+
+[_Code_] #include <iostream.h>
+
+[_Code_] #define SQR(x) (x * x)
+
+[_Code_]
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     int counter;    // Counter for loop
+
+[_Code_]
+[_Code_]     for (counter = 0; counter < 5; ++counter) {
+
+[_Code_]         cout << "x " << counter + 1 <<
+
+[_Code_]                 " x squared " << SQR(counter + 1) << '\n';
+
+[_Code_]     }
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+Question 10-5: What does the above program output? (Try running it on your
+machine.) Why did it output what it did? (Try checking the output of the pre-
+processor.)
+
+The keep-it-simple system of programming prevents us from using the incre-
+ment (++) and decrement (--) operators except on a line by themselves. When
+used in an expression, they are considered side effects, and this can lead to unex-
+pected results as illustrated in Example 10-8.
+
+Example 10-8
+
+. sqr-i/sqr-i.cc
+
+[_Code_] #include <iostream.h>
+
+[_Code_] #define SQR(x) ((x) * (x))
+
+[_Code_]
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     int counter;    /* Counter for loop */
+
+[_Code_]
+[_Code_]     counter = 0;
+
+[_Code_]     while (counter < 5)
+
+[_Code_]         cout << "x " << counter + 1 <<
+
+[_Code_]                 " x squared " << SQR(++counter) << '\n';
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+Why does this not produce the expected output? How much does the counter go up
+each time.
+
+In the program shown in Example 10-8 the SQR(++counter) is expanded to
+((++counter) * (++counter)) in this case. The result is that counter
+goes up by 2 each time through the loop. The actual result of this expression is
+system dependent.
+
+Question 10-6: The following program tells us we have an undefined variable, but
+our only variable name is counter. Why?
+
+Example 10-9
+
+. rec/rec.cc
+
+[_Code_] #include <iostream.h>
+
+[_Code_] #define RECIPROCAL (number) (1.0 / (number))
+
+[_Code_]
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     float   counter;
+
+[_Code_]
+[_Code_]     for (counter = 0.0; counter < 10.0;
+
+[_Code_]          counter += 1.0) {
+
+[_Code_]
+[_Code_]         cout << "1/" << counter << " = " <<
+
+[_Code_]                   RECIPROCAL(counter) << "\n";
+
+[_Code_]     }
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+[_B_]  The # Operator
+
+The # operator is used inside a parameterized macro to turn an
+argument into a string. For example:
+
+[_Code_] #define STR(data) #data
+
+[_Code_] STR(hello)
+
+generates
+
+[_Code_] "hello"
+
+For a more extensive example of how to use this operator see
+Chapter 26, Putting It All Together.
+
+[_B_]  Parameterized Macros Versus Inline Functions
+
+In most cases it is better to use an inline function instead of a
+parameterized macro, to avoid most of the traps caused by
+parameterized macros. But there are cases where a parameterized
+macro may be better than an inline function. For example, the
+SQR macro works for both float and int data types. We'd have
+to write two inline functions to perform the same functions.
+
+[_Code_] #define SQR(x) ((x) * (x))  // A parameterized macro
+
+[_Code_] // Works, but is dangerous
+
+[_Code_]
+
+[_Code_] // Inline function to do the same thing
+
+[_Code_] inline int sqr(const int x) {
+
+[_Code_]     return (x * x);
+
+[_Code_] }
+
+[_A_]  Advanced Features
+
+This book does not cover the complete list of C++ preprocessor
+directives. Among the more advanced features are an advanced
+form of the #if directive for conditional compilations and the
+#pragma directive for inserting compiler-dependent commands into
+a file. See your C++ reference manual for more information on these
+features.
+
+[_A_]  Summary
+
+The C++ preprocessor is a very useful part of the C++ language. It
+has a completely different look and feel from C++. However, it must
+be treated apart from the main C++ compiler.
+
+Problems in macro definitions often do not show up where the
+macro is defined, but result in errors much further down in the
+program. By following a few simple rules, you can decrease the
+chances of having problems.
+
+1.  Put parentheses around everything. In particular they should
+enclose #define constants and macro parameters.
+
+2.  When defining a macro with more than one statement, enclose
+the code in { }.
+
+3.  The preprocessor is not C++. Don't use = or ;.
+
+[_Code_] #define X = 5 // Illegal
+
+[_Code_] #define X 5;  // Illegal
+
+[_Code_] #define X = 5; // Very illegal
+
+[_Code_]
+
+[_Code_] #define X 5   // Correct
+
+Finally, be glad. If you got this far, be glad that the worst is over.
+
+[_A_]  Programming Exercises
+
+Exercise 10-1: The C++ standard contains a boolean type (bool) that defines the
+values true and false. The problem is most compilers haven't implemented this
+type yet. Create a boolean type by using #define to define values for
+BOOLEAN, TRUE, and FALSE.
+
+Exercise 10-2: Write a macro that returns true if its parameter is divisible by 10
+and false otherwise.
+
+Exercise 10-3: Write a macro is_digit that returns true if its argument is a
+decimal digit. Write a second macro is_hex that returns true if its argument is a
+hex digit (0-9 A-F a-f). The second macro should reference the first.
+
+Exercise 10-4: Write a preprocessor macro that swaps two integers. (If you're a
+real hacker, write one that does not use a temporary variable declared outside the
+macro.)
+
+[_A_]  Answers to Chapter Questions
+
+Answer 10-1: After the program has been run through the preprocessor, the cout
+statement is expanded to look like:
+
+[_Code_] cout << "The square of all the parts is " <<  7 + 5 * 7 + 5  << '\n';
+
+The equation 7 + 5 * 7 + 5 evaluates to 47. It is a good rule to put
+parentheses (  ) around all expressions in macros. If you change the
+definition of ALL_PARTS to:
+
+[_Code_] #define ALL_PARTS (FIRST_PART + LAST_PART)
+
+the program executes correctly.
+
+Answer 10-2: The preprocessor is a very simple-minded program. When it defines
+a macro, everything past the identifier is part of the macro. In this case, the defini-
+tion of MAX is literally "=10". When the for statement is expanded, the result is:
+
+[_Code_] for (counter==10; counter > 0; --counter)
+
+C++ allows you to compute a result and throw it away. For this
+statement, the program checks to see whether counter is 10 and
+discards the answer. Removing the = from the definition will correct
+the problem.
+
+Answer 10-3: As with the previous problem, the preprocessor does not respect
+C++ syntax conventions. In this case the programmer used a semicolon to end the
+statement, but the preprocessor included it as part of the definition for size. The
+assignment statement for size, expanded, is:
+
+[_Code_]     size = 10; -2;;
+
+The two semicolons at the end do not hurt anything, but the one in
+the middle is a killer. This line tells C++ to do two things: 1) assign
+10 to size and 2) compute the value -2 and throw it away (this
+results in the null effect warning). Removing the semicolons will fix
+the problem.
+
+Answer 10-4: The output of the preprocessor looks like:
+
+[_Code_] void exit();
+
+[_Code_]
+
+[_Code_] main() {
+
+[_Code_]     int value;
+
+[_Code_]
+
+[_Code_]     value = 1;
+
+[_Code_]     if (value < 0)
+
+[_Code_]         cout << "Fatal Error: Abort\n"; exit(8);
+
+[_Code_]
+
+[_Code_]     cout << "We did not die\n";
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+The problem is that two statements follow the if line. Normally
+they would be put on two lines. If we properly indent this program
+we get:
+
+Example 10-10
+
+. die3/die.cc
+
+[_Code_] #include <iostream.h>
+
+[_Code_] #include <stdlib.h>
+
+[_Code_]
+[_Code_] main() {
+
+[_Code_]     int value;  // A random value for testing
+
+[_Code_]
+
+[_Code_]     value = 1;
+
+[_Code_]     if (value < 0)
+
+[_Code_]         cout << "Fatal Error: Abort\n";
+
+[_Code_]
+[_Code_]     exit(8);
+
+[_Code_]
+[_Code_]     cout << "We did not die\n";
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+From this it is obvious why we always exit. The fact that there were
+two statements after the if was hidden by using a single
+preprocessor macro. The cure for this problem is to put curly braces
+around all multistatement macros.
+
+[_Code_] #define DIE \
+
+[_Code_]     {cout << "Fatal Error: Abort\n"; exit(8);}
+
+Answer 10-5: The answer is that the counter is incremented by two each time
+through the loop. This is because the macro call:
+
+[_Code_] SQR(++counter)
+
+is expanded to:
+
+[_Code_] ((++counter) * (++counter))
+
+Answer 10-6: The only difference between a parameterized macro and one
+without parameters is the parentheses immediately following the macro name. In
+this case, a space follows the definition of RECIPROCAL, so it is not a parameter-
+ized macro. Instead it is a simple text replacement macro that replaces
+RECIPROCAL with:
+
+[_Code_] (number) (1.0 / number)
+
+Removing the space between RECIPROCAL and (number)
+corrects the problem.

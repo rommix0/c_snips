@@ -1,0 +1,1421 @@
+Chapter 21Part IV: Advanced Programming Concepts
+
+In This Chapter:
+
+*  [_XREF Derived Classes_]
+
+*  [_XREF Virtual Functions_]
+
+*  [_XREF Virtual Classes_]
+
+*  [_XREF Function Hiding in
+Derived Classes_]
+
+*  [_XREF Constructors and
+Destructors in Derived Classes_
+]
+
+*  [_XREF Summary_]
+
+*  [_XREF Programming
+Exercises_]
+
+*  [_XREF Answers to Chapter
+Questions_]
+
+21	
+
+21: Advanced Classes
+
+The ruling ideas of each age have ever
+been the ideas of its ruling class.
+
+---Karl Marx
+
+Manifesto of the Communist Party
+
+[_A_]  Derived Classes
+
+The stack class that was defined in Example 13-1 contains one
+major limitation: it does not check for bad data. For example, there
+is nothing that prevents the user from pushing too many things onto
+the stack.
+
+We need to define a new bounds-checking stack (b_stack). This
+new stack does everything a simple stack does but also includes
+bounds checking. C++ allows you to build new classes on old ones.
+In this case we will be building our bounds-checking stack (b_
+stack) on the existing simple stack (stack). Technically we will be
+using the class stack as a base class to create a new derived class,
+the bounds-checking stack.
+
+We start by telling C++ that we are creating b_stack out of stack.
+
+[_Code_] class b_stack: public stack {
+
+The keyword public tells C++ to make all the members of stack
+accessible to the outside world. If we declared stack as private
+then the public and protected members of stack would be
+accessible only inside b_stack.
+
+This declaration tells C++ that we are going to use stack as a base
+for b_stack. [_XREF Figure 21-1_] shows how C++ views this
+combination.
+
+Figure 21-1
+
+. Derived class b_stack and base class stack
+
+Now we need to define the new version of the push member
+function. We first check to see whether there's room in the stack. If
+there's no more room, we print an error message and abort the
+program. Otherwise we push the item onto the stack. Here's a
+limited version of push.
+
+[_Code_] inline void b_stack::b_push(const int item)
+
+[_Code_] {
+
+[_Code_]     if (count >= STACK_SIZE) {
+
+[_Code_]         cout << "Error: Push overflows stack\n";
+
+[_Code_]         exit(8);
+
+[_Code_]     }
+
+[_Code_]     // This calls the push member function of the stack class
+
+[_Code_]     push(item);
+
+[_Code_] }
+
+We have been very careful in selecting the name of this member
+function. It is called b_push instead of push for a reason. We
+would like to call it push, but then the code:
+
+[_Code_] inline void b_stack::push(const int item)
+
+[_Code_] {
+
+[_Code_]     if (count >= STACK_SIZE) {
+
+[_Code_]         cout << "Error: Push overflows stack\n";
+
+[_Code_]         exit(8);
+
+[_Code_]     }
+
+[_Code_]     // The next line wrongly calls b_stack::push (this function),
+
+[_Code_]     //    not stack::push
+
+[_Code_]     push(item);
+
+[_Code_] }
+
+would call the member function push in the class b_stack not
+stack's push as we want. The result is that we call b_stack's
+push, which performs a limit check and then calls push. This push
+belongs to b_stack, so we perform a bounds check and call push,
+and so on. The result is that push will call itself over and over until
+the system runs out of stack space.
+
+This is not want we want. We want to tell C++ that we want to call
+the push in stack. This can be accomplished by using the scope
+operator "::". The new version of b_stack::push looks like:
+
+[_Code_] inline void b_stack::push(const int item)
+
+[_Code_] {
+
+[_Code_]     if (count >= STACK_SIZE) {
+
+[_Code_]         cout << "Error: Push overflows stack\n";
+
+[_Code_]         exit(8);
+
+[_Code_]     }
+
+[_Code_]     stack::push(item);
+
+[_Code_] }
+
+The full definition for both the stack and b_stack classes is
+shown in [_XREF Example 21-1_].
+
+Example 21-1
+
+. stack_c/stack_d1.cc
+
+[_Code_] /********************************************************
+
+[_Code_]  * Stack                                                *
+
+[_Code_]  *      a file implementing a simple stack class        *
+
+[_Code_]  ********************************************************/
+
+[_Code_] #include <stdlib.h>
+
+[_Code_] #include <iostream.h>
+
+[_Code_]
+[_Code_] const int STACK_SIZE = 100;     // Maximum size of a stack
+
+[_Code_]
+[_Code_] /********************************************************
+
+[_Code_]  * Stack class                                          *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Member functions                                     *
+
+[_Code_]  *      stack -- initialize the stack                   *
+
+[_Code_]  *      push -- put an item on the stack                *
+
+[_Code_]  *      pop -- remove an item from the stack            *
+
+[_Code_]  ********************************************************/
+
+[_Code_] // The stack itself
+
+[_Code_] class stack {
+
+[_Code_]     protected:
+
+[_Code_]         int count;              // Number of items in the stack
+
+[_Code_]     private:
+
+[_Code_]         int data[STACK_SIZE];   // The items themselves
+
+[_Code_]     public:
+
+[_Code_]         // Initialize the stack
+
+[_Code_]         stack(void);
+
+[_Code_]         // ~stack() -- default destructor
+
+[_Code_]         // Copy constructor defaults
+
+[_Code_]
+[_Code_]         // Push an item on the stack
+
+[_Code_]         void push(const int item);
+
+[_Code_]
+[_Code_]         // Pop an item from the stack
+
+[_Code_]         int pop(void);
+
+[_Code_] };
+
+[_Code_]
+[_Code_] /********************************************************
+
+[_Code_]  * stack::stack -- initialize the stack                 *
+
+[_Code_]  ********************************************************/
+
+[_Code_] inline stack::stack(void)
+
+[_Code_] {
+
+[_Code_]     count = 0;  // Zero the stack
+
+[_Code_] }
+
+[_Code_] /********************************************************
+
+[_Code_]  * stack::push -- push an item on the stack             *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Warning: We do not check for overflow                *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Parameters                                           *
+
+[_Code_]  *      item -- item to put in the stack                *
+
+[_Code_]  ********************************************************/
+
+[_Code_] inline void stack::push(const int item)
+
+[_Code_] {
+
+[_Code_]     data[count] = item;
+
+[_Code_]     ++count;
+
+[_Code_] }
+
+[_Code_] /********************************************************
+
+[_Code_]  * stack::pop -- remove item from stack                 *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Warning: We do not check for stack underflow         *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Returns                                              *
+
+[_Code_]  *      the top item from the stack                     *
+
+[_Code_]  ********************************************************/
+
+[_Code_] inline int stack::pop(void)
+
+[_Code_] {
+
+[_Code_]     // Stack goes down by one
+
+[_Code_]     --count;
+
+[_Code_]
+[_Code_]     // Then we return the top value
+
+[_Code_]     return (data[count]);
+
+[_Code_] }
+
+[_Code_]
+[_Code_] /********************************************************
+
+[_Code_]  * b_stack -- bound checking stack                      *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Member function                                      *
+
+[_Code_]  *      push -- push an item on the stack               *
+
+[_Code_]  *      pop -- remove an item from the stack            *
+
+[_Code_]  ********************************************************/
+
+[_Code_] class b_stack: public stack {
+
+[_Code_]     public:
+
+[_Code_]         // b_stack -- default constructor
+
+[_Code_]         // ~b_stack -- default destructor
+
+[_Code_]         // Copy constructor defaults
+
+[_Code_]
+[_Code_]         // Push an item on the stack
+
+[_Code_]         void push(const int item);
+
+[_Code_]
+[_Code_]         // Remove an item from the stack
+
+[_Code_]         int pop(void);
+
+[_Code_] };
+
+[_Code_] /********************************************************
+
+[_Code_]  * b_stack::push -- push an item on the stack           *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Parameters                                           *
+
+[_Code_]  *      item -- item to put in the stack                *
+
+[_Code_]  ********************************************************/
+
+[_Code_] inline void b_stack::push(const int item)
+
+[_Code_] {
+
+[_Code_]     if (count >= STACK_SIZE) {
+
+[_Code_]         cerr << "Error: Push overflows stack\n";
+
+[_Code_]         exit (8);
+
+[_Code_]     }
+
+[_Code_]     stack::push(item);
+
+[_Code_] }
+
+[_Code_] /********************************************************
+
+[_Code_]  * b_stack::pop -- get an item off the stack            *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Returns                                              *
+
+[_Code_]  *      the top item from the stack                     *
+
+[_Code_]  ********************************************************/
+
+[_Code_] inline int b_stack::pop(void)
+
+[_Code_] {
+
+[_Code_]     if (count <= 0) {
+
+[_Code_]         cerr << "Error: Pop causes stack underflow\n";
+
+[_Code_]         exit (8);
+
+[_Code_]     }
+
+[_Code_]     return (stack::pop());
+
+[_Code_] }
+
+Even though these two classes are relatively simple, they illustrate
+some important features of the C++ language. First we have
+declared count as a protected member variable. This means that
+this variable can be used only within the class stack and in any
+classes derived from stack, such as b_stack. The b_stack
+functions push and pop can use count to do their work. However,
+anyone outside of stack and b_stack cannot use the variable.
+
+Because b_stack is derived from stack, you can use a b_stack
+type variable wherever a stack type variable is used. In the
+following example, we create a b_stack named bound_stack that
+is used as a parameter to the function push_things, which takes a
+normal, unbounded stack as a parameter.
+
+[_Code_] void push_things(stack &a_stack) {
+
+[_Code_]     a_stack.push(1);
+
+[_Code_]     a_stack.push(2);
+
+[_Code_] }
+
+[_Code_]
+
+[_Code_] // ...
+
+[_Code_] b_stack bounded_stack; // A random stack
+
+[_Code_] // ....
+
+[_Code_] push_things(bounded_stack);
+
+The function push_things takes a stack as a parameter. Even
+though the variable bounded_stack is a b_stack type variable,
+C++ turns it into a stack when push_things is called.
+
+One way to explain this is that although bounded_stack is of type
+b_stack, when it is used by push_things the function is looking
+through a peephole that allows it to see only the stack part of the
+variable as shown in [_XREF Figure 21-2_].
+
+Figure 21-2
+
+. How "push_things" sees a b_stack
+
+Let's improve the basic stack so that instead of always allocating a
+fixed-size stack, we allocate the stack dynamically. The new stack
+starts with:
+
+[_Code_] class stack {
+
+[_Code_]     private:
+
+[_Code_]         int *data;    // Pointer to the data in the stack
+
+[_Code_]     protected:
+
+[_Code_]         int count;    // Current item on the stack
+
+[_Code_]     public:
+
+[_Code_]         stack(const unsigned int size) {
+
+[_Code_]             data = new int[size];
+
+[_Code_]             count = 0;
+
+[_Code_]         };
+
+[_Code_]         virtual ~stack(void) {
+
+[_Code_]             delete data;
+
+[_Code_]             data = NULL;
+
+[_Code_]         }
+
+[_Code_] // ...
+
+(We discuss the keyword virtual later in this chapter.)
+
+This stack is more flexible. To use the new stack we must give it a
+size when we declare the stack variable. For example:
+
+[_Code_] stack big_stack(1000);
+
+[_Code_] stack small_stack(10);
+
+[_Code_] stack bad_stack; // Illegal, size required
+
+Back to the bound-checking stack. Somehow we need to call the
+base class constructor (stack) with a parameter.
+
+The way we do this is to put the base-constructor unitization just
+after the declaration of the constructor for the derived class:
+
+But this flexibility creates some problems for the bound-checking
+stack: the constructor for stack contains a parameter. How is the
+bound-checking stack to initialize the simple stack?
+
+The solution is to use a syntax similar to initializing a constant data
+member.
+
+[_Code_] class b_stack: public stack {
+
+[_Code_]     private:
+
+[_Code_]         const unsigned int stack_size;   // Size of the simple stack
+
+[_Code_]     public:
+
+[_Code_]         b_stack(const unsigned int size) : stack(size),
+
+[_Code_]                                            stack_size(size) {
+
+[_Code_]         }
+
+In this example, the base class is stack and the derived class is b_
+stack. The constructor for b_stack takes a single parameter, the
+size of the stack. It needs to pass this parameter to stack. The line:
+
+[_Code_]       b_stack::b_stack(cont unsigned int size) : stack(size),
+
+does this through the stack(size) syntax.
+
+[_NOTE_]  Because the new version of stack uses dynamic
+memory (new and delete), it is vital that we define the
+"big four" member functions: the constructor, the destructor,
+the copy constructor, and the assignment operator (=).
+
+[_A_]  Virtual Functions
+
+Today there are many different ways of sending a letter. We can
+mail it by the United States Postal Service, send it via Federal
+Express, send it Certified Mail, or even fax it. All of these methods
+get the letter to the person (most of the time), but they differ in cost
+and speed.
+
+Let's define a class to handle the sending of a letter. We start by
+defining an address class and then use this class to define addresses
+for the sender and the receiver. (The definition of the address class
+is "just a simple matter of programming" and is left to the reader.)
+
+[_Code_] class mail {
+
+[_Code_]     public:
+
+[_Code_]         address sender; // Who's sending the mail (return address)?
+
+[_Code_]         address receiver; // Who's getting the mail?
+
+[_Code_]
+
+[_Code_]         // Send the letter
+
+[_Code_]         void send_it(void) {
+
+[_Code_]         // ... Some magic happens here
+
+[_Code_]         };
+
+[_Code_] };
+
+There is, however, one little problem with this class. We're
+depending on "magic" to get our letters sent. The process for
+sending a letter is different depending on which service we are
+using. One way to handle this is to have send_it call the
+appropriate routine depending on what service we are using:
+
+[_Code_] void mail::send_it(void) {
+
+[_Code_]     switch (service) {
+
+[_Code_]         case POST_OFFICE:
+
+[_Code_]             put_in_local_mailbox();
+
+[_Code_]             break;
+
+[_Code_]         case FEDERAL_EXPRESS:
+
+[_Code_]             fill_out_waybill();
+
+[_Code_]             call_federal_for_pickup();
+
+[_Code_]             break;
+
+[_Code_]         case UPS:
+
+[_Code_]             put_out_ups_yes_sign();
+
+[_Code_]             give_package_to_driver();
+
+[_Code_]             break;
+
+[_Code_]         //... and so on for every service in the universe
+
+This solution is a bit clunky. Our mail class must know about all the
+mailing services in the world. Also consider what happens when we
+add another function to the class:
+
+[_Code_] class mail {
+
+[_Code_]     public:
+
+[_Code_]         // Returns the cost of mailing in cents
+
+[_Code_]         int cost(void) {
+
+[_Code_]         // ... more magic
+
+[_Code_]         }
+
+Do we create another big switch statement? If we do, we'll have
+two big switch statements to worry about. What's worse, the
+sending instructions and cost for each service are now spread out
+over two functions. It would be nice if we could group all the
+functions for the Postal Service in one class, all of Federal Express
+in one class, and so on.
+
+For example, a class for the Postal Service might be:
+
+[_Code_] class post_office: public mail{
+
+[_Code_]     public:
+
+[_Code_]         // Send the letter
+
+[_Code_]         void send_it(void) {
+
+[_Code_]             put_in_local_mailbox();
+
+[_Code_]         };
+
+[_Code_]         // Cost returns cost of sending a letter in cents
+
+[_Code_]         int cost(void) {
+
+[_Code_]               // Costs 32 cents to mail a letter
+
+[_Code_]              return (32);   // WARNING: This can easily become dated
+
+[_Code_]         }
+
+[_Code_] };
+
+Now we have the information for each single service in a single
+class. The information is stored in a format that is easy to
+understand. The problem is that it is not easy to use. For example,
+let's write a routine to send a letter:
+
+[_Code_] void get_address_and_send(mail &letter)
+
+[_Code_] {
+
+[_Code_]     letter.from = my_address.
+
+[_Code_]     letter.to = get_to_address();
+
+[_Code_]     letter.send();
+
+[_Code_] }
+
+[_Code_] //...
+
+[_Code_]     class post_office simple_letter;
+
+[_Code_]     get_address_and_send(simple_letter);
+
+[_Code_]
+
+The trouble is that letter is a mail class, so when we call
+letter.send() we call the send of the base class mail. What we
+need is a way of telling C++, "Please call the send function of the
+derived class instead of the base class."
+
+The virtual keyword identifies a member function that can be
+overridden by a member function in the derived class. If we are
+using a derived class, then C++ will look for members in the
+derived class and then in the base class, in that order. If we are
+using a base class variable (even if the actual instance is a derived
+class), then C++ will search only the base class for the member
+function. The exception is when the base class defines a virtual
+function. In this case, the derived class is searched and then the
+base class.
+
+[_XREF Table 21-1_] illustrates the various search algorithms.
+
+Table 21-1
+
+. Member Function Search Order
+
+Class Type
+
+Member Function Type
+
+Search Order
+
+Derived
+
+Normal
+
+Derived->base
+
+Base
+
+Normal
+
+Base
+
+Base
+
+virtual
+
+Derived->base
+
+[_XREF Example 21-2_] illustrates the use of virtual functions.
+
+Example 21-2
+
+. virt/virt.cc
+
+[_Code_] // Illustrates the use of virtual functions
+
+[_Code_]
+[_Code_] #include <iostream.h>
+
+[_Code_]
+[_Code_] class base {
+
+[_Code_]     public:
+
+[_Code_]         void a(void) { cout << "base::a called\n"; }
+
+[_Code_]         virtual void b(void) { cout << "base::b called\n"; }
+
+[_Code_]         virtual void c(void) { cout << "base::c called\n"; }
+
+[_Code_] };
+
+[_Code_]
+[_Code_] class derived: public base {
+
+[_Code_]     public:
+
+[_Code_]         void a(void) { cout << "derived::a called\n"; }
+
+[_Code_]         void b(void) { cout << "derived::b called\n"; }
+
+[_Code_] };
+
+[_Code_]
+[_Code_] void do_base(base &a_base)
+
+[_Code_] {
+
+[_Code_]     cout << "Call functions in the base class\n";
+
+[_Code_]
+[_Code_]     a_base.a();
+
+[_Code_]     a_base.b();
+
+[_Code_]     a_base.c();
+
+[_Code_] }
+
+[_Code_]
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     derived a_derived;
+
+[_Code_]
+[_Code_]     cout << "Calling functions in the derived class\n";
+
+[_Code_]
+[_Code_]     a_derived.a();
+
+[_Code_]     a_derived.b();
+
+[_Code_]     a_derived.c();
+
+[_Code_]
+[_Code_]     do_base(a_derived);
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+[_Code_]
+
+The derived class contains three member functions. Two of them
+are self-defined: a and b. The third, c, is inherited from the base
+class. When we call a, C++ looks at the derived class to see whether
+that class defines the function. In this case it does, so the line:
+
+[_Code_] a_derived.a();
+
+outputs:
+
+[_Code_] derived::a called
+
+When b is called the same thing happens, and we get:
+
+[_Code_] derived::b called
+
+It doesn't matter whether the base class defines a and b or not. C++
+calls the derived class and goes no further.
+
+However, the derived class doesn't contain a member function
+named c. So when we reach the line:
+
+[_Code_] a_derived.c();
+
+C++ tries to find c in the derived class and fails. Then it tries to find
+the member function in the base class. In this case it succeeds and
+we get:
+
+[_Code_] base::c called
+
+Now let's move on to the function do_base. Because it takes a base
+class as it's arguments, C++ restricts its search for member functions
+to the base class. So the line:
+
+[_Code_] a_base.a();
+
+outputs
+
+[_Code_] base::a called
+
+But what happens when the member function b is called? This is a
+virtual function. That tells C++ that the search rules are changed.
+C++ first checks whether there is a b member function in the
+derived class, and then C++ checks the base class. In the case of b,
+there is a b in the derived class, so the line:
+
+[_Code_] a_base.b();
+
+outputs:
+
+[_Code_] derived::b called
+
+The member function c is also a virtual function. Therefore, C++
+starts by looking for the function in the derived class. In this case
+it's not defined there, so C++ then looks in the base class. It is
+defined there, so we get:
+
+[_Code_] base::c called
+
+Now getting back to our mail. We need a simple base class that
+describes the basic mailing functions for each different type of
+service.
+
+[_Code_] class mail {
+
+[_Code_]     public:
+
+[_Code_]         address sender; // Who is sending the mail (return address)?
+
+[_Code_]         address receiver; // Who is getting the mail?
+
+[_Code_]
+
+[_Code_]         // Send the letter
+
+[_Code_]         virtual void send_it(void) {
+
+[_Code_]             cout << "Error: send_it not defined in derived class.\n"
+
+[_Code_]             exit (8);
+
+[_Code_]         };
+
+[_Code_]         // Cost of sending a letter in pennies
+
+[_Code_]         virtual int cost(void) {
+
+[_Code_]             cout << "Error: cost not defined in derived class.\n"
+
+[_Code_]             exit (8);
+
+[_Code_]         };
+
+[_Code_] };
+
+Now we can define a derived class for each different type of
+service. For example:
+
+[_Code_] class post_office: public mail {
+
+[_Code_]     public:
+
+[_Code_]         void send_it(void) {
+
+[_Code_]             put_letter_in_box();
+
+[_Code_]         }
+
+[_Code_]         int cost(void) {
+
+[_Code_]             return (29);
+
+[_Code_]         }
+
+[_Code_] };
+
+Now we can write a routine to send a letter and not have to worry
+about the details. All we have to do is call send_it and let the
+virtual function do the work.
+
+The mail class is an abstraction that describes a generalized mailer.
+To associate a real mailing service, we need to use it as the base for
+a derived class. But what happens if the programmer forgets to put
+the right member functions in the derived class? For example:
+
+[_Code_] class federal_express: public mail {
+
+[_Code_]     public:
+
+[_Code_]         void send_it(void) {
+
+[_Code_]             put_letter_in_box();
+
+[_Code_]         }
+
+[_Code_]         // Something is missing
+
+[_Code_] };
+
+When we try to find the cost of sending a letter via Federal Express,
+C++ will notice that there's no cost function in federal_express
+and call the one in mail. The cost function in mail knows that it
+should never be called, so it spits out an error message and aborts
+the program. Getting an error message is nice, but getting it at
+compilation rather than during the run would be better.
+
+C++ allows you to specify virtual functions that must be
+overridden in a derived class. For this example, the new, improved,
+abstract mailer is:
+
+[_Code_] class mail {
+
+[_Code_]     public:
+
+[_Code_]         address sender; // Who is sending the mail (return address)?
+
+[_Code_]         address receiver; // Who is getting the mail?
+
+[_Code_]
+
+[_Code_]         // Send the letter
+
+[_Code_]         virtual void send_it(void) = 0;
+
+[_Code_]         // Cost of sending a letter in pennies
+
+[_Code_]         virtual int cost(void) = 0;
+
+[_Code_] };
+
+The "= 0" tells C++ that these member functions are pure virtual
+functions. That is, they can never be called directly. Any class
+containing one or more pure virtual functions is called an abstract
+class. If you tried to use an abstract class as an ordinary type, such
+as:
+
+[_Code_] void send_package(void) {
+
+[_Code_]     mail a_mailer;   // Attempt to use an abstract class
+
+you would get a compile-time error.
+
+[_A_]  Virtual Classes
+
+Let's design some classes to handle a tax form. In the upper right
+corner of each form is a blank for your name, address, and Social
+Security number. All the forms contain this same information, so
+we'll define a class for this corner of the form.
+
+[_Code_] class name {
+
+[_Code_]     public:
+
+[_Code_]         char *name;   // Name of the taxpayer
+
+[_Code_]          //... Rest of the class
+
+[_Code_] };
+
+Now let's use this class to design another class for the 1040 form.
+
+[_Code_] class form_1040: public name {
+
+[_Code_]     public:
+
+[_Code_]         int income;   // Wages, tips, and other income
+
+[_Code_]         // ...
+
+[_Code_] };
+
+Our class structure so far is illustrated by [_XREF Figure 21-3_].
+
+Figure 21-3
+
+. 1040 class structure
+
+Unfortunately our tax returns consist of more than one form. For
+deductions we need Schedule A, so let's define a class for it.
+
+[_Code_] class schedule_a: public name {
+
+[_Code_]     public:
+
+[_Code_]         int home_interest;    // Interest deduction for home mortgage
+
+[_Code_]         // ... Rest of class
+
+[_Code_] };
+
+Putting the two forms together, we get a simple return.
+
+[_Code_] class tax_return: public form_1040, schedule_a {
+
+[_Code_]     //... Rest of class
+
+[_Code_] };
+
+[_XREF Figure 21-4_] illustrates this class structure.
+
+Figure 21-4
+
+. Tax return structure
+
+The problem with this structure is that we have two name classes.
+But the taxpayer's name doesn't change from one form to another.
+What we want is the class structure shown in [_XREF Figure 21-5_].
+
+Figure 21-5
+
+. Better tax return structure
+
+Declaring a base class virtual tells C++ to combine common base
+classes. Redefining tax_return using virtual base classes we get:
+
+[_Code_] class form_1040: virtual public name {
+
+[_Code_]     public:
+
+[_Code_]         int income;   // Wages, tips, and other income
+
+[_Code_]         // ...
+
+[_Code_] };
+
+[_Code_]
+
+[_Code_] class schedule_a: virtual public name {
+
+[_Code_]     public:
+
+[_Code_]         int home_interest;    // Interest deduction for home mortgage
+
+[_Code_]         // ... Rest of class
+
+[_Code_] };
+
+[_Code_]
+
+[_Code_] class tax_return: public form_1040, schedule_a {
+
+[_Code_]     //... Rest of class
+
+[_Code_] };
+
+Notice that the class name is used as the base for two derived
+classes; derived classes cause their base class's constructor to be
+called to initialize the class. Does this mean that the constructor for
+name will be called twice? The answer is no. C++ is smart enough
+to know that name is used twice and to ignore the second
+initialization.
+
+[_A_]  Function Hiding in Derived Classes
+
+[_XREF Example 21-3_] defines a base class with the overloaded
+function do_it, which comes in both an integer version and a
+floating-point version. The program also defines a derived class that
+contains the single integer do_it.
+
+Example 21-3
+
+. doit/doit.cc
+
+[_Code_] class simple {
+
+[_Code_]     public:
+
+[_Code_]         int do_it(int i, int j) {return (i*j);}
+
+[_Code_]         float do_it(float f) {return (f*2);}
+
+[_Code_] };
+
+[_Code_] class derived: public simple {
+
+[_Code_]     public:
+
+[_Code_]         int do_it(int i, int j) {return (i+j);}
+
+[_Code_] };
+
+Clearly, when we are using the derived class and we call the
+integer version of do_it, we are calling the one in the derived
+class. But what happens if we call the floating-point version? The
+derived class has no floating point do_it. Normally, if we don't
+have a member function in the derived class, C++ will look to the
+base class.
+
+However, since a version of do_it is defined in the derived class,
+C++ will look to the derived class for all flavors of do_it. In other
+words, if one form of do_it is defined in the derived class, then
+that locks out all forms of the function.
+
+[_Code_] main() {
+
+[_Code_]     derived test;       // Define a class for our testing
+
+[_Code_]     int i;              // Test variable
+
+[_Code_]     float f;            // Test variable
+
+[_Code_]
+
+[_Code_]     i = test.do_it(1, 3);   // Legal; returns 4 (1 + 3)
+
+[_Code_]     f = test.do_it(4.0);    // Illegal; "do_it(float)" not defined in
+
+[_Code_]                             // the class "derived"
+
+[_A_]  Constructors and Destructors
+in Derived Classes
+
+Constructors and destructors behave differently from normal
+member functions especially when used with derived classes. When
+a derived-class variable is created, the constructor for the base class
+is called first, followed by the constructor for the derived class.
+
+[_XREF Example 21-4_] defines a simple base class and uses it to
+create a derived class.
+
+Example 21-4
+
+. cons/class.cc
+
+[_Code_] #include <iostream.h>
+
+[_Code_]
+[_Code_] class base_class {
+
+[_Code_]     public:
+
+[_Code_]         base_class() {
+
+[_Code_]            cout << "base_class constructor called\n";
+
+[_Code_]         }
+
+[_Code_]         ~base_class() {
+
+[_Code_]            cout << "base_class destructor called\n";
+
+[_Code_]         }
+
+[_Code_] };
+
+[_Code_] class derived_class:public base_class {
+
+[_Code_]     public:
+
+[_Code_]         derived_class() {
+
+[_Code_]            cout << "derived_class constructor called\n";
+
+[_Code_]         }
+
+[_Code_]         ~derived_class() {
+
+[_Code_]            cout << "derived_class destructor called\n";
+
+[_Code_]         }
+
+[_Code_] };
+
+Now when we execute the code:
+
+[_Code_] derived_class *sample_ptr = new derived_class;
+
+the program prints:
+
+[_Code_] base_class constructor called
+
+[_Code_] derived_class constructor called
+
+After the variable is destroyed, the destructors are called. The
+destructor for the derived class is called first, followed by the
+destructor for the base class. So when we destroy the variable with
+the statement:
+
+[_Code_] delete sample_ptr;
+
+[_Code_] sample_ptr = NULL;
+
+we get:
+
+[_Code_] derived_class destructor called
+
+[_Code_] base_class destructor called
+
+But C++ has a surprise lurking for us. Remember that derived
+classes can operate as base classes. For example:
+
+[_Code_] base_class *base_ptr = new derived_class;
+
+is perfectly legal. However, there is a problem when the variable is
+deleted:
+
+[_Code_] delete base_ptr;
+
+[_Code_] base_ptr = NULL;
+
+You see, base_ptr is a pointer to a base class. At this point all
+the code can see is the base class. There is no way for C++ to
+know that there is a derived class out there. So when the
+variable is deleted, C++ fails to call the derived class destructor.
+
+The output of the delete statement is:
+
+[_Code_] base_class destructor called
+
+We have just tricked C++ into deleting a class without calling the
+proper destructor.
+
+We need some way to tell C++, "Hey, there is a derived class out
+there and you might want to call its destructor." The way we do this
+is to make the destructor for the base class a virtual function.
+
+[_Code_] class base_class {
+
+[_Code_]     public:
+
+[_Code_]         base_class() {
+
+[_Code_]            cout << "base_class constructor called\n";
+
+[_Code_]         }
+
+[_Code_]         virtual ~base_class() {
+
+[_Code_]            cout << "base_class destructor called\n";
+
+[_Code_]         }
+
+[_Code_] };
+
+The keyword virtual normally means, "Call the function in the
+derived class instead of the one in the base class." For the
+destructor, it has a slightly different meaning. When C++ sees a
+virtual destructor, it will call the destructor of the derived class
+and then call the destructor of the base class.
+
+So with the virtual destructor in place, we can safely delete the
+base_class variable and the program will output the proper
+information:
+
+[_Code_] derived_class destructor called
+
+[_Code_] base_class destructor called
+
+Question 21-1: Why does [_XREF Example 21-5_] fail when we delete the variable
+list_ptr? The program seems to get upset when it tries to call clear at line 20.
+
+Example 21-5
+
+. blow/blow.cc
+
+[_Code_]  1 #include <iostream.h>
+
+[_Code_]  2 #include <stdlib.h>
+
+[_Code_]  3
+
+[_Code_]  4 class list {
+
+[_Code_]  5     private:
+
+[_Code_]  6      int item;       // Current item number
+
+[_Code_]  7
+
+[_Code_]  8     public:
+
+[_Code_]  9      virtual void clear() = 0;
+
+[_Code_] 10
+
+[_Code_] 11      void next_item(void) {
+
+[_Code_] 12          ++item;
+
+[_Code_] 13      }
+
+[_Code_] 14
+
+[_Code_] 15      list(void) {
+
+[_Code_] 16          item = 0;
+
+[_Code_] 17      }
+
+[_Code_] 18
+
+[_Code_] 19      virtual ~list() {
+
+[_Code_] 20         clear();
+
+[_Code_] 21      }
+
+[_Code_] 22 };
+
+[_Code_] 23
+
+[_Code_] 24 class list_of_integers : public list {
+
+[_Code_] 25     public:
+
+[_Code_] 26         int array[100];   // Place to store the items
+
+[_Code_] 27
+
+[_Code_] 28      void clear(void) {
+
+[_Code_] 29          int i;      // Array index
+
+[_Code_] 30
+
+[_Code_] 31          for (i = 0; i < 100; ++i)
+
+[_Code_] 32              array[i] = 0;
+
+[_Code_] 33      }
+
+[_Code_] 34 };
+
+[_Code_] 35
+
+[_Code_] 36 main()
+
+[_Code_] 37 {
+
+[_Code_] 38     list_of_integers *list_ptr = new list_of_integers;
+
+[_Code_] 39
+
+[_Code_] 40     // Cause problems
+
+[_Code_] 41     delete list_ptr;
+
+[_Code_] 42     list_ptr = NULL;
+
+[_Code_] 43     return (0);
+
+[_Code_] 44 }
+
+[_A_]  Summary
+
+Since programming began, programmers have been trying to find
+ways of building re-usable code. C++, through the use of derived
+classes, allows you to build classes on top of existing code. This
+provides a great deal of flexibility and makes the code easier to
+organize and maintain.
+
+[_A_]  Programming Exercises
+
+Exercise 21-1: Combine the checkbook class of Exercise 13-2 with the queue class
+of Exercise 13-3 to implement a checkbook class that can print out the last ten
+entries of your checkbook.
+
+Exercise 21-2: Define a "string-match" base class.
+
+[_Code_] class string_matcher {
+
+[_Code_]     public:
+
+[_Code_]         // Returns true if string matches, false if not
+
+[_Code_]         int match(const char *const string);
+
+[_Code_] ...
+
+Define derived classes that match words, numbers, and blank strings.
+
+Exercise 21-3: Define a base class shape that can describe any simple shape such
+as a square, circle or equilateral triangle. The size of all these shapes can be
+reduced to a single dimension.
+
+Define derived classes for each of the three shapes.
+
+Create a virtual function in the base class that returns the area of
+each shape.
+
+Note: You will need to more precisely define what dimensions are
+stored in the base class. (Is the size in the base class for circle, the
+radius, or the diameter?)
+
+Exercise 21-4: Write a base class called person that describes a person of either
+gender. Define two derived classes called man and woman that define gender
+specific items. Write pure virtual functions in the base class for operations that
+are common to both sexes yet are handled in different ways by each of them.
+
+Exercise 21-5: Write a base class number that holds a single integer value and
+contains one member function, print_it. Define three derived classes to print
+the value in hex, octal, and decimal.
+
+[_A_]  Answers to Chapter Questions
+
+Answer 21-1: Remember that destructors are called in the order of derived class
+first and then base class. In this case, the destructor for the derived class, list_
+of_integers, is called to destroy the class. The class is gone.
+
+Next, the destructor for the base class list is called. It calls the
+function clear. This a pure virtual function, so C++ must call
+the clear function in the derived class. But the derived class is
+gone. There is no clear function. This makes C++ very upset and it
+aborts the program. (Actually, only good compilers will cause a
+program to abort. Others may do something really strange to your
+program.)
+
+You should never call pure virtual functions from a destructor.

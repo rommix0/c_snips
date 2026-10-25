@@ -1,0 +1,1434 @@
+Chapter 9Part II: Simple Programming
+
+In This Chapter:
+
+*  [_XREF Scope and Storage
+Class_]
+
+*  [_XREF Functions_]
+
+*  [_XREF Summary of Parameter
+Types_]
+
+*  [_XREF Structured
+Programming Basics_]
+
+*  [_XREF Recursion_]
+
+*  [_XREF Programming
+Exercises_]
+
+*  [_XREF Answers to Chapter
+Questions_]
+
+9	
+
+9: Variable Scope and Functions
+
+But in the gross and scope of my
+opinion
+This bodes some strange eruption to
+our state.
+
+---Shakespeare
+
+Hamlet, Act I, Scene I
+
+So far you have been using only global variables. These are
+variables that can be set or used almost anywhere in the program.
+In this chapter you learn about other kinds of variables and how to
+use them. This chapter also tells you how to divide your code into
+functions. Many aspects of functions are detailed, including function
+overloading, using functions to build structured programs, and the
+use of recursive function calls.
+
+[_A_]  Scope and Storage Class
+
+All variables have two attributes, scope and storage class. The
+scope of a variable is the area of the program where the variable is
+valid. A global variable is valid from the point it is declared to the
+end of the program. A local variable's scope is limited to the block
+where it is declared and cannot be accessed (set or read) outside
+that block. A block is a section of code enclosed in curly braces ({ }).
+[_XREF Figure 9-1_] illustrates the difference between local and
+global variables.
+
+Figure 9-1
+
+. Local and global variables
+
+It is possible to declare a local variable with the same name as a
+global variable. Normally, the scope of the variable count (first
+declaration in [_XREF Figure 9-2_]) would be the whole program.
+The declaration of a second, local count takes precedence over the
+global declaration inside the small block where the local count is
+declared. In this block, the global count is hidden. You can also
+nest local declarations and hide local variables. These "very local"
+variables have an even smaller and more local scope than the
+"normal local" variables. (The clarity of the previous sentence gives
+you some idea why using nesting to hide local variables does not
+make your program easy to understand.) [_XREF Figure 9-2_]
+illustrates a hidden variable.
+
+Figure 9-2
+
+. Hidden variables
+
+The variable count is declared both as a local variable and as a
+global variable. Normally the scope of count (global) would be the
+entire program, but when a variable is declared inside a block, that
+instance of the variable becomes the active one for the length of the
+block. The global count has been hidden by the local count for
+the scope of this block. The shaded area in the figure shows where
+the scope of count (global) is hidden.
+
+It is not good programming practice to hide variables. The problem
+is that when you have the statement:
+
+[_Code_] count = 1;
+
+it is difficult to tell which count you are referring to. Is it the
+global count, the one declared at the top of main, or the one in
+the middle of the while loop? It is better to give these variables
+different names, such as total_count, current_count, and item_
+count.
+
+The storage class of a variable may be either permanent or
+temporary. Global variables are always permanent. They are created
+and initialized before the program starts and remain until it
+terminates. Temporary variables are allocated from a section of
+memory called the stack at the beginning of the block. If you try to
+allocate too many temporary variables you will get a stack
+overflow error. The space used by the temporary variables is
+returned to the stack at the end of the block. Each time the block is
+entered, the temporary variables are initialized.
+
+The size of the stack depends on the system and compiler you are
+using. On many UNIX systems, the program is automatically
+allocated the largest possible stack. On other systems, a default
+stack size is allocated that can be changed by a compiler switch. In
+Turbo-C++ the stack space must be fewer than 64,000 bytes. This
+may seem like a lot of space, but several large arrays can eat it up
+quickly. You should consider making all large arrays permanent.
+
+Local variables are temporary unless they are declared static.
+
+[_NOTE_]  static has an entirely different meaning when
+used with global variables. (It indicates that a variable is local
+to the current file.) See Chapter 23, Modular Programming.
+For a complete discussion of the many meanings of the word
+"static," see Table 14-1.
+
+[_XREF Example 9-1_] illustrates the difference between permanent
+and temporary variables. We have chosen obvious variable names;
+temporary is a temporary variable while permanent is permanent.
+C++ initializes temporary each time it is created (at the beginning
+of the for statement block), while permanent gets initialized only
+once, at program start-up time.
+
+In the loop both variables are incremented. However, at the top of
+the loop temporary is initialized to 1.
+
+Example 9-1
+
+. perm/perm.cc
+
+[_Code_] #include <iostream.h>
+
+[_Code_]
+[_Code_] main() {
+
+[_Code_]     int counter;    // Loop counter
+
+[_Code_]
+[_Code_]     for (counter = 0; counter < 3; ++counter) {
+
+[_Code_]         int temporary = 1;
+
+[_Code_]         static int permanent = 1;
+
+[_Code_]
+[_Code_]         cout << "Temporary " << temporary <<
+
+[_Code_]                 " Permanent " << permanent << '\n';
+
+[_Code_]         ++temporary;
+
+[_Code_]         ++permanent;
+
+[_Code_]     }
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+[_Code_] The output of this program is:
+
+[_Code_] Temporary 1 Permanent 1
+
+[_Code_] Temporary 1 Permanent 2
+
+[_Code_] Temporary 1 Permanent 3
+
+[_NOTE_]  Temporary variables are sometimes referred to as
+automatic variables because the space for them is allocated
+automatically. The qualifier auto can be used to denote a
+temporary variable; however, in practice auto is almost
+never used.
+
+[_XREF Table 9-1_] describes the different ways a variable can be
+declared.
+
+Table 9-1
+
+. Declaration Modifiers
+
+Declared
+
+Scope
+
+Storage Class
+
+Initialized
+
+Outside all blocks
+
+Global
+
+Permanent
+
+Once
+
+static outside all blocks
+
+Global
+
+Permanent
+
+Once
+
+Inside a block
+
+Local
+
+Temporary
+
+Each time block is entered
+
+static inside a block
+
+Local
+
+Permanent
+
+Once
+
+[_NOTE_]  The keyword static is the most overloaded C++
+operator. It means a lot of different things depending on
+how it is used. For a complete list see Table 14-1.
+
+[_A_]  Functions
+
+Functions allow you to group commonly used code into a compact
+unit that can be used repeatedly. You have already encountered
+one function, main. It is a special function called at the beginning
+of the program. All other functions are directly or indirectly called
+from main.
+
+Suppose you want to write a program to compute the area of three
+triangles. You could write out the formula three times, or you could
+create a function to do the work and then use that function three
+times. Each function should begin with a comment block containing
+the following:
+
+Name
+Name of the function
+
+Description
+Description of what the function does
+
+Parameters
+Description of each parameter to the function
+
+Returns
+Description of the return value of the function
+
+Additional sections may be added such as file formats, references,
+or notes. Refer to Chapter 3, Style, for other suggestions.
+
+The function to compute the area of a triangle begins with:
+
+[_Code_] /*******************************************
+
+[_Code_]  * Triangle -- compute area of a triangle  *
+
+[_Code_]  *                                         *
+
+[_Code_]  * Parameters                              *
+
+[_Code_]  *  width -- width of the triangle         *
+
+[_Code_]  *  height -- height of the triangle       *
+
+[_Code_]  *                                         *
+
+[_Code_]  * Returns                                 *
+
+[_Code_]  *  area of the triangle                   *
+
+[_Code_]  *******************************************/
+
+The function proper begins with the lines:
+
+[_Code_] float triangle(float width, float height)
+
+float is the function type. This defines the type of data returned
+by the function. width and height are the parameters to the
+function. Parameters are variables local to the function that are used
+to pass information into the function.
+
+[_NOTE_]  The function type is not required by C++. If no
+function type is declared, the type defaults to int. However,
+if you omit the function type, it is not clear whether you
+want to have the function default to int or you just forgot
+the function type. To avoid this confusion, always declare
+the function type and do not use the default.
+
+The function computes the area with the statement:
+
+[_Code_]     area = width * height / 2.0;
+
+What's left is to give the result to the caller. This is done with the
+return statement:
+
+[_Code_]     return (area)
+
+The full triangle function can be seen in [_XREF Example 9-2_].
+
+Example 9-2
+
+. tri/tri-sub.cc
+
+[_Code_] /*******************************************
+
+[_Code_]  * Triangle -- compute area of a triangle  *
+
+[_Code_]  *                                         *
+
+[_Code_]  * Parameters                              *
+
+[_Code_]  *  width -- width of the triangle         *
+
+[_Code_]  *  height -- height of the triangle       *
+
+[_Code_]  *                                         *
+
+[_Code_]  * Returns                                 *
+
+[_Code_]  *  area of the triangle                   *
+
+[_Code_]  *******************************************/
+
+[_Code_]
+[_Code_] float triangle(float width, float height)
+
+[_Code_] {
+
+[_Code_]     float area; // Area of the triangle
+
+[_Code_]
+[_Code_]     area = width * height / 2.0;
+
+[_Code_]     return (area);
+
+[_Code_] }
+
+The line:
+
+[_Code_] size = triangle(1.3, 8.3)
+
+is a call to the function triangle. When C++ sees this function call
+it performs the following operations:
+
+[_Code_] Triangle's variable width = 1.3
+
+[_Code_] Triangle's height = 8.3
+
+[_Code_]
+
+[_Code_] Begin execution of the first line of the function triangle.
+
+The technical name for this type of parameter passing is "call by
+value." The assignment only occurs when the function is called, so
+data flows through the parameters only one way: in.
+
+The return statement is how you get data out of the function. In
+the triangle example, the function assigns the local variable area
+the value 5.4 and then executes the statement return (area), so
+the return value of this function is 5.4. This value is assigned to
+size.
+
+[_Code_] return(area);        5.4 (The value of area)
+
+[_Code_] // ......
+
+[_Code_] size = triangle(1.3, 8.3)
+
+[_XREF Example 9-3_] computes the area of three triangles.
+
+Example 9-3
+
+. tri/tri.cc
+
+[_Code_] #include <iostream.h>
+
+[_Code_]
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     // Function to compute area of triangle
+
+[_Code_]     float triangle(float width, float height);
+
+[_Code_]
+[_Code_]     cout << "Triangle #1 " << triangle(1.3, 8.3) << '\n';
+
+[_Code_]     cout << "Triangle #2 " << triangle(4.8, 9.8) << '\n';
+
+[_Code_]     cout << "Triangle #3 " << triangle(1.2, 2.0) << '\n';
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+[_Code_] /*******************************************
+
+[_Code_]  * Triangle -- compute area of a triangle  *
+
+[_Code_]  *                                         *
+
+[_Code_]  * Parameters                              *
+
+[_Code_]  *  width -- width of the triangle         *
+
+[_Code_]  *  height -- height of the triangle       *
+
+[_Code_]  *                                         *
+
+[_Code_]  * Returns                                 *
+
+[_Code_]  *  area of the triangle                   *
+
+[_Code_]  *******************************************/
+
+[_Code_] float triangle(float width, float height)
+
+[_Code_] {
+
+[_Code_]     float area; // Area of the triangle
+
+[_Code_]
+[_Code_]     area = width * height / 2.0;
+
+[_Code_]     return (area);
+
+[_Code_] }
+
+Functions must be declared just like variables. The declaration tells
+the C++ compiler about the function's return value and parameters.
+There are two ways of declaring a function. The first is to write the
+entire function before it's used. The other is to define what's called
+a function prototype, which gives the compiler just enough
+information to call the function. A function prototype looks like the
+first line of the function, only the function has no body. For
+example, the prototype for the triangle function is:
+
+[_Code_] float triangle(float width, float height);
+
+Note the semicolon at the end of the line. This is used to tell C++
+that this is a prototype and not a real function.
+
+C++ allows you to leave out the parameter names when declaring a
+prototype. This function could just as easily have been written:
+
+[_Code_] float triangle(float, float);
+
+However, this technique is not commonly used. The reason is that
+it's very easy to create a prototype by simply using the editor to
+copy the first line of a function and put that line where you want
+the prototype. (Many times this will be in a header file as described
+in Chapter 23, Modular Programming.) Also, putting the names in
+the prototype gives anyone reading the program additional useful
+information.
+
+Functions that have no parameters are declared with a parameter
+list of void. For example:
+
+[_Code_] int get_value(void);
+
+The void construct is a holdover from the old C days when an
+empty parameter list "(  )" signaled an old K&R-style C function
+prototype. Actually, C++ will accept both an empty list and a void
+declaration, but the void form is preferred. By putting in the void
+you are saying, "Yes, I know that this function takes no parameters."
+
+The keyword void is also used to indicate a function that does not
+return a value (similar to the FORTRAN SUBROUTINE or PASCAL
+Procedure). For example, this function just prints a result, it does
+not return a value.
+
+[_Code_] void print_answer(int answer)
+
+[_Code_] {
+
+[_Code_]     if (answer < 0) {
+
+[_Code_]         cout << "Answer corrupt\n";
+
+[_Code_]         return;
+
+[_Code_]     }
+
+[_Code_]     cout << "The answer is " << answer '\n';
+
+[_Code_] }
+
+[_B_]  const Parameters and Return Values
+
+If a parameter is declared const then that parameter cannot be
+changed inside the function. Ordinary parameters can be changed
+inside functions, but the changes will not be passed back to the
+calling program.
+
+For example, in the triangle function, we never change width or
+height. These could easily be declared const. Since the return
+value is also something that cannot be changed, it can be declared
+const as well. The const declarations serve to notify the
+programmer that the parameters do not change inside the functions.
+If you do attempt to change a const parameter, the compiler
+generates an error. The improved triangle function with the
+const declarations can be seen in [_XREF Example 9-4_].
+
+Example 9-4
+
+. tri/tri-sub2.cc
+
+[_Code_] const float triangle(const float width, const float height)
+
+[_Code_] {
+
+[_Code_]     float area; // Area of the triangle
+
+[_Code_]
+[_Code_]     area = width * height / 2.0;
+
+[_Code_]     return (area);
+
+[_Code_] }
+
+As it stands now, the const declaration for the return value is
+merely a decoration. In the next section you'll see to how to return
+references and make the const return declaration useful.
+
+[_B_]  Reference Parameters and Return Values
+
+Remember that in Chapter 4, Basic Declarations and Expressions,
+we discussed reference variables. A reference variable is a way of
+declaring an additional name for a variable. For global and local
+variables, reference variables are not very useful. However, when
+used as parameters they take on an entirely new meaning.
+
+Suppose you want to write a subroutine to increment a counter. If
+you write it like [_XREF Example 9-5_], it won't work.
+
+Example 9-5
+
+. value/value.cc
+
+[_Code_] #include <iostream.h>
+
+[_Code_] // This function won't work
+
+[_Code_] void inc_counter(int counter)
+
+[_Code_] {
+
+[_Code_]     ++counter;
+
+[_Code_] }
+
+[_Code_]
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]    int a_count = 0;     // Random counter
+
+[_Code_]
+[_Code_]    inc_counter(a_count);
+
+[_Code_]    cout << a_count << '\n';
+
+[_Code_]    return (0);
+
+[_Code_] }
+
+Why doesn't it work? Because C++ defaults to call by value. This
+means that values go in, but they don't come out.
+
+What happens if you convert the parameter counter to a
+reference? References are just another way of giving the same
+variable two names. When inc_counter is called, counter
+becomes a reference to a_count. That means that anything done to
+counter results in changes to a_count. [_XREF Example 9-6_],
+using a reference parameter, works properly.
+
+Example 9-6
+
+. value/ref.cc
+
+[_Code_] #include <iostream.h>
+
+[_Code_] // Works
+
+[_Code_] void inc_counter(int &counter)
+
+[_Code_] {
+
+[_Code_]     ++counter;
+
+[_Code_] }
+
+[_Code_]
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]    int a_count = 0;     // Random counter
+
+[_Code_]
+[_Code_]    inc_counter(a_count);
+
+[_Code_]    cout << a_count << '\n';
+
+[_Code_]    return (0);
+
+[_Code_] }
+
+Examining this program we find that it looks a lot like [_XREF
+Example 9-5_] except for the "&" in front of counter. This "&" tells
+C++ that counter is a reference and not a normal call-by-value
+parameter.
+
+Reference declarations can also be used for return values. For
+example, [_XREF Example 9-7_] finds the biggest element in an
+array.
+
+Example 9-7
+
+. value/big.cc
+
+[_Code_] int &biggest(int array[], int n_elements)
+
+[_Code_] {
+
+[_Code_]     int index;  // Current index
+
+[_Code_]     int biggest; // Index of the biggest element
+
+[_Code_]
+[_Code_]     // Assume the first is the biggest
+
+[_Code_]     biggest = 0;
+
+[_Code_]     for (index = 1; index < n_elements; ++index) {
+
+[_Code_]         if (array[biggest] < array[index])
+
+[_Code_]             biggest = index;
+
+[_Code_]     }
+
+[_Code_]
+[_Code_]     return (array[biggest]);
+
+[_Code_] }
+
+If you wanted to print the biggest element of an array, all you
+would have to do is:
+
+[_Code_] int item_array[5] = {1, 2, 5000, 3, 4}; // An array
+
+[_Code_]
+
+[_Code_] cout << "The biggest element is " <<
+
+[_Code_]          biggest(item_array, 5) << '\n';
+
+Let's examine this in more detail. First of all, consider what happens
+when you create a reference variable:
+
+[_Code_] int &big_reference = item_array[2]; // A reference to element #2
+
+The reference variable big_reference is another name for item_
+array[2]. You can now use this reference to print a value:
+
+[_Code_] cout << big_reference << '\n';   // Print out element #2
+
+But since this is a reference, you can use it on the left side as well:
+
+[_Code_] big_reference = 0;      // Zero the largest value of the array
+
+The function biggest returns a reference. When used on item_
+array it returns a reference to item_array[2]. Remember that in
+the following code, biggest(item_array, 5) is item_
+array[2]. The following three code sections all perform equivalent
+operations. The actual variable, item_array[2], does not change;
+however, the way we refer to it does.
+
+[_Code_] // Using the actual data
+
+[_Code_] cout << item_array[2] << '\n';
+
+[_Code_] item_array[2] = 0;
+
+[_Code_]
+
+[_Code_] // Using a simple reference
+
+[_Code_] int big_reference = &item_array[2];
+
+[_Code_] cout << big_reference << '\n';
+
+[_Code_] big_reference = 0;
+
+[_Code_]
+
+[_Code_] // Using a function that returns a reference
+
+[_Code_] cout << biggest(item_array, 5) << '\n';
+
+[_Code_] biggest(item_array, 5) = 0;
+
+Because the version of biggest returns a reference, it can be used
+on the left side of an assignment operation (=). But suppose you
+don't want that to happen. You can accomplish this by returning a
+const reference.
+
+[_Code_] const int &biggest(int array[], int n_elements);
+
+This tells C++ that even though you return a reference, the result
+cannot be changed. Thus, code like
+
+[_Code_] biggest(item_array, 5) = 0;              // Now it generates an error
+
+is illegal.
+
+[_B_]  Dangling References
+
+You should be careful when using "return by reference." If you're
+not careful, you can wind up with a reference to a variable that no
+longer exists. [_XREF Example 9-8_] illustrates this problem.
+
+Example 9-8
+
+. ref/ref.cc
+
+[_Code_]  1 #include <iostream.h>
+
+[_Code_]  2
+
+[_Code_]  3 const int &min(const int &i1, const int &i2)
+
+[_Code_]  4 {
+
+[_Code_]  5     if (i1 < i2)
+
+[_Code_]  6      return (i1);
+
+[_Code_]  7     return (i2);
+
+[_Code_]  8 }
+
+[_Code_]  9
+
+[_Code_] 10 main()
+
+[_Code_] 11 {
+
+[_Code_] 12    int &i = min(1 + 2, 3 + 4);
+
+[_Code_] 13
+
+[_Code_] 14    return (0);
+
+[_Code_] 15 }
+
+Line 3 starts the definition of the function min. It returns a reference
+to the smaller of two integers.
+
+In line 12 we call this function. Before the function min is called
+C++ creates a temporary integer to hold the value of the expression
+1 + 2. A reference to this temporary is passed to the min function
+as the parameter i1. C++ creates another temporary for the i2
+parameter.
+
+The function min is then called and returns a reference to i1. But
+what does i1 refer to? It refers to a temporary that C++ created in
+main. At the end of the statement C++ can destroy all the
+temporaries.
+
+Let's look at the call to min (line 12) in more detail. Here's a
+pseudocode version of line 12, including the details that C++
+normally hides from the programmer:
+
+[_Code_] create integer tmp1, assign it the value 1 + 2
+
+[_Code_] create integer tmp2, assign it the value 3 + 4
+
+[_Code_] bind parameter i1 so it refers to tmp1
+
+[_Code_] bind parameter i2 so it refers to tmp2
+
+[_Code_] call the function "min"
+
+[_Code_] bind main's variable i so it refers to
+
+[_Code_]         the return value (i1-a reference to tmp1)
+
+[_Code_] // At this point i is a reference to tmp1
+
+[_Code_] destroy tmp1
+
+[_Code_] destroy tmp2
+
+[_Code_]
+
+[_Code_] //    At this point i still refers to tmp1
+
+[_Code_] //    It doesn't exist, but i refers to it
+
+At the end of line 12 we have a bad situation: i refers to a
+temporary variable that has been destroyed. In other words, i
+points to something that does not exist. This is called a dangling
+reference and should be avoided.
+
+[_B_]  Array Parameters
+
+So for you've dealt only with simple parameters. C++ treats arrays a
+little differently. First of all, you don't have to put a size in the
+prototype declaration. For example:
+
+[_Code_] int sum(int array[]);
+
+C++ uses a parameter-passing scheme called "call by address" to
+pass arrays. Another way of thinking of this is that C++
+automatically turns all array parameters into reference parameters.
+This allows any size arrays to be passed. The function sum we just
+declared may accept integer arrays of length 3, 43, 5,000, or any
+length.
+
+However, if you want to put in a size you can. C++ allows this
+although it ignores whatever number you put there. But by putting
+in the size you alert the people reading your program that this
+function takes only fixed-size arrays.
+
+[_Code_] int sum(int array[3]);
+
+For multidimensional arrays you are required to put in the size for
+each dimension except the last one. That's because C++ uses these
+dimensions to compute the location of each element in the array.
+
+[_Code_] int sum_matrix(int matrix1[10][10]);   // Legal
+
+[_Code_] int sum_matrix(int matrix1[][10]);     // Legal
+
+[_Code_] int sum_matrix(int matrix1[][]);       // Illegal
+
+Question 9-1:  The function in [_XREF Example 9-9_] should compute the length of
+a string. Instead it insists that all strings are of length zero. Why?
+
+Example 9-9
+
+. length/length.cc
+
+[_Code_] /********************************************************
+
+[_Code_]  * length -- compute the length of a string             *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Parameters                                           *
+
+[_Code_]  *      string -- the string whose length we want       *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Returns                                              *
+
+[_Code_]  *      the length of the string                        *
+
+[_Code_]  ********************************************************/
+
+[_Code_] int  Length(char string[])
+
+[_Code_] {
+
+[_Code_]     int index;      // Index into the string
+
+[_Code_]
+[_Code_]     /*
+
+[_Code_]      * Loop until we reach the end-of-string character
+
+[_Code_]      */
+
+[_Code_]     for (index = 0; string[index] != '\0'; ++index)
+
+[_Code_]         /* do nothing */
+
+[_Code_]     return (index);
+
+[_Code_] }
+
+[_B_]  Function Overloading
+
+Let's define a simple function to return the square of an integer:
+
+[_Code_] int square(int value) {
+
+[_Code_]     return (value * value);
+
+[_Code_] }
+
+We also want to square floating point numbers:
+
+[_Code_] float square(float value) {
+
+[_Code_]     return (value * value);
+
+[_Code_] }
+
+Now we have two functions with the same name. Isn't that illegal?
+In older languages such as C and PASCAL that would be true. In
+C++ it's not. C++ allows function overloading, which means you
+can define multiple functions with the same names. Thus you can
+define a square function for all types of things: int, float,
+short int, double, and even char if we could figure out
+what it means to square a character.
+
+To keep your code consistent, all functions that use the same name
+should perform the same basic function. For example you could
+define the following two square functions:
+
+[_Code_] // Square an integer
+
+[_Code_] int square(int value);
+
+[_Code_]
+
+[_Code_] // Draw a square on the screen
+
+[_Code_] void square(int top, int bottom, int left, int right);
+
+This is perfectly legal C++ code, but it is confusing to anyone who
+has to read the code.
+
+There is one limitation to function overloading: C++ must be able to
+tell the functions apart. For example, the following is illegal:
+
+[_Code_] int get_number(void);
+
+[_Code_] float get_number(void);  // Illegal
+
+The problem is that C++ uses the parameter list to tell the
+functions apart. But the parameter list of the two get_number
+routines is the same: (void). The result is that C++ can't tell these
+two routines apart and flags the second declaration as an error.
+
+[_B_]  Default Parameters
+
+Suppose you want to define a function to draw a rectangle on the
+screen. This function also needs to be able to scale the rectangle as
+needed. The function definition is:
+
+[_Code_] 	void draw(const rectangle &rectangle, double scale)
+
+After using this function for a while, you discover that 90% of the
+time you don't use the ability of draw to scale. In other words, 90%
+of the time the scale factor is 1.0.
+
+C++ allows you to specify a default value for scale. The statement:
+
+[_Code_] 	void draw(const rectangle &rectangle, double scale = 1.0)
+
+tells C++, "If scale is not specified, make it 1.0." Thus the following
+are equivalent:
+
+[_Code_] 	draw(big_rectangle, 1.0);    	// Explicity specify scale 	
+
+[_Code_] draw(big_rectangle);         		// Let it default to 1.0
+
+There are some style problems with default parameters. Study the
+following code:
+
+[_Code_] 	draw(big_rectangle);		
+
+Can you tell whether the programmer intended for the scale to be
+1.0 or just forgot to put it in? Although sometimes useful, the default
+parameter trick should be used sparingly.
+
+[_B_]  Unused Parameters
+
+If you define a parameter and fail to use it, most good compilers
+will generate a warning. For example:
+
+[_Code_] 	void exit_button(Widget &button) {
+
+[_Code_]     cout << "Shutting down\n";
+
+[_Code_]     exit (0);
+
+[_Code_] }
+
+generates the message:
+
+[_Code_] 	Warning: line 1.  Unused parameter "button" 	
+
+But what about the times you really don't want to use a parameter?
+Is there a way to get C++ to shut up and not bother you? There is.
+The trick is to leave out the name of the parameter.
+
+[_Code_] 	// No warning, but style needs work
+
+[_Code_] 	void exit_button(Widget &) {
+
+[_Code_]     cout << "Shutting down\n";
+
+[_Code_]     exit (0); 	
+
+[_Code_] }
+
+This is nice for C++, but not so nice for the programmer who has to
+read your code. We can see that exit_button takes a Widget &
+parameter, but what is the parameter? A solution to this problem is
+to reissue the parameter name as a comment.
+
+[_Code_] 	// Better 	
+
+[_Code_] void exit_button(Widget & /*button*/) {
+
+[_Code_]     cout << "Shutting down\n"; 	
+
+[_Code_]     exit (0);
+
+[_Code_] 	}
+
+Some people consider this style ugly and confusing. They're right
+that it's not that easy to read. There ought to be a better way; I just
+wish I could think of one.
+
+One question you might be asking by now is, "Why would I ever
+write code like this? Why not just leave the parameter out?"
+
+It turns out that many programming systems make use of callback
+functions. For example, you can tell the X Window System, "When
+the `EXIT' button is pushed call the function exit_button." Your
+callback function may handle many buttons, so it's important to
+know which button is pushed. So X supplies button as a parameter
+to the function.
+
+What happens if you know that only button can cause X to call
+exit_button? Well, X is still going to give it to you, you're just
+going to ignore it. That's why some functions have unused
+parameters.
+
+[_B_]  inline Functions
+
+Looking back at the square function for integers, we see that it is a
+very short function (one line). Whenever C++ calls a function there
+is some overhead generated. This includes putting the parameters
+on the stack, entering and leaving the function, and a stack fix-up
+after the function returns.
+
+For example, the code:
+
+[_Code_] int square(int value) {
+
+[_Code_]     return (value * value);
+
+[_Code_] }
+
+[_Code_] main() {
+
+[_Code_]     // .....
+
+[_Code_]     x = square(x);
+
+generates the following assembly code on a 68000 machine
+(paraphrased).
+
+[_Code_] label "int square(int value)"
+
+[_Code_]         link a6,#0              // Set up local variables
+
+[_Code_]
+
+[_Code_]         // The next two lines do the work
+
+[_Code_]         movel a6@(8),d1         // d1 = value
+
+[_Code_]         mulsl a6@(8),d1         // d1 = value * d1
+
+[_Code_]
+
+[_Code_]         movel d1,d0             // Put return value in d0
+
+[_Code_]         unlk a6                 // Restore stack
+
+[_Code_]         rts                     // Return(d0)
+
+[_Code_]
+
+[_Code_] label "main"
+
+[_Code_] //....
+
+[_Code_] //      x = square(x)
+
+[_Code_] //
+
+[_Code_]         movel a6@(-4),sp@-      // Put the number x on the stack
+
+[_Code_]         jbsr "void square(int value)"
+
+[_Code_]                                 // Call the function
+
+[_Code_]
+
+[_Code_]         addqw #4,sp             // Restore the stack
+
+[_Code_]         movel d0,a6@(-4)        // Store return value in X
+
+[_Code_] // ...
+
+As you can see from this code, there are eight lines of overhead for
+two lines of work. C++ allows you to cut out that overhead through
+the use of the inline function. The inline keyword tells C++
+that the function is very small. This means that it's simpler and
+easier for the C++ compiler to put the entire body of the function in
+the code stream instead of generating a call to the function.
+
+[_Code_] inline int square(int value) {
+
+[_Code_]     return (value * value);
+
+[_Code_] }
+
+Changing the square function:
+
+[_Code_] label "main"
+
+[_Code_] // ...
+
+[_Code_] //      x = square(x)
+
+[_Code_] //
+
+[_Code_]         movel d1,a6@(-4)        // d1 = x
+
+[_Code_]         movel a6@(-4),d0        // d0 = x
+
+[_Code_]         mulsl d0,d0             // d0 = (x * x)
+
+[_Code_]
+
+[_Code_]         movel d0,a6@(-4)        // Store result
+
+Expanding the function inline has eliminated the eight lines of
+overhead and results in much faster execution.
+
+The inline modifier provides C++ a valuable hint it can use when
+generating code. Inline tells the compiler that the code is
+extremely small and simple. Like register, the inline modifier
+is a hint. If the C++ compiler can't generate a function inline, it will
+create it as an ordinary function.
+
+[_A_]  Summary of Parameter Types
+
+[_XREF Table 9-2_] lists the various parameter types.
+
+Table 9-2
+
+. Parameter Types
+
+Type
+
+Declaration
+
+Call by value
+
+function(int var)
+
+Value is passed into the function and can be changed inside the function, but the
+changes are not passed to the caller.
+
+Constant call by value
+
+function(const int var)
+
+Value is passed into the function and cannot be changed.
+
+Reference
+
+function(int &var)
+
+Reference is passed to the function. Any changes made to the parameter are
+reflected in the caller.
+
+Constant reference
+
+function(const int &var)
+
+Value cannot be changed in the function. This form of a parameter is more
+efficient than "constant call by value" for complex data types. (See Chapter 12,
+Advanced Types.)
+
+Array
+
+function(int array[])
+
+Value is passed in and may be modified. C++ automatically turns arrays into
+reference parameters.
+
+Call by address
+
+function(int *var)
+
+Passes a pointer to an item. Pointers are covered in Chapter 15, Simple Pointers.
+
+[_A_]  Structured Programming Basics
+
+Computer scientists spend a great deal of time and effort studying
+how to program. The result is that they come up with the
+absolutely, positively, best programming methodology-a new one
+each month. Some of these systems include flow charts, top-down
+programming, bottom-up programming, structured programming,
+and object-oriented programming.
+
+Now that you have learned about functions, we can talk about
+using structured programming techniques to design programs. This
+is a way of dividing up or structuring a program into small, well-
+defined functions. It makes the program easy to write and easy to
+understand. I don't claim that this system is the absolute best way to
+program. It happens to be the system that works best for me. If
+another system works better for you, use it.
+
+Structured programming concentrates on a program's code. Later
+you'll see how to merge code and data to form classes and begin to
+perform object-oriented programming.
+
+The first step in programming is to decide what you are going to
+do. This has already been described in Chapter 7, The Programming
+Process. Next, decide how you are going to structure your data.
+
+Finally, the coding phase begins. When writing a paper, you start
+with an outline, with each section in the paper described by a
+single sentence. The details are filled in later. Writing a program is
+similar. You start with an outline, but this outline is your main
+function. The details can be hidden within other functions. For
+example, the program in [_XREF Example 9-10_] solves all of the
+world's problems.
+
+Example 9-10
+
+. A global solution
+
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     void init(void);
+
+[_Code_]     void solve_problems(void);
+
+[_Code_]     void finish_up(void);
+
+[_Code_]
+[_Code_]     init();
+
+[_Code_]     solve_problems();
+
+[_Code_]     finish_up();
+
+[_Code_] }
+
+Of course, some of the details remain to be filled in.
+
+Start by writing the main function. It should be less than two pages
+long. If it grows longer, consider splitting it up into two smaller,
+simpler functions. The size of the function should be limited to
+three pages because that is about the maximum amount of
+information a human being can store in short-term memory at one
+time. After the main function is complete, you can start on the
+other functions. This type of structured programming is called top-
+down programming. You start at the top (main) and work your way
+down.
+
+Another type of coding is called bottom-up programming. This
+involves writing the lowest-level function first, testing it, and then
+building on that working set. I tend to use some bottom-up
+techniques when I'm working with a new standard function that I
+haven't used before. I write a small function to make sure I really
+know how the function works and continue from there. This is the
+approach used in Chapter 7 to construct the calculator program.
+
+In actual practice, both techniques are useful. This results in a
+mostly top-down, partially bottom-up technique. Computer
+scientists have a term for this methodology: chaos. The one rule you
+should follow in programming is, "Use what works best."
+
+[_A_]  Recursion
+
+Recursion occurs when a function calls itself directly or indirectly.
+Some programming functions lend themselves naturally to recursive
+algorithms, such as the factorial.
+
+A recursive function must follow two basic rules:
+
+1.  It must have an ending point.
+
+2.  It must make the problem simpler.
+
+A definition of factorial is:
+
+[_Code_] fact(0) 	= 1
+
+[_Code_] fact(n) 	= n * fact(n-1)
+
+In C++ this is:
+
+[_Code_] int fact(int number)
+
+[_Code_] {
+
+[_Code_]     if (number == 0)
+
+[_Code_]         return (1);
+
+[_Code_]     /* else */
+
+[_Code_]     return (number * fact(number-1));
+
+[_Code_] }
+
+This satisfies the two rules. First, it has a definite ending point
+(when number == 0). Second, it simplifies the problem because
+fact(number-1) is simpler than fact(number).
+
+Factorial is legal only for number >= 0. But what happens if we try
+to compute fact(-3)? The program aborts with a stack overflow or
+similar message. fact(-3) calls fact(-4) calls fact(-5) and so
+on. There is no ending point. This is called an infinite recursion
+error.
+
+Many things we do iteratively can be done recursively, such as
+summing the elements of an array. You can define a function to add
+elements m through n of an array as follows:
+
+If you have only one element, then the sum is simple.
+
+Otherwise, it is the sum of the first element and the sum of the rest.
+
+In C++ this is:
+
+[_Code_] int sum(int first, int last, int array[])
+
+[_Code_] {
+
+[_Code_]     if (first == last)
+
+[_Code_]         return (array[first]);
+
+[_Code_]     /* else */
+
+[_Code_]         return (array[first] + sum(first + 1, last, array));
+
+[_Code_] }
+
+For example:
+
+[_Code_] Sum(1 8 3 2) =
+
+[_Code_]     1 + Sum(8 3 2) =
+
+[_Code_]         8 + Sum(3 2) =
+
+[_Code_]             3 + Sum(2) =
+
+[_Code_]                 2
+
+[_Code_]             3 + 2 = 5
+
+[_Code_]         8 + 5 = 13
+
+[_Code_]     1 + 13 = 14
+
+[_Code_] Answer = 14
+
+[_A_]  Programming Exercises
+
+Exercise 9-1: Write a procedure that counts the number of words in a string. (Your
+documentation should describe exactly how you define a word.) Write a program
+to test your new procedure.
+
+Exercise 9-2: Write a function "begins(string1, string2)" that returns true if
+string1 begins string2. Write a program to test the function.
+
+Exercise 9-3: Write a function count(number, array, length) that will count
+the number of times number appears in array. The array has length elements.
+The function should be recursive. Write a test program to go with the function.
+
+Exercise 9-4: Write a function that will take a character string and return a primi-
+tive hash code by adding up the value of each character in the string.
+
+Exercise 9-5: Write a function that returns the maximum value of an array of
+numbers.
+
+Exercise 9-6: Write a function that scans a string for the character "-" and replaces
+it with "_".
+
+[_A_]  Answers to Chapter Questions
+
+Answer 9-1: The programmer went to a lot of trouble to explain that the for loop
+did nothing (except increment the index). However, there is no semicolon at the
+end of the for. C++ keeps reading until it sees a statement (in this case
+return(index)) and puts that in the for loop. [_XREF Example 9-11_] contains
+a correctly written version of the program.
+
+Example 9-11
+
+. length/rlen.cc
+
+[_Code_] int  length(char string[])
+
+[_Code_] {
+
+[_Code_]     int index;      // index into the string
+
+[_Code_]
+[_Code_]     /*
+
+[_Code_]      * Loop until we reach the end of string character
+
+[_Code_]      */
+
+[_Code_]     for (index = 0; string[index] != '\0'; ++index)
+
+[_Code_]         /* do nothing */ ;
+
+[_Code_]     return (index);
+
+[_Code_] }
+

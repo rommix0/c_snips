@@ -1,0 +1,1416 @@
+Chapter 15Part III: Advanced Types and Classes
+
+In This Chapter:
+
+*  [_XREF const Pointers_]
+
+*  [_XREF Pointers and Printing_]
+
+*  [_XREF Pointers and Arrays_]
+
+*  [_XREF Splitting Strings_]
+
+*  [_XREF Pointers and
+Structures_]
+
+*  [_XREF Command-Line
+Arguments_]
+
+*  [_XREF Programming
+Exercises_]
+
+*  [_XREF Answers to Chapter
+Questions_]
+
+15	
+
+15: Simple Pointers
+
+The choice of a point of view is the
+initial act of culture.
+
+---Ortega y Gasset
+
+There are things and there are pointers to things ([_XREF
+Figure 15-1_]).
+
+Figure 15-1
+
+. A thing and a pointer to a thing
+
+Things can come in any size; some may be big, some may be small.
+Pointers come in only one size (relatively small).
+
+Throughout this book you use a box to represent a thing. The box
+may be large or small, but things are always a box. Pointers are
+represented by arrows.
+
+Most novice programmers get pointers and their contents confused.
+To limit this problem, all pointer variables in this book end with the
+extension _ptr. You probably want to follow this convention in
+your own programs. Although not as common as it should be, this
+notation is extremely useful.
+
+[_XREF Figure 15-1_] shows one thing: a variable named thing.
+The name of the variable is written on the box that represents it.
+This variable contains the value 6. The actual address of this
+variable is 0x1008. C++ automatically assigns an address to each
+variable at compile time. The actual addresses differ from machine
+to machine. Most of the time you don't have to worry about
+variable addresses, as the compiler takes care of that detail. (After
+all, you've gotten through 11 chapters of programming without
+knowing anything about addresses.)
+
+The pointer (thing_ptr) points to the variable thing. Pointers are
+also called address variables since they contain the addresses of
+other variables. In this case, the pointer contains the address
+0x1008. Since this is the address of thing, you say that thing_ptr
+points to thing. (You could put another address in thing_ptr and
+force it to point to something else.)
+
+You use "things" and "addresses" in everyday life. For example, you
+might live in a house (a thing). The street address might be "123 W.
+Main Street." An address is a small thing that can be written down
+on a piece of paper. Putting a house on a piece of paper is
+something else requiring a lot of work and a very large crane.
+
+Street addresses are approximately the same size: one line. Houses
+come in various sizes. So while "1600 Pennsylvania Ave." might
+refer to a big house and "8347 Skid Row" might refer to a one-room
+shack, both addresses are the same size.
+
+Many different address variables can point to the same thing. This is
+true for street addresses as well. [_XREF Table 15-1_] lists the
+location of important services in a small town.
+
+Table 15-1
+
+. Small-town Directory
+
+Service (Variable Name)
+
+Address (Address Value)
+
+Building (Thing)
+
+Fire department
+
+1 Main Street
+
+City Hall
+
+Police station
+
+1 Main Street
+
+City Hall
+
+Planning office
+
+1 Main Street
+
+City Hall
+
+Gas station
+
+2 Main Street
+
+Ed's Gas Station
+
+In this case you have one, large, multipurpose building that is used
+by several services. Although there are three address variables
+(Services), there is only one address (1 Main Street) pointing to one
+building (City Hall.)
+
+As you will see in this chapter, pointers can be used as a quick and
+simple way to access arrays. In later chapters you will discover how
+pointers can be used to create new variables and complex data
+structures such as linked lists and trees. As you go through the rest
+of the book, you will be able to understand these data structures as
+well as create your own.
+
+A pointer is declared by putting an asterisk (*) in front of the
+variable name in the declaration statement:
+
+[_Code_] int thing;       // Define "thing" (see [_XREF Figure 15-2_]A)
+
+[_Code_] int *thing_ptr;  // Define "pointer to a thing" (see [_XREF Figure 15-2_]B)
+
+[_XREF Table 15-2_] lists the operators used in conjunction with
+pointers.
+
+Table 15-2
+
+. Pointer Operators
+
+Operator
+
+Meaning
+
+*
+
+De-reference (given a pointer, get the thing referenced)
+
+&
+
+Address of (given a thing, point to it)
+
+The ampersand operator (&) changes a thing into a pointer. The *
+changes a pointer into a thing. These operators can easily cause
+confusion. Let's look at some simple uses of these operators in
+detail.
+
+thing
+A thing. The declaration int thing does not contain an asterisk, so thing
+is not a pointer. Example:
+
+[_Code_]        thing = 4;			// See [_XREF Figure 15-2_]C
+
+&thing
+A pointer to thing. thing is an object. The & (address of) operator gets the
+address of an object (a pointer), so &thing is a pointer. Example:
+
+[_Code_]         thing_ptr = &thing;	// Point to the thing
+
+[_Code_] 								// (See [_XREF Figure 15-2_]A)
+
+[_Code_]        *thing_ptr = 5; 					// Set "thing" to 5
+
+[_Code_] 							// (See [_XREF Figure 15-2_]B)
+
+thing_ptr
+Thing pointer. The asterisk (*) in the declaration indicates this is a pointer.
+Also, you have put the extension _ptr onto the name.
+
+*thing_ptr
+A thing. The variable thing_ptr is a pointer. The * (de-reference operator)
+tells C++ to look at the data pointed to, not at the pointer itself. Note: This
+points to an integer, any integer. It may or may not point to the specific vari-
+able thing.
+
+[_Code_]        *thing_ptr = 5;   			// Assign 5 to an integer
+
+[_Code_] 						// We may or may not be pointing
+
+[_Code_] 						   to the specific integer "thing"
+
+Figure 15-2
+
+. Pointer operators
+
+The following examples show misuse of pointer operators.
+
+*thing
+Illegal. Asks C++ to get the object pointed to by the variable thing. Since
+thing is not a pointer, this is an invalid operation.
+
+&thing_ptr
+Legal, but strange. thing_ptr is a pointer. The & (address of) operator gets a
+pointer to the object (in this case thing_ptr). The result is a pointer to a
+pointer. (Pointers to pointers do occur in more complex programs.)
+
+[_XREF Example 15-1_] illustrates a very simple use of pointers. It
+declares one object, thing_var, and a pointer, thing_ptr. thing_
+var is set explicitly by the line:
+
+[_Code_]     thing_var = 2;
+
+The line:
+
+[_Code_]     thing_ptr = &thing_var;
+
+causes C++ to set thing_ptr to the address of thing_var. From
+this point on, thing_var and *thing_ptr are the same.
+
+Example 15-1
+
+.  thing/thing.cc
+
+[_Code_] #include <iostream.h>
+
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     int   thing_var;  // Define a variable
+
+[_Code_]     int  *thing_ptr;  // Define a pointer
+
+[_Code_]
+[_Code_]     thing_var = 2;      // Assigning a value to "thing"
+
+[_Code_]     cout << "Thing " << thing_var << '\n';
+
+[_Code_]
+[_Code_]     thing_ptr = &thing_var; // Make the pointer point to "thing"
+
+[_Code_]     *thing_ptr = 3;     // thing_ptr points to thing_var so
+
+[_Code_]                         // thing_var changes to 3
+
+[_Code_]     cout << "Thing " << thing_var << '\n';
+
+[_Code_]
+[_Code_]     // Another way of printing the data
+
+[_Code_]     cout << "Thing " << *thing_ptr << '\n';
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+Several pointers can point to the same thing:
+
+[_Code_]  1:      int      something;
+
+[_Code_]  2:
+
+[_Code_]  3:      int      *first_ptr;     // One pointer
+
+[_Code_]  4:      int      *second_ptr;    // Another pointer
+
+[_Code_]  5:
+
+[_Code_]  6:      something = 1;          // Give the thing a value
+
+[_Code_]  7:
+
+[_Code_]  8:      first_ptr = &something;
+
+[_Code_]  9:      second_ptr = first_ptr;
+
+In line 8 you use the & operator to change a simple variable
+(something) into a pointer that can be assigned to first_ptr.
+Because first_ptr and second_ptr are both pointers, you can
+do a direct assignment in line 9.
+
+After executing this program fragment, you have the situation
+illustrated by [_XREF Figure 15-3_].
+
+Figure 15-3
+
+. Two pointers and a thing
+
+It is most important to note that while you have three variables,
+there is only one integer (thing). The following are all equivalent:
+
+[_Code_] something = 1;
+
+[_Code_] *first_ptr = 1;
+
+[_Code_] *second_ptr = 1;
+
+Finally, there is a special pointer called NULL that points to nothing.
+(The actual numeric value is 0.) The standard include file, stddef.h,
+defines the constant NULL. (Most standard include files that have
+anything to do with pointers automatically include NULL as well.)
+The NULL pointer is represented graphically in [_XREF Figure 15-4_].
+
+Figure 15-4
+
+. NULL
+
+[_A_]  const Pointers
+
+Declaring constant pointers is a little tricky. For example, although
+the declaration:
+
+[_Code_] const int result = 5;
+
+tells C++ that result is a constant, so
+
+[_Code_] result = 10;      // Illegal
+
+is illegal. The declaration:
+
+[_Code_] const char *answer_ptr = "Forty-Two";
+
+does not tell C++ that the variable answer_ptr is a constant.
+Instead it tells C++ that the data pointed to by answer_ptr is a
+constant. The data cannot be changed, but the pointer can. Again
+we need to make sure we know the difference between "things"
+and "pointers to things."
+
+What's answer_ptr? A pointer. Can it be changed? Yes, it's just a
+pointer.. What does it point to? A const char array. Can the data
+pointed to by answer_ptr be changed? No, it's constant.
+
+In C++ this is:
+
+[_Code_] answer_ptr = "Fifty-One";     // Legal (answer_ptr is a variable)
+
+[_Code_] *answer_ptr = 'X';            // Illegal (*answer_ptr is a constant)
+
+If you put the const after the *, we tell C++ that the data is
+constant. For example:
+
+[_Code_] char *const name_ptr = "Test";
+
+What's name_ptr? A constant pointer. Can it be changed? No. What
+does it point to? A character. Can the data we pointed to by name_
+ptr be changed? Yes.
+
+[_Code_] name_ptr = "New";           // Illegal (name_ptr is constant)
+
+[_Code_] *name_ptr = 'B';            // Legal (*name_ptr is a char)
+
+Finally, we put const in both places, creating a pointer that cannot
+be changed to a data item that cannot be changed.
+
+[_Code_] const char *const title_ptr = "Title";
+
+[_A_]  Pointers and Printing
+
+In C++ you can print the value of a pointer just like you can print
+the value of a simple variable such as an integer or floating point
+number. For example:
+
+[_Code_] int an_integer = 5;           // A simple integer
+
+[_Code_] int *int_ptr = &an_integer;   // Pointer to an integer
+
+[_Code_]
+
+[_Code_] cout << "Integer pointer " << int_ptr << '\n';
+
+outputs
+
+[_Code_] Integer pointer 0x58239A
+
+In this case, the value 0x58239A represents a memory address. This
+address may vary from program to program.
+
+C++ treats character pointers a little differently from other pointers.
+A character pointer is treated as a pointer to a string. For example:
+
+[_Code_] char some_characters[10] = "Hello";   // A simple set of characters
+
+[_Code_] char *char_ptr = &some_characters[0];  // Pointer to a character
+
+[_Code_]
+
+[_Code_] cout << "String pointer " << char_ptr << '\n';
+
+outputs
+
+[_Code_] String pointer Hello
+
+[_A_]  Pointers and Arrays
+
+C++ allows pointer arithmetic. Addition and subtraction are allowed
+with pointers. Suppose you have the following:
+
+[_Code_] char array[10];
+
+[_Code_] char *array_ptr = &array[0];
+
+Graphically this is represented in [_XREF Figure 15-5_].
+
+Figure 15-5
+
+. Pointers and an array
+
+In this example, *array_ptr is the same as array[0], *(array_
+ptr+1) is the same as array[1], and so on. Note the use of
+parentheses. (*array_ptr)+1 is not the same as array[1]. The
++1 is outside the parentheses so it is added after the de-reference.
+Thus (*array_ptr)+1 is the same as array[0]+1.
+
+At first glance this may seem like a complex way of representing
+simple array indices. You are starting with simple pointer arithmetic.
+In later chapters you will use more complex pointers to handle
+more difficult functions efficiently.
+
+Pointers are merely memory addresses. In an array each element is
+assigned to consecutive addresses. For example, array[0] may be
+placed at address 0xff000024. Then array[1] would be placed at
+address 0xff000025 and so on. [_XREF Example 15-2_] prints out
+the elements and addresses of a simple character array. (Note: The
+I/O manipulators hex and dec are described in Chapter 16, File
+Input/Output.)
+
+Example 15-2
+
+. array-p/array-p.cc
+
+[_Code_] #include <iostream.h>
+
+[_Code_] #include <iomanip.h>
+
+[_Code_]
+[_Code_] const int ARRAY_SIZE  = 10; // Number of characters in array
+
+[_Code_] // Array to print
+
+[_Code_] char array[ARRAY_SIZE] = "012345678";
+
+[_Code_]
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     int index;  /* Index into the array */
+
+[_Code_]
+[_Code_]     for (index = 0; index < ARRAY_SIZE; ++index) {
+
+[_Code_]         cout << hex;    // Trick to print hex numbers
+
+[_Code_]         cout <<
+
+[_Code_]             "&array[index]=0x" <<  int(&array[index]) <<
+
+[_Code_]             " (array+index)=0x" << int(array+index) <<
+
+[_Code_]             " array[index]=0x" <<  int(array[index]) << '\n',
+
+[_Code_]        cout << dec;
+
+[_Code_]     }
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+When run this program prints:
+
+[_Code_] &array[index]=0x20090 (array+index)=0x20090 array[index]=0x30
+
+[_Code_] &array[index]=0x20091 (array+index)=0x20091 array[index]=0x31
+
+[_Code_] &array[index]=0x20092 (array+index)=0x20092 array[index]=0x32
+
+[_Code_] &array[index]=0x20093 (array+index)=0x20093 array[index]=0x33
+
+[_Code_] &array[index]=0x20094 (array+index)=0x20094 array[index]=0x34
+
+[_Code_] &array[index]=0x20095 (array+index)=0x20095 array[index]=0x35
+
+[_Code_] &array[index]=0x20096 (array+index)=0x20096 array[index]=0x36
+
+[_Code_] &array[index]=0x20097 (array+index)=0x20097 array[index]=0x37
+
+[_Code_] &array[index]=0x20098 (array+index)=0x20098 array[index]=0x38
+
+[_Code_] &array[index]=0x20099 (array+index)=0x20099 array[index]=0x0
+
+Characters usually take up one byte, so the elements in a character
+array will be assigned consecutive addresses. A short int takes
+up two bytes, so in an array of short ints the addresses increase
+by two. Does this mean short_array+1 will not work for anything
+other than characters? No. C++ automatically scales pointer
+arithmetic so it works correctly. In this case short_array+1 will
+point to element number 1.
+
+C++ provides a shorthand for dealing with arrays. Rather than write:
+
+[_Code_] array_ptr = &array[0];
+
+you can write:
+
+[_Code_] array_ptr = array;
+
+C++ blurs the distinction between pointers and arrays by treating
+them the same in many cases. Here you used the variable array as
+a pointer and C++ automatically did the necessary conversion.
+
+[_XREF Example 15-3_] counts the number of elements that are non-
+zero and stops when a zero is found. No limit check is provided, so
+there must be at least one zero in the array.
+
+Example 15-3
+
+. ptr2/ptr2a.cc
+
+[_Code_] #include <iostream.h>
+
+[_Code_]
+[_Code_] int array[10] = {4, 5, 8, 9, 8, 1, 0, 1, 9, 3};
+
+[_Code_] int index;
+
+[_Code_]
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     index = 0;
+
+[_Code_]     while (array[index] != 0)
+
+[_Code_]         ++index;
+
+[_Code_]
+[_Code_]     cout << "Number of elements before zero " << index << '\n';
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+Rewriting this program to use pointers gives us [_XREF
+Example 15-4_].
+
+Example 15-4
+
+. ptr2/prt2.cc
+
+[_Code_] #include <iostream.h>
+
+[_Code_]
+[_Code_] int array[10] = {4, 5, 8, 9, 8, 1, 0, 1, 9, 3};
+
+[_Code_] int *array_ptr;
+
+[_Code_]
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     array_ptr = array;
+
+[_Code_]
+[_Code_]     while ((*array_ptr) != 0)
+
+[_Code_]         ++array_ptr;
+
+[_Code_]
+[_Code_]     cout << "Number of elements before zero " <<
+
+[_Code_]         (array_ptr - array) << '\n';
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+The first program uses the expression (array[index] != 0). This
+requires the compiler to generate an index operation, which takes
+longer than a simple pointer de-reference: ((*array_ptr) != 0).
+The expression at the end of this program, array_ptr - array,
+computes how far array_ptr is into the array.
+
+When passing an array to a procedure, C++ will automatically
+change the array into a pointer. In fact, if you put an & before the
+array, C++ will issue a warning. [_XREF Example 15-5_] illustrates
+array passing.
+
+Example 15-5
+
+. init-a/init-a.cc
+
+[_Code_] const int MAX = 10;
+
+[_Code_]
+[_Code_] /********************************************************
+
+[_Code_]  * init_array_1 -- Zero out an array                    *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Parameters                                           *
+
+[_Code_]  *      data -- the array to zero                       *
+
+[_Code_]  ********************************************************/
+
+[_Code_] void init_array_1(int data[])
+
+[_Code_] {
+
+[_Code_]     int  index;
+
+[_Code_]
+[_Code_]     for (index = 0; index < MAX; ++index)
+
+[_Code_]         data[index] = 0;
+
+[_Code_] }
+
+[_Code_]
+[_Code_] /********************************************************
+
+[_Code_]  * init_array_2 -- Zero out an array                    *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Parameters                                           *
+
+[_Code_]  *      data_ptr -- pointer to array to zero            *
+
+[_Code_]  ********************************************************/
+
+[_Code_] void init_array_2(int *data_ptr)
+
+[_Code_] {
+
+[_Code_]     int index;
+
+[_Code_]
+[_Code_]     for (index = 0; index < MAX; ++index)
+
+[_Code_]         *(data_ptr + index) = 0;
+
+[_Code_] }
+
+[_Code_] #
+
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     int  array[MAX];
+
+[_Code_]
+[_Code_]     // One way of initializing the array
+
+[_Code_]     init_array_1(array);
+
+[_Code_]
+[_Code_]     // Another way of initializing the array
+
+[_Code_]     init_array_1(&array[0]);
+
+[_Code_]
+[_Code_]     // Similar to the first method but
+
+[_Code_]     //    function is different
+
+[_Code_]     init_array_2(array);
+
+[_Code_]
+[_Code_]     return (0);
+
+[_Code_] }
+
+[_A_]  Splitting Strings
+
+Suppose you are given a string of the form "Last/First." You want to
+split this into two strings, one containing the first name and one
+containing the last name.
+
+Example 15-6 reads in a single line, stripping the newline character
+from it. The function strchr is called to find the location of the
+slash (/). (The function strchr is actually a standard function. You
+have duplicated it for this example so you can see how it works.)
+
+At this point last_ptr points to the beginning character of the last
+name (with the first tacked on) and first_ptr points to a slash.
+You then split the string by replacing the slash (/) with an end-of-
+string (NUL or '\0'). Now last_ptr points to just the last name and
+first_ptr points to a null string. Moving first_ptr to the next
+character makes first_ptr point to the beginning of the first
+name.
+
+Graphically what you are doing is illustrated in [_XREF Figure 15-6_].
+
+[_XREF Example 15-6_] contains the full program
+
+Figure 15-6
+
+. Splitting a string
+
+Example 15-6: split/split.cc
+
+[_Code_] /********************************************************
+
+[_Code_]  * Split -- split an entry of the form Last/First       *
+
+[_Code_]  *      into two parts                                  *
+
+[_Code_]  ********************************************************/
+
+[_Code_] #include <iostream.h>
+
+[_Code_] #include <string.h>
+
+[_Code_] #include <stdlib.h>
+
+[_Code_]
+[_Code_] main()
+
+[_Code_] {
+
+[_Code_]     char line[80];      // The input line
+
+[_Code_]     char *first_ptr;    // Pointer we set to point to the first name
+
+[_Code_]     char *last_ptr;     // Pointer we set to point to the last name
+
+[_Code_]
+[_Code_]     cin.getline(line, sizeof(line));
+
+[_Code_]
+[_Code_]     last_ptr = line;    // Last name is at beginning of line
+
+[_Code_]
+[_Code_]     first_ptr = strchr(line, '/');      // Find slash
+
+[_Code_]
+[_Code_]     // Check for an error
+
+[_Code_]     if (first_ptr == NULL) {
+
+[_Code_]         cerr << "Error: Unable to find slash in " << line << '\n';
+
+[_Code_]         exit (8);
+
+[_Code_]     }
+
+[_Code_]
+[_Code_]     *first_ptr = '\0';  // Zero out the slash
+
+[_Code_]
+[_Code_]     ++first_ptr;        // Move to first character of name
+
+[_Code_]
+[_Code_]     cout << "First:" << first_ptr << " Last:" << last_ptr << '\n';
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+[_Code_] /********************************************************
+
+[_Code_]  * strchr -- find a character in a string               *
+
+[_Code_]  *      Duplicate of a standard library function,       *
+
+[_Code_]  *      put here for illustrative purposes.             *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Parameters                                           *
+
+[_Code_]  *      string_ptr -- string to look through            *
+
+[_Code_]  *      find -- character to find                       *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Returns                                              *
+
+[_Code_]  *      pointer to 1st occurrence of character in string*
+
+[_Code_]  *      or NULL for error                               *
+
+[_Code_]  ********************************************************/
+
+[_Code_] char *strchr(char * string_ptr, char find)
+
+[_Code_] {
+
+[_Code_]     while (*string_ptr != find) {
+
+[_Code_]
+[_Code_]        // Check for end
+
+[_Code_]
+[_Code_]        if (*string_ptr == '\0')
+
+[_Code_]            return (NULL);       // Not found
+
+[_Code_]
+[_Code_]         ++string_ptr;
+
+[_Code_]     }
+
+[_Code_]     return (string_ptr);        // Found
+
+[_Code_] }
+
+This program illustrates how pointers and character arrays may be
+used for simple string processing.
+
+Question 15-1: Example 15-7 is supposed to print out:
+
+[_Code_]
+
+[_Code_] Name: tmp1
+
+but instead you get:
+
+[_Code_] Name: !_@$#ds80
+
+(Your results may vary.) Why does this happen?
+
+Example 15-7
+
+.  tmp-name/tmp-name.cc
+
+[_Code_] #include <iostream.h>
+
+[_Code_] #include <string.h>
+
+[_Code_]
+[_Code_] /********************************************************
+
+[_Code_]  * tmp_name -- return a temporary filename              *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Each time this function is called, a new name will   *
+
+[_Code_]  * be returned                                          *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Returns                                              *
+
+[_Code_]  *      pointer to the new filename                     *
+
+[_Code_]  ********************************************************/
+
+[_Code_] char *tmp_name(void)
+
+[_Code_] {
+
+[_Code_]     char name[30];              // The name we are generating
+
+[_Code_]     static int sequence = 0;    // Sequence number for last digit
+
+[_Code_]
+[_Code_]     ++sequence; // Move to the next filename
+
+[_Code_]
+[_Code_]     strcpy(name, "tmp");
+
+[_Code_]
+[_Code_]     // Put in the sequence digit
+
+[_Code_]     name[3] = sequence + '0';
+
+[_Code_]
+[_Code_]     // End the string
+
+[_Code_]     name[4] = '\0';
+
+[_Code_]
+[_Code_]     return(name);
+
+[_Code_] }
+
+[_Code_]
+[_Code_] int main()
+
+[_Code_] {
+
+[_Code_]     cout << "Name: " << tmp_name() << '\n';
+
+[_Code_]     return(0);
+
+[_Code_] }
+
+[_A_]  Pointers and Structures
+
+In Chapter 12, Advanced Types, you defined a structure for a
+mailing list:
+
+[_Code_] struct mailing {
+
+[_Code_]     char name[60];    // Last name, first name
+
+[_Code_]     char address1[60];// Two lines of street address
+
+[_Code_]     char address2[60];
+
+[_Code_]     char city[40];
+
+[_Code_]     char state[2];    // Two-character abbreviation
+
+[_Code_]     long int zip;     // Numeric zip code
+
+[_Code_] } list[MAX_ENTRIES];
+
+Mailing lists must frequently be sorted in name order and zip-code
+order. You could sort the entries themselves, but each entry is 226
+bytes long. That's a lot of data to move around. A way around this
+problem is to declare an array of pointers and then sort the pointers:
+
+[_Code_] // Pointer to the data
+
+[_Code_] struct mailing *list_ptrs[MAX_ENTRIES];
+
+[_Code_]
+
+[_Code_] int current;    // Current mailing list entry
+
+[_Code_]
+
+[_Code_]     // ....
+
+[_Code_]
+
+[_Code_]     for (current = 0; current = number_of_entries; ++current)
+
+[_Code_]         list_ptrs = &list[current];
+
+[_Code_]
+
+[_Code_]     // Sort list_ptrs by zip code
+
+Now instead of having to move a 226-byte structure around, you are
+moving 4-byte pointers. This sorting is much faster. Imagine that
+you had a warehouse full of big heavy boxes and you needed to
+locate any box quickly. One way of doing this would be to put the
+boxes in alphabetical order. But that would require a lot of moving,
+so you assign each location a number, write down the name and
+number on index cards, and sort the cards by name.
+
+[_A_]  Command-Line Arguments
+
+The procedure main actually takes two arguments. They are called
+argc and argv. (They don't have to be called argv and argc;
+however, 99.99% of C++ programs use these names.)
+
+[_Code_] main(int argc, char *argv[])
+
+[_Code_] {
+
+It's easy to remember which comes first when you realize that they
+are in alphabetical order.
+
+The parameter argc is the number of arguments on the command
+line (including the program name). The array argv contains the
+actual arguments. For example, if the program args were run with
+the command line:
+
+[_Code_] args this is a test
+
+then:
+
+[_Code_] argc 			= 5
+
+[_Code_] argv[0] 			= "args"
+
+[_Code_] argv[1] 			= "this"
+
+[_Code_] argv[2] 			= "is"
+
+[_Code_] argv[3] 			= "a"
+
+[_Code_] argv[4] 			= "test"
+
+[_NOTE_]  The UNIX shell expands wildcard characters like
+*, ?, and [] before sending the command line to the
+program. See your sh or csh manual for details.
+
+[_NOTE_]  Turbo-C++ will expand wildcard characters if the
+file WILDARG.OBJ is linked with your program. See the
+Turbo-C++ manual for details.
+
+Almost all UNIX commands use a standard command-line format.
+This "standard" has carried over into other environments. A standard
+UNIX command has the form:
+
+[_Code_] command  options file1 file1 file3 ...
+
+Options are preceded by a hyphen (-) and are usually a single
+letter. For example, the option -v might turn on verbose mode. If
+the option takes a parameter, the parameter follows the letter. For
+example, the switch -m1024 sets the maximum number of symbols
+to 1024 and -ooutfile sets the output file name to outfile.
+
+You have been given the assignment to write a program that will
+format and print files. Part of the documentation for the program
+looks like:
+
+[_Code_] print_file [-v] [-l<length>] [-o<name>] [file1] [file2] ...
+
+In this line, -v sets verbose options, which turns on a lot of
+progress information messages. The option -l<length> sets the
+page size to <length> lines (default = 66) and -o<name> sets the
+output file to <name> (default = print.out). A list of files to print
+follows these options ([file1], [file2], etc.). If no files are
+specified, then print the file print.in.
+
+The while loop cycles through the options. The actual loop is:
+
+[_Code_]     while ((argc > 1) && (argv[1][0] == '-')) {
+
+There is always one argument, the program name. The expression
+(argc > 1) checks for additional arguments. The first one will be
+numbered 1. The first character of the first argument is
+argv[1][0]. If this character is a dash you have an option.
+
+At the end of the loop is the code:
+
+[_Code_]         --argc;
+
+[_Code_]         ++argv;
+
+[_Code_]     }
+
+This consumes an argument. The number of arguments is
+decremented to indicate one less option, and the pointer to the first
+option is incremented, shifting the list to the left one place. (Note:
+After the first increment, argv[0] no longer points to the program
+name.)
+
+The switch statement is used to decode the options. Character 0
+of the argument is the hyphen (-). Character 1 is the option
+character, so you use the expression:
+
+[_Code_]         switch (argv[1][1]) {
+
+to decode the option.
+
+The option -v has no arguments; it just causes a flag to be set.
+
+The -l option takes an integer argument. The library function atoi is used to
+convert the string into an integer. From the previous example you know that
+argv[1][2] starts the string containing the number. This string is passed to atoi.
+
+The option -o takes a filename. Rather than copy the whole string,
+you set the character pointer out_file to point to the name part of
+the string. By this time you know that:
+
+[_Code_] argv[1][0] = '-'
+
+[_Code_] argv[1][1] = 'o'
+
+[_Code_] argv[1][2] = start of the file name
+
+You set out_file to point to the string with the statement:
+
+[_Code_]                 out_file = &argv[1][2];
+
+Finally all the options are parsed and you fall through to the processing loop.
+This merely executes the function do_file for each file argument.
+
+[_XREF Example 15-8_] contains the complete option-decoding program.
+
+Example 15-8: print/print.cc
+
+[_Code_]  /*******************************************************
+
+[_Code_]  * Print -- format files for printing                   *
+
+[_Code_]  ********************************************************/
+
+[_Code_] #include <iostream.h>
+
+[_Code_] #include <stdlib.h>
+
+[_Code_]
+[_Code_] int verbose = 0;                // Verbose mode (default = false)
+
+[_Code_] char *out_file = "print.out";   // Output file name
+
+[_Code_] char *program_name;             // Name of the program (for errors)
+
+[_Code_] int line_max = 66;              // Number of lines per page
+
+[_Code_]
+[_Code_] /********************************************************
+
+[_Code_]  * do_file -- dummy routine to handle a file            *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Parameter                                            *
+
+[_Code_]  *      name -- name of the file to print               *
+
+[_Code_]  ********************************************************/
+
+[_Code_] void do_file(char *name)
+
+[_Code_] {
+
+[_Code_]     cout << "Verbose " << verbose << " Lines " << line_max <<
+
+[_Code_]             " Input " << name << " Output " << out_file << '\n';
+
+[_Code_] }
+
+[_Code_] /********************************************************
+
+[_Code_]  * Usage -- tell the user how to use this program and   *
+
+[_Code_]  *              exit                                    *
+
+[_Code_]  ********************************************************/
+
+[_Code_] void usage(void)
+
+[_Code_] {
+
+[_Code_]     cerr << "Usage is " << program_name << " [options] [file-list]\n";
+
+[_Code_]     cerr << "Options\n";
+
+[_Code_]     cerr << "  -v          verbose\n";
+
+[_Code_]     cerr << "  -l<number>  Number of lines\n";
+
+[_Code_]     cerr << "  -o<name>    Set output filename\n";
+
+[_Code_]     exit (8);
+
+[_Code_] }
+
+[_Code_]
+[_Code_] main(int argc, char *argv[])
+
+[_Code_] {
+
+[_Code_]     // Save the program name for future use
+
+[_Code_]     program_name = argv[0];
+
+[_Code_]
+[_Code_]     /*
+
+[_Code_]      * Loop for each option
+
+[_Code_]      *   Stop if we run out of arguments
+
+[_Code_]      *   or we get an argument without a dash
+
+[_Code_]      */
+
+[_Code_]     while ((argc > 1) && (argv[1][0] == '-')) {
+
+[_Code_]         /*
+
+[_Code_]          * argv[1][1] is the actual option character
+
+[_Code_]          */
+
+[_Code_]         switch (argv[1][1]) {
+
+[_Code_]             /*
+
+[_Code_]              * -v verbose
+
+[_Code_]              */
+
+[_Code_]             case 'v':
+
+[_Code_]                 verbose = 1;
+
+[_Code_]                 break;
+
+[_Code_]             /*
+
+[_Code_]              * -o<name>  output file
+
+[_Code_]              *    [0] is the dash
+
+[_Code_]              *    [1] is the "o"
+
+[_Code_]              *    [2] starts the name
+
+[_Code_]              */
+
+[_Code_]             case 'o':
+
+[_Code_]                 out_file = &argv[1][2];
+
+[_Code_]                 break;
+
+[_Code_]             /*
+
+[_Code_]              * -l<number> set max number of lines
+
+[_Code_]              */
+
+[_Code_]             case 'l':
+
+[_Code_]                 line_max = atoi(&argv[1][2]);
+
+[_Code_]                 break;
+
+[_Code_]             default:
+
+[_Code_]                 cerr << "Bad option " << argv[1] << '\n';
+
+[_Code_]                 usage();
+
+[_Code_]         }
+
+[_Code_]         /*
+
+[_Code_]          * Move the argument list up one
+
+[_Code_]          * Move the count down one
+
+[_Code_]          */
+
+[_Code_]         ++argv;
+
+[_Code_]         --argc;
+
+[_Code_]     }
+
+[_Code_]
+[_Code_]     /*
+
+[_Code_]      * At this point all the options have been processed.
+
+[_Code_]      * Check to see if we have no files in the list
+
+[_Code_]      * and, if so, we need to list just standard in
+
+[_Code_]      */
+
+[_Code_]     if (argc == 1) {
+
+[_Code_]         do_file("print.in");
+
+[_Code_]     } else {
+
+[_Code_]         while (argc > 1) {
+
+[_Code_]           do_file(argv[1]);
+
+[_Code_]           ++argv;
+
+[_Code_]           --argc;
+
+[_Code_]         }
+
+[_Code_]     }
+
+[_Code_]     return (0);
+
+[_Code_] }
+
+This is one way of parsing the argument list. The use of the while
+loop and switch statement is simple and easy to understand. This
+method does have a limitation. The argument must immediately
+follow the options. For example, -o data.out will work, but -
+o data.out will not. An improved parser would make the program
+more friendly, but this works for simple programs. (See your system
+documentation for information on the getopt function.)
+
+[_A_]  Programming Exercises
+
+Exercise 15-1: Write a program that uses pointers to set each element of an array
+to zero.
+
+Exercise 15-2: Write a function that takes a single string as its argument and
+returns a pointer to the first nonwhite character in the string.
+
+[_A_]  Answers to Chapter Questions
+
+Answer 15-1:  The problem is that the variable name is a temporary variable. The
+compiler allocates space for the name when the function is entered and reclaims
+the space when the function exits. The function assigns name the correct value
+and returns a pointer to it. However, the function is over, so name disappears
+and you have a pointer with an illegal value.
+
+The solution is to declare name static. Consequently, it is a
+permanent variable and will not disappear at the end of the function.
+
+Question 15-2:  After fixing the function, you try using it for two filenames. [_XREF
+Example 15-8_] should print out:
+
+[_Code_] Name: tmp1
+
+[_Code_] Name: tmp2
+
+but it doesn't. What does it print and why?
+
+Example 15-9
+
+.  tmp2/tmp2.cc
+
+[_Code_] #include <iostream.h>
+
+[_Code_] #include <string.h>
+
+[_Code_]
+[_Code_] /********************************************************
+
+[_Code_]  * tmp_name -- return a temporary filename              *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Each time this function is called, a new name will   *
+
+[_Code_]  * be returned                                          *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Warning: There should be a warning here, but if we   *
+
+[_Code_]  *      put it in we would answer the question.         *
+
+[_Code_]  *                                                      *
+
+[_Code_]  * Returns                                              *
+
+[_Code_]  *      pointer to the new filename                     *
+
+[_Code_]  ********************************************************/
+
+[_Code_] char *tmp_name(void)
+
+[_Code_] {
+
+[_Code_]     static char name[30];       // The name we are generating
+
+[_Code_]     static int sequence = 0;    // Sequence number for last digit
+
+[_Code_]
+[_Code_]     ++sequence; // Move to the next file name
+
+[_Code_]
+[_Code_]     strcpy(name, "tmp");
+
+[_Code_]
+[_Code_]     // Put in the sequence digit
+
+[_Code_]     name[3] = sequence + '0';
+
+[_Code_]
+[_Code_]     // End the string
+
+[_Code_]     name[4] = '\0';
+
+[_Code_]
+[_Code_]     return(name);
+
+[_Code_] }
+
+[_Code_]
+[_Code_] int main()
+
+[_Code_] {
+
+[_Code_]     char *name1;                // Name of a temporary file
+
+[_Code_]     char *name2;                // Name of a temporary file
+
+[_Code_]
+[_Code_]     name1 = tmp_name();
+
+[_Code_]     name2 = tmp_name();
+
+[_Code_]
+[_Code_]     cout << "Name1: " << name1 << '\n';
+
+[_Code_]     cout << "Name2: " << name2 << '\n';
+
+[_Code_]     return(0);
+
+[_Code_] }
+
+Answer 15-2:  The first call to tmp_name returns a pointer to name. There is only
+one name. The second call to tmp_name changes name and returns a pointer to it.
+So you have two pointers, and they point to the same thing, name.
+
+Several library functions return pointers to static strings. A second
+call to one of these routines will overwrite the first value. A solution
+to this problem is to copy the values:
+
+[_Code_] char name1[100];
+
+[_Code_] char name2[100];
+
+[_Code_]
+
+[_Code_] strcpy(name1, tmp_name());
+
+[_Code_] strcpy(name2, tmp_name());
+
